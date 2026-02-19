@@ -1,10 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
   <defs>
-    <linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#11998e;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#38ef7d;stop-opacity:1" />
+    <linearGradient id="shiny-black" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3a3a3a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a1a1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2a2a2a;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <circle cx="100" cy="100" r="95" fill="url(#grad6)"/>
-  <text x="100" y="130" text-anchor="middle" fill="#e94560" font-size="91" font-family="Georgia, serif" font-weight="bold" font-style="italic">Z</text>
+  <!-- 亮黑色渐变背景 -->
+  <circle cx="100" cy="100" r="90" fill="url(#shiny-black)"/>
+  <!-- 外圈深灰圆环 -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#2a2a2a" stroke-width="8"/>
+  <!-- 内圈白色细圆环 -->
+  <circle cx="100" cy="100" r="86" fill="none" stroke="white" stroke-width="4"/>
+  <!-- 红色斜体 Z -->
+  <text x="100" y="125" text-anchor="middle" fill="#e94560" font-size="80" font-family="Georgia, serif" font-weight="bold" font-style="italic">Z</text>
+  <!-- 白色 blog 文字 -->
+  <text x="100" y="105" text-anchor="middle" fill="white" font-size="16" font-family="Georgia, serif" font-style="italic">blog</text>
 </svg>
