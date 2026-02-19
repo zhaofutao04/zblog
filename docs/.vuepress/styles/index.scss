@@ -1,0 +1,25 @@
+// 自定义样式
+.theme-reco-content {
+  max-width: 1200px !important;
+}
+
+// 首页样式调整
+.home-blog .hero {
+  margin-top: 0 !important;
+}
+
+// 文章样式
+.theme-default-content {
+  max-width: 900px !important;
+}
+
+// 代码块样式
+pre {
+  border-radius: 8px;
+}
+
+// 自定义变量
+:root {
+  --c-brand: #3eaf7c;
+  --c-brand-light: #4abf8a;
+}
