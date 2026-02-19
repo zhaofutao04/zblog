@@ -25,5 +25,5 @@ banner: /banner.png
 </div>
 
 <div class="footer">
-  <p>Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">京ICP备XXXXXXXX号</a></p>
+  <p>Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2024095491号-1</a></p>
 </div>
