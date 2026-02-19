@@ -78,7 +78,8 @@ export default defineUserConfig({
 
     footer: {
       createYear: 2024,
-      authorInfo: '老Z'
+      authorInfo: '老Z',
+      beian: '沪ICP备2024095491号-1'
     }
   }),
 
