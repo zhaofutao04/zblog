@@ -38,6 +38,12 @@ export default defineUserConfig({
     autoSetCategory: true,
     autoSetTag: true,
 
+    // 博客文章配置
+    blogs: {
+      dir: '/_posts',
+      itemPerRow: 3
+    },
+
     friendLink: [
       {
         title: 'VuePress',
