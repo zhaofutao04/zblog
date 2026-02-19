@@ -27,7 +27,6 @@ export default defineUserConfig({
 
     navbar: [
       { text: '首页', link: '/' },
-      { text: '文章', link: '/posts/' },
       { text: '时间线', link: '/timeline/' },
       { text: '分类', link: '/categories/' },
       { text: '标签', link: '/tags/' },
@@ -40,7 +39,7 @@ export default defineUserConfig({
 
     // 博客文章配置
     blogs: {
-      dir: '/_posts',
+      dir: '/blogs',
       itemPerRow: 3
     },
 
