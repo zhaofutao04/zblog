@@ -35,21 +35,6 @@ export default defineUserConfig({
       { text: '友情链接', link: '/friendship-link/' }
     ],
 
-    // Valine 评论系统配置
-    commentConfig: {
-      type: 'valine',
-      options: {
-        appId: 'your-leancloud-app-id',
-        appKey: 'your-leancloud-app-key',
-        placeholder: '说点什么吧...',
-        avatar: 'monsterid',
-        pageSize: 10,
-        lang: 'zh-CN',
-        highlight: true,
-        recordIP: false
-      }
-    },
-
     autoSetCategory: true,
     autoSetTag: true,
 
