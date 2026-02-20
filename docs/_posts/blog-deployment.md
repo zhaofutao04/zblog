@@ -1,6 +1,6 @@
 ---
 title: 博客部署架构
-date: 2026-02-19
+date: 2026-02-20
 categories:
   - 项目文档
 tags:
@@ -72,7 +72,7 @@ author: 老Z
 | 构建命令 | `npm run build` |
 | 输出目录 | `docs/.vuepress/dist` |
 | Node 版本 | 22.x（自动检测） |
-| 包管理器 | bun（自动检测） |
+| 包管理器 | npm（自动检测） |
 
 ### 域名配置
 
@@ -97,7 +97,7 @@ author: 老Z
         ↓
 2. 拉取最新代码
         ↓
-3. 安装依赖 (npm install / bun install)
+3. 安装依赖 (npm install)
         ↓
 4. 执行构建 (npm run build)
         ↓
@@ -111,7 +111,7 @@ author: 老Z
 ### 部署时间
 
 - 平均部署时间：1-2 分钟
-- 构建时间：约 20 秒
+- 构建时间：约 15 秒
 - CDN 更新：实时
 
 ---
@@ -132,7 +132,7 @@ git add .
 git commit -m "更新文章"
 git push
 
-# 4. 等待自动部署完成
+# 4. 等待自动部署完成（约1-2分钟）
 ```
 
 ### 手动触发部署
@@ -183,11 +183,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - run: npm install
       - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/.vuepress/dist
@@ -224,12 +226,18 @@ Cloudflare Pages 自动提供 HTTPS：
 - 图片优化（需开启）
 - Minify HTML/CSS/JS
 
+### vuepress-theme-hope 内置优化
+
+- 自动生成 sitemap.xml
+- 自动生成 robots.txt
+- SEO meta 标签优化
+- 代码分割
+
 ### 手动优化建议
 
 1. **图片压缩**：使用 WebP 格式
-2. **代码分割**：VuePress 已自动处理
-3. **懒加载**：图片使用懒加载
-4. **CDN 缓存**：静态资源长期缓存
+2. **懒加载**：图片使用懒加载
+3. **CDN 缓存**：静态资源长期缓存
 
 ---
 
@@ -255,8 +263,8 @@ Cloudflare Pages 自动提供 HTTPS：
 ### 部署失败
 
 1. 检查构建日志
-2. 确认 Node 版本兼容
-3. 检查依赖是否完整
+2. 确认 Node 版本兼容（需要 18.x 或更高）
+3. 检查依赖是否完整（`npm install`）
 
 ### 访问异常
 

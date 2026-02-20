@@ -1,6 +1,6 @@
 ---
 title: 博客操作指南
-date: 2026-02-19
+date: 2026-02-20
 categories:
   - 项目文档
 tags:
@@ -52,7 +52,7 @@ cp docs/_posts/java-basics.md docs/_posts/new-article.md
 ```markdown
 ---
 title: 文章标题
-date: 2026-02-19
+date: 2026-02-20
 categories:
   - 分类名称
 tags:
@@ -114,28 +114,26 @@ public class Hello {
 
 ---
 
-## 添加分类
+## 分类和标签
 
-分类是通过文章的 `categories` 字段自动生成的，无需手动创建。
+分类和标签都是通过文章的 frontmatter 自动生成的，无需手动创建。
 
-### 添加新分类
-
-只需在文章中添加新的分类名称：
+### 添加分类
 
 ```yaml
 ---
 categories:
-  - 新分类名称
+  - Java技术
 ---
 ```
 
-### 多级分类
+### 添加标签
 
 ```yaml
 ---
-categories:
-  - [后端开发, Java]
-  - [后端开发, 数据库]
+tags:
+  - Spring Boot
+  - 微服务
 ---
 ```
 
@@ -153,36 +151,16 @@ categories:
 
 ---
 
-## 添加标签
+## 自动生成的页面
 
-标签也是自动生成的，在文章中配置：
+vuepress-theme-hope 会自动生成以下页面：
 
-```yaml
----
-tags:
-  - Spring Boot
-  - 微服务
-  - 实战
----
-```
-
----
-
-## 添加友情链接
-
-编辑 `docs/.vuepress/config.ts`：
-
-```typescript
-friendLink: [
-  {
-    title: '链接名称',
-    desc: '链接描述',
-    logo: 'https://example.com/logo.png',
-    link: 'https://example.com'
-  },
-  // 添加更多...
-]
-```
+| 页面 | 路径 | 说明 |
+|------|------|------|
+| 文章列表 | `/posts/` | 所有文章列表 |
+| 分类 | `/category/` | 按分类浏览 |
+| 标签 | `/tag/` | 按标签浏览 |
+| 时间线 | `/timeline/` | 按时间归档 |
 
 ---
 
@@ -194,15 +172,11 @@ friendLink: [
 navbar: [
   { text: '首页', link: '/' },
   { text: '文章', link: '/posts/' },
-  { text: '新页面', link: '/new-page/' },  // 添加新导航
+  { text: '分类', link: '/category/' },
+  { text: '标签', link: '/tag/' },
+  { text: '时间线', link: '/timeline/' },
+  { text: '关于我', link: '/about/' },
 ]
-```
-
-然后创建对应页面：
-
-```bash
-mkdir docs/new-page
-echo '---\ntitle: 新页面\n---\n\n# 新页面内容' > docs/new-page/README.md
 ```
 
 ---
@@ -223,20 +197,20 @@ export default defineUserConfig({
 ### 作者信息
 
 ```typescript
-theme: recoTheme({
-  author: '你的名字',
-  authorAvatar: '/avatar.svg',
+theme: hopeTheme({
+  author: {
+    name: '老Z',
+    url: 'https://www.zhaofutao.cn',
+  },
 })
 ```
 
 ### 页脚和备案号
 
 ```typescript
-footer: {
-  createYear: 2024,
-  authorInfo: '你的名字',
-  beian: '你的ICP备案号'
-}
+theme: hopeTheme({
+  footer: 'Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2024095491号-1</a>',
+})
 ```
 
 ### 更换 Logo
@@ -256,20 +230,43 @@ logo: '/your-logo.svg',
 编辑 `docs/.vuepress/styles/index.scss`：
 
 ```scss
-// 修改主题色
-:root {
-  --c-brand: #ff6b6b;        // 品牌色
-  --c-brand-light: #ff8787;  // 浅品牌色
+// 自定义样式
+pre {
+  border-radius: 8px;
 }
 
-// 自定义首页样式
-.home-blog .hero {
-  // 你的样式
+// 页脚链接样式
+.vp-footer a {
+  color: var(--vp-c-accent);
 }
+```
 
-// 自定义文章样式
-.theme-default-content {
-  // 你的样式
+---
+
+## 启用更多功能
+
+### 启用评论系统
+
+```typescript
+// config.ts
+plugins: {
+  comment: {
+    provider: 'Giscus',
+    // Giscus 配置
+  },
+}
+```
+
+### 启用全文搜索
+
+```bash
+npm install -D @vuepress/plugin-slimsearch
+```
+
+```typescript
+// config.ts
+plugins: {
+  slimsearch: true,
 }
 ```
 
@@ -284,3 +281,22 @@ logo: '/your-logo.svg',
 | `git add .` | 暂存所有更改 |
 | `git commit -m "msg"` | 提交更改 |
 | `git push` | 推送到远程 |
+
+---
+
+## 部署流程
+
+```bash
+# 1. 本地预览
+npm run dev
+
+# 2. 构建测试
+npm run build
+
+# 3. 提交并推送
+git add .
+git commit -m "更新文章"
+git push
+
+# 4. 等待 Cloudflare 自动部署（约1-2分钟）
+```
