@@ -65,19 +65,8 @@ export default defineUserConfig({
 
     // 插件配置
     plugins: {
-      // 搜索
-      search: {
-        locales: {
-          '/': {
-            placeholder: '搜索',
-          },
-        },
-      },
-
-      // 评论 (已禁用)
-      // comment: {
-      //   provider: 'Giscus',
-      // },
+      // 启用博客功能
+      blog: true,
     },
   }),
 
@@ -85,8 +74,4 @@ export default defineUserConfig({
     viteOptions: {},
     vuePluginOptions: {}
   }),
-
-  markdown: {
-    lineNumbers: true
-  }
 })
