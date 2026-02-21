@@ -41,16 +41,11 @@ export default defineUserConfig({
     // 博客配置
     blog: {
       intro: '/about/',
-      sidebarDisplay: 'none',
     },
-
-    // 文章配置
-    articles: '/posts/',
 
     // 元信息
     metaLocales: {
       editLink: '在 GitHub 上编辑此页',
-      lastUpdated: '上次更新',
     },
 
     // 页脚配置
