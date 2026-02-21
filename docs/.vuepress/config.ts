@@ -1,3 +1,4 @@
+import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics'
 import { viteBundler } from '@vuepress/bundler-vite'
 import { defineUserConfig } from 'vuepress'
 import { hopeTheme } from 'vuepress-theme-hope'
@@ -69,4 +70,10 @@ export default defineUserConfig({
     viteOptions: {},
     vuePluginOptions: {}
   }),
+
+  plugins: [
+    googleAnalyticsPlugin({
+      id: 'G-2NDJZGP77K',
+    }),
+  ],
 })
