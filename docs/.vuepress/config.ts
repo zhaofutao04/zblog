@@ -29,10 +29,10 @@ export default defineUserConfig({
     // 导航栏
     navbar: [
       { text: '首页', link: '/' },
-      { text: '文章', link: '/posts/' },
       { text: '支付', link: '/category/支付/' },
       { text: 'web3', link: '/category/web3/' },
       { text: '建站', link: '/category/建站/' },
+      { text: '文章', link: '/posts/' },
       { text: '分类', link: '/category/' },
       { text: '标签', link: '/tag/' },
       { text: '时间线', link: '/timeline/' },
@@ -56,7 +56,7 @@ export default defineUserConfig({
     footer: 'Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2024095491号-1</a>',
 
     // 版权信息
-    copyright: 'Copyright © 2024-present 老Z',
+    //copyright: 'Copyright © 2024-present 老Z',
 
     // 显示设置
     displayFooter: true,
