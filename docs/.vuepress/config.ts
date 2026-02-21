@@ -30,6 +30,9 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/' },
       { text: '文章', link: '/posts/' },
+      { text: '支付', link: '/category/支付/' },
+      { text: 'web3', link: '/category/web3/' },
+      { text: '建站', link: '/category/建站/' },
       { text: '分类', link: '/category/' },
       { text: '标签', link: '/tag/' },
       { text: '时间线', link: '/timeline/' },

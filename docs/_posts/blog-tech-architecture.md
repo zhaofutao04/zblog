@@ -2,7 +2,7 @@
 title: 博客技术架构
 date: 2026-02-21
 categories:
-  - 项目文档
+  - 建站
 tags:
   - VuePress
   - 博客
