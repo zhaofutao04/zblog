@@ -1,279 +1,74 @@
 ---
-title: 博客部署架构
-date: 2026-02-20
+title: 博客是怎么部署的
+date: 2026-02-21
 categories:
   - 项目文档
 tags:
   - VuePress
-  - 博客
-  - 部署
   - Cloudflare
 author: 老Z
 ---
 
-## 部署架构概览
+## 简单说一下部署方案
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        开发环境                              │
-│                     (本地电脑)                               │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    │
-│  │  编写文章   │ → │ npm run dev │ → │  本地预览   │    │
-│  │  (Markdown) │    │  (热更新)   │    │ (localhost) │    │
-│  └─────────────┘    └─────────────┘    └─────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-          │
-          │ git push
-          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      GitHub 仓库                             │
-│                (代码版本管理)                                │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │  main 分支                                           │   │
-│  │  ├── docs/          # 源码                          │   │
-│  │  ├── package.json   # 配置                          │   │
-│  │  └── ...                                             │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-          │
-          │ Webhook 触发
-          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   Cloudflare Pages                          │
-│                   (CI/CD + 托管)                            │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    │
-│  │ 拉取代码    │ → │ npm run     │ → │  部署静态   │    │
-│  │ (git clone) │    │   build     │    │   文件      │    │
-│  └─────────────┘    └─────────────┘    └─────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    Cloudflare CDN                           │
-│                   (全球加速)                                 │
-│  ┌─────────────────────────────────────────────────────┐   │
-│  │     全球节点分发 → 用户就近访问                       │   │
-│  └─────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      用户访问                                │
-│               www.zhaofutao.cn                              │
-└─────────────────────────────────────────────────────────────┘
-```
+博客是静态网站，部署起来很简单。我用的是 Cloudflare Pages，主要因为：
 
-## 当前部署配置
+- 免费，带宽不限
+- 自带 CDN，国内访问还行
+- 自动 HTTPS
+- 推送代码自动部署
 
-### Cloudflare Pages 配置
+流程大概是这样：本地写文章 → push 到 GitHub → Cloudflare 自动拉取代码构建 → 部署到全球节点。
 
-| 配置项 | 值 |
-|--------|-----|
-| 构建命令 | `npm run build` |
-| 输出目录 | `docs/.vuepress/dist` |
-| Node 版本 | 22.x（自动检测） |
-| 包管理器 | npm（自动检测） |
+## Cloudflare 配置
 
-### 域名配置
+在 Cloudflare Pages 里建个项目，配置几项：
 
-| 域名 | 类型 | 说明 |
-|------|------|------|
-| www.zhaofutao.cn | CNAME | 指向 Cloudflare Pages |
-| zhaofutao.cn | CNAME | 指向 Cloudflare Pages |
+- 构建命令：`npm run build`
+- 输出目录：`docs/.vuepress/dist`
+- Node 版本：22.x
 
----
+就这样，其他都是默认的。每次往 GitHub 推代码，Cloudflare 会自动检测到然后重新构建部署。
 
-## 自动部署流程
+## 域名绑定
 
-### 触发条件
+我的域名是 `zhaofutao.cn`，DNS 也托管在 Cloudflare，绑定很方便。在 Pages 项目设置里添加自定义域名，Cloudflare 会自动配置 DNS 记录。
 
-- 推送到 `main` 分支
-- 手动触发重新部署
+域名在阿里云买的，已经备案了，用 Cloudflare 的 CDN 也没啥问题。
 
-### 部署步骤
-
-```
-1. Cloudflare 检测到 GitHub 推送
-        ↓
-2. 拉取最新代码
-        ↓
-3. 安装依赖 (npm install)
-        ↓
-4. 执行构建 (npm run build)
-        ↓
-5. 生成静态文件到 docs/.vuepress/dist/
-        ↓
-6. 部署到 Cloudflare 边缘节点
-        ↓
-7. 用户访问新版本
-```
-
-### 部署时间
-
-- 平均部署时间：1-2 分钟
-- 构建时间：约 15 秒
-- CDN 更新：实时
-
----
-
-## 部署操作
-
-### 日常更新
+## 日常更新流程
 
 ```bash
-# 1. 编写/修改文章
-vim docs/_posts/my-article.md
+# 写文章
+vim docs/_posts/xxx.md
 
-# 2. 本地预览
+# 本地看看效果
 npm run dev
 
-# 3. 提交并推送
+# 没问题就提交
 git add .
-git commit -m "更新文章"
+git commit -m "新文章"
 git push
-
-# 4. 等待自动部署完成（约1-2分钟）
 ```
 
-### 手动触发部署
+push 之后等个一两分钟就能在线上看到了。
 
-1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. 进入 Workers & Pages → 你的项目
-3. 点击 View details → Create deployment
-4. 选择分支，点击 Save and Deploy
+## 为什么不用其他方案
 
-### 查看部署日志
+**Vercel** - 也挺好用的，但国内访问比 Cloudflare 慢一些。
 
-1. Cloudflare Dashboard → 项目详情
-2. 点击具体部署记录
-3. 查看 Building... 日志
+**GitHub Pages** - 免费，但国内访问不稳定，有时候加载不出来。
 
----
+**阿里云 OSS** - 国内访问最快，但配置麻烦，还要单独搞 CDN，流量大了也要花钱。
 
-## 备选部署方案
+**自己的服务器** - 太折腾了，还要维护，博客这点东西没必要。
 
-### 方案一：Vercel
+## 遇到过的坑
 
-| 优点 | 缺点 |
-|------|------|
-| 部署简单 | 国内访问较慢 |
-| 免费额度充足 | - |
+有次构建失败，看了日志发现是 `sass-embedded` 没装上。解决方案是把它加到 `devDependencies` 里，因为 Cloudflare 默认只安装 `devDependencies`。
 
-配置：
-```
-Build Command: npm run build
-Output Directory: docs/.vuepress/dist
-```
+还有一次 Node 版本不对，在环境变量里指定 `NODE_VERSION=22` 就好了。
 
-### 方案二：GitHub Pages
+## 小结
 
-| 优点 | 缺点 |
-|------|------|
-| 完全免费 | 国内访问不稳定 |
-| 与 GitHub 集成好 | 配置稍复杂 |
-
-配置：
-```yaml
-# .github/workflows/deploy.yml
-name: Deploy
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install
-      - run: npm run build
-      - uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/.vuepress/dist
-```
-
-### 方案三：阿里云 OSS
-
-| 优点 | 缺点 |
-|------|------|
-| 国内访问快 | 需要付费 |
-| 带宽稳定 | 需要 ICP 备案 |
-
-适用场景：已备案域名 + 国内用户为主
-
----
-
-## HTTPS 配置
-
-Cloudflare Pages 自动提供 HTTPS：
-
-- 自动申请 SSL 证书
-- 自动续期
-- 支持 HTTP/2
-- 支持 HTTP/3（QUIC）
-
----
-
-## 性能优化
-
-### Cloudflare 自动优化
-
-- Brotli 压缩
-- 响应缓存
-- 图片优化（需开启）
-- Minify HTML/CSS/JS
-
-### vuepress-theme-hope 内置优化
-
-- 自动生成 sitemap.xml
-- 自动生成 robots.txt
-- SEO meta 标签优化
-- 代码分割
-
-### 手动优化建议
-
-1. **图片压缩**：使用 WebP 格式
-2. **懒加载**：图片使用懒加载
-3. **CDN 缓存**：静态资源长期缓存
-
----
-
-## 监控与告警
-
-### Cloudflare Analytics
-
-- 访问量统计
-- 流量来源
-- 国家/地区分布
-- 响应时间
-
-### 设置告警
-
-1. Cloudflare Dashboard → Notifications
-2. 添加告警规则
-3. 配置通知方式（邮件/Webhook）
-
----
-
-## 故障排查
-
-### 部署失败
-
-1. 检查构建日志
-2. 确认 Node 版本兼容（需要 18.x 或更高）
-3. 检查依赖是否完整（`npm install`）
-
-### 访问异常
-
-1. 检查 DNS 解析
-2. 检查 Cloudflare 状态
-3. 清除浏览器缓存
-
-### 更新未生效
-
-1. 确认 git push 成功
-2. 检查部署是否完成
-3. 清除 Cloudflare 缓存
+静态博客部署真的挺简单的，选个平台，配置一下构建命令，之后就是写文章 push 就行。如果只是想写写博客，不用折腾太多，能用就行。

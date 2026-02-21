@@ -1,171 +1,66 @@
 ---
 title: 博客技术架构介绍
-date: 2026-02-20
+date: 2026-02-21
 categories:
   - 项目文档
 tags:
   - VuePress
   - 博客
-  - 技术架构
 author: 老Z
 ---
 
-## 概述
+## 为什么选择这个技术栈
 
-本博客基于 **VuePress 2** 构建，使用 **vuepress-theme-hope** 主题，是一个纯静态的个人博客网站。本文将详细介绍博客的技术架构。
+在搭建这个博客之前，我对比了好几个方案。WordPress 太重，Hexo 主题太少，Hugo 的模板语法不太习惯。最后选了 VuePress 2 + vuepress-theme-hope，主要是因为：
 
-## 核心技术栈
+- Markdown 写作体验好
+- Vue 生态熟悉，方便魔改
+- 构建速度快，Vite 加持
+- 主题功能够用，文档也全
 
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| VuePress | 2.0.0-rc.26 | 静态网站生成器 |
-| vuepress-theme-hope | 2.0.0-rc.102 | 博客主题 |
-| Vue | 3.5.x | 前端框架 |
-| Vite | 6.x | 构建工具 |
-| TypeScript | - | 配置文件编写 |
-| Sass | 1.77.x | 样式预处理器 |
+## 用到的主要技术
 
-## 技术架构图
+核心就是 VuePress 2，配合 vuepress-theme-hope 主题。版本信息：
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                     用户访问层                           │
-│                   (浏览器/CDN)                          │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│                   静态文件服务                           │
-│              (Cloudflare Pages)                        │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│                   VuePress 构建层                        │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
-│  │  Markdown   │  │   主题      │  │   插件      │    │
-│  │   文章      │  │  (hope)     │  │  (内置)     │    │
-│  └─────────────┘  └─────────────┘  └─────────────┘    │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│                    开发/构建工具                         │
-│              Vite + Vue 3 + TypeScript                 │
-└─────────────────────────────────────────────────────────┘
-```
+- VuePress: 2.0.0-rc.26
+- vuepress-theme-hope: 2.0.0-rc.102
+- Vue 3.5 + Vite 6
+- TypeScript 写配置
+- Sass 写样式
 
-## 核心组件说明
+说实话这套组合还是有些坑的，毕竟是 rc 版本，API 偶尔会变。但总体来说能用，遇到问题查 issue 基本都能解决。
 
-### 1. VuePress 2
+## 主题自带的功能
 
-VuePress 是一个以 Markdown 为中心的静态网站生成器。主要特性：
+hope 主题自带的东西挺多的，基本开箱即用：
 
-- **Markdown 增强**：支持代码高亮、表格、Emoji 等
-- **Vue 驱动**：可以在 Markdown 中使用 Vue 组件
-- **高性能**：基于 Vite 构建，热更新快
-- **SEO 友好**：静态渲染，利于搜索引擎收录
+**博客相关**
+- 文章列表、分类、标签、时间线，都是自动根据文章 frontmatter 生成的
+- 不用像以前那样手动维护分类页面
 
-### 2. vuepress-theme-hope
+**SEO 相关**
+- sitemap.xml 自动生成
+- robots.txt 自动生成
+- meta 标签也处理得不错
 
-一款功能强大、高度可定制的博客主题，提供：
+**其他**
+- 暗黑模式支持
+- 图片点击放大
+- 代码一键复制
+- 响应式布局
 
-- **博客功能**：文章列表、分类、标签、时间线
-- **页面加密**：支持密码保护页面
-- **评论系统**：支持 Giscus、Waline 等多种评论
-- **全文搜索**：内置搜索功能
-- **SEO 优化**：自动生成 sitemap、robots.txt
-- **RSS 订阅**：支持 RSS/Atom/JSON Feed
-- **暗黑模式**：自动/手动切换
-- **响应式设计**：移动端适配
-- **PWA 支持**：可离线访问
+## 关于评论
 
-## 当前使用的功能模块
+之前试过 Valine，但遇到了 401 错误，懒得折腾就先关了。后面有空可能会换 Giscus，毕竟基于 GitHub Discussions，稳定性应该好一些。
 
-| 模块 | 文件 | 功能 |
-|------|------|------|
-| 导航栏 | config.ts → navbar | 顶部导航菜单 |
-| 博客配置 | config.ts → blog | 博客相关设置 |
-| 页脚配置 | config.ts → footer | 页脚信息、备案号 |
-| 分类系统 | 自动 | 根据文章 frontmatter 自动生成 |
-| 标签系统 | 自动 | 根据文章 frontmatter 自动生成 |
-| 时间线 | 自动 | 按时间归档文章 |
-| SEO | 内置 | sitemap、robots.txt |
+## 构建和部署
 
-## 内置插件
+本地 `npm run dev` 开发，`npm run build` 构建，构建产物在 `docs/.vuepress/dist/`。
 
-vuepress-theme-hope 内置了丰富的插件：
+部署用的 Cloudflare Pages，推送到 GitHub 自动触发部署，挺省心的。之前考虑过阿里云 OSS，但国内访问虽然快，配置起来麻烦，还要单独搞 CDN。
 
-| 插件 | 功能 |
-|------|------|
-| @vuepress/plugin-blog | 博客核心功能 |
-| @vuepress/plugin-seo | SEO 优化 |
-| @vuepress/plugin-sitemap | 站点地图 |
-| @vuepress/plugin-git | Git 信息 |
-| @vuepress/plugin-nprogress | 进度条 |
-| @vuepress/plugin-photo-swipe | 图片浏览 |
-| @vuepress/plugin-copy-code | 代码复制 |
+## 一点体会
 
-## 可扩展功能
+静态博客的好处是省心，不用担心服务器挂了、数据库崩了。坏处是每次发文章都要重新构建，不过反正也就十几秒，可以接受。
 
-### 启用评论系统
-
-```ts
-// config.ts
-plugins: {
-  comment: {
-    provider: 'Giscus',
-    // Giscus 配置
-  },
-}
-```
-
-### 启用全文搜索
-
-```bash
-npm install -D @vuepress/plugin-slimsearch
-```
-
-```ts
-// config.ts
-plugins: {
-  slimsearch: true,
-}
-```
-
-### 启用 PWA
-
-```ts
-// config.ts
-plugins: {
-  pwa: true,
-}
-```
-
-## 构建流程
-
-```
-Markdown 文章
-     │
-     ▼
-VuePress 解析 frontmatter
-     │
-     ▼
-主题渲染页面模板
-     │
-     ▼
-Vite 编译打包
-     │
-     ▼
-生成静态 HTML/JS/CSS
-     │
-     ▼
-部署到 Cloudflare Pages
-```
-
-## 相关文件
-
-- 配置文件：`docs/.vuepress/config.ts`
-- 样式文件：`docs/.vuepress/styles/index.scss`
-- 静态资源：`docs/.vuepress/public/`
-- 博客文章：`docs/_posts/`
+如果你也想搭博客，我的建议是：先想清楚自己要什么功能，然后选最简单的方案。不要追求大而全，能写文章、能被人访问到就够了。

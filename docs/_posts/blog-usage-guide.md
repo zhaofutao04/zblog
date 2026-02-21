@@ -1,302 +1,137 @@
 ---
-title: 博客操作指南
-date: 2026-02-20
+title: 博客日常操作
+date: 2026-02-21
 categories:
   - 项目文档
 tags:
   - VuePress
   - 博客
-  - 操作指南
 author: 老Z
 ---
 
-## 开发环境
+## 怎么写文章
 
-### 本地启动
+文章放在 `docs/_posts/` 目录下，新建一个 `.md` 文件就行。
 
-```bash
-cd /Users/zhaofutao/web4pay/my-blog
-npm run dev
-```
-
-访问 `http://localhost:8080` 预览网站。
-
-### 构建部署
-
-```bash
-npm run build
-```
-
-构建产物在 `docs/.vuepress/dist/` 目录。
-
----
-
-## 添加文章
-
-### 方法一：直接创建 Markdown 文件
-
-在 `docs/_posts/` 目录下创建 `.md` 文件：
-
-```bash
-touch docs/_posts/my-new-article.md
-```
-
-### 方法二：复制模板
-
-```bash
-cp docs/_posts/java-basics.md docs/_posts/new-article.md
-```
-
-### 文章模板
+文件开头要写 frontmatter，告诉博客系统这篇文章的基本信息：
 
 ```markdown
 ---
 title: 文章标题
-date: 2026-02-20
+date: 2026-02-21
 categories:
-  - 分类名称
+  - 分类名
 tags:
   - 标签1
   - 标签2
-author: 老Z
 ---
 
-## 简介
+这里是正文...
+```
 
-这里是文章摘要...
+`<!-- more -->` 这个标记可以用在文章摘要后面，首页列表只显示摘要部分，点击才看全文。
 
-<!-- more -->
+## 本地预览
 
-## 正文内容
+```bash
+npm run dev
+```
 
-### 一级标题
+然后打开 `http://localhost:8080` 就能看到效果。改了文件会自动刷新，挺方便的。
 
-正文内容...
+## 发布文章
 
-#### 代码示例
+```bash
+git add .
+git commit -m "发新文章"
+git push
+```
 
-\`\`\`java
+推送到 GitHub 之后，Cloudflare 会自动构建部署，等一两分钟就能在线上看到了。
+
+## 常用的 Markdown 语法
+
+代码块：
+````markdown
+```java
 public class Hello {
     public static void main(String[] args) {
-        System.out.println("Hello World");
+        System.out.println("Hello");
     }
 }
-\`\`\`
+```
+````
 
-#### 表格
-
+表格：
+```markdown
 | 列1 | 列2 |
 |-----|-----|
 | 内容 | 内容 |
-
-#### 引用
-
-> 这是一段引用文字
-
-#### 列表
-
-- 无序列表项1
-- 无序列表项2
-
-1. 有序列表项1
-2. 有序列表项2
 ```
 
-### Frontmatter 字段说明
+引用：
+```markdown
+> 这是引用的文字
+```
 
-| 字段 | 必填 | 说明 |
-|------|------|------|
-| title | ✅ | 文章标题 |
-| date | ✅ | 发布日期 |
-| categories | ✅ | 分类（数组） |
-| tags | ✅ | 标签（数组） |
-| author | ❌ | 作者，默认使用配置 |
-
----
+图片：
+```markdown
+![图片描述](/path/to/image.png)
+```
 
 ## 分类和标签
 
-分类和标签都是通过文章的 frontmatter 自动生成的，无需手动创建。
-
-### 添加分类
+这两个都是自动生成的，写文章的时候填上就行：
 
 ```yaml
----
 categories:
   - Java技术
----
-```
-
-### 添加标签
-
-```yaml
----
 tags:
   - Spring Boot
-  - 微服务
----
+  - 后端
 ```
 
-### 推荐的分类
+分类建议用大类，比如"Java技术"、"前端技术"、"数据库"这种。标签可以更细一点，具体到框架或工具名。
 
-| 分类 | 说明 |
-|------|------|
-| 项目文档 | 项目相关文档 |
-| Java技术 | Java 相关 |
-| 前端技术 | 前端相关 |
-| 数据库 | 数据库相关 |
-| 开发工具 | 工具使用 |
-| 架构设计 | 架构相关 |
-| 中间件 | 中间件技术 |
+## 改网站配置
 
----
+配置文件是 `docs/.vuepress/config.ts`，改什么就打开看看，结构挺清晰的。
 
-## 自动生成的页面
-
-vuepress-theme-hope 会自动生成以下页面：
-
-| 页面 | 路径 | 说明 |
-|------|------|------|
-| 文章列表 | `/posts/` | 所有文章列表 |
-| 分类 | `/category/` | 按分类浏览 |
-| 标签 | `/tag/` | 按标签浏览 |
-| 时间线 | `/timeline/` | 按时间归档 |
-
----
-
-## 修改导航栏
-
-编辑 `docs/.vuepress/config.ts`：
-
+比如改导航栏：
 ```typescript
 navbar: [
   { text: '首页', link: '/' },
   { text: '文章', link: '/posts/' },
-  { text: '分类', link: '/category/' },
-  { text: '标签', link: '/tag/' },
-  { text: '时间线', link: '/timeline/' },
-  { text: '关于我', link: '/about/' },
+  // 加新的...
 ]
 ```
 
----
+改完记得 `npm run dev` 看看效果，没问题再 push。
 
-## 修改网站信息
+## 换 Logo
 
-### 网站标题和描述
-
-编辑 `docs/.vuepress/config.ts`：
+把新 Logo 文件放到 `docs/.vuepress/public/` 目录，然后在 `config.ts` 里改：
 
 ```typescript
-export default defineUserConfig({
-  title: '你的博客标题',
-  description: '你的博客描述',
-})
+logo: '/新logo.svg',
 ```
 
-### 作者信息
+## 自动生成的页面
 
-```typescript
-theme: hopeTheme({
-  author: {
-    name: '老Z',
-    url: 'https://www.zhaofutao.cn',
-  },
-})
-```
+这些页面不用自己写，主题自动生成：
 
-### 页脚和备案号
+- `/posts/` - 所有文章列表
+- `/category/` - 分类页面
+- `/tag/` - 标签页面
+- `/timeline/` - 时间线
 
-```typescript
-theme: hopeTheme({
-  footer: 'Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2024095491号-1</a>',
-})
-```
+## 一些小技巧
 
-### 更换 Logo
+1. 文件名用英文，url 会比较干净
+2. 日期格式 `YYYY-MM-DD`，不然可能识别不了
+3. 文章多了可以在 `_posts` 下建子目录分类存放，不影响构建
+4. 图片可以放 `public` 目录，引用时直接 `/图片名.png`
 
-1. 准备 Logo 文件（推荐 SVG 格式）
-2. 放到 `docs/.vuepress/public/` 目录
-3. 更新配置：
+## 遇到问题怎么办
 
-```typescript
-logo: '/your-logo.svg',
-```
-
----
-
-## 添加自定义样式
-
-编辑 `docs/.vuepress/styles/index.scss`：
-
-```scss
-// 自定义样式
-pre {
-  border-radius: 8px;
-}
-
-// 页脚链接样式
-.vp-footer a {
-  color: var(--vp-c-accent);
-}
-```
-
----
-
-## 启用更多功能
-
-### 启用评论系统
-
-```typescript
-// config.ts
-plugins: {
-  comment: {
-    provider: 'Giscus',
-    // Giscus 配置
-  },
-}
-```
-
-### 启用全文搜索
-
-```bash
-npm install -D @vuepress/plugin-slimsearch
-```
-
-```typescript
-// config.ts
-plugins: {
-  slimsearch: true,
-}
-```
-
----
-
-## 常用命令速查
-
-| 命令 | 说明 |
-|------|------|
-| `npm run dev` | 启动开发服务器 |
-| `npm run build` | 构建生产版本 |
-| `git add .` | 暂存所有更改 |
-| `git commit -m "msg"` | 提交更改 |
-| `git push` | 推送到远程 |
-
----
-
-## 部署流程
-
-```bash
-# 1. 本地预览
-npm run dev
-
-# 2. 构建测试
-npm run build
-
-# 3. 提交并推送
-git add .
-git commit -m "更新文章"
-git push
-
-# 4. 等待 Cloudflare 自动部署（约1-2分钟）
-```
+大多数问题看报错信息就能找到原因。实在不行就去 GitHub 搜 issue，基本都有人遇到过。
