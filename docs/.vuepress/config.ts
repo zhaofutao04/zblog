@@ -56,7 +56,7 @@ export default defineUserConfig({
     footer: 'Copyright © 2024-present 老Z | <a href="https://beian.miit.gov.cn/" target="_blank">沪ICP备2024095491号-1</a>',
 
     // 版权信息
-    //copyright: 'Copyright © 2024-present 老Z',
+    copyright: false,
 
     // 显示设置
     displayFooter: true,
@@ -66,6 +66,14 @@ export default defineUserConfig({
     plugins: {
       // 启用博客功能
       blog: true,
+      // 公告配置
+      notice: [
+        {
+          path: '/',
+          title: '欢迎访问',
+          content: '本博客正在持续更新中，欢迎关注！',
+        },
+      ],
     },
   }),
 
