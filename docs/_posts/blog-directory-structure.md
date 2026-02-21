@@ -1,5 +1,5 @@
 ---
-title: 博客目录结构说明
+title: 博客目录结构
 date: 2026-02-21
 categories:
   - 项目文档
@@ -9,75 +9,86 @@ tags:
 author: 老Z
 ---
 
-## 项目整体结构
-
-项目结构很简单，就这些：
+## 项目结构
 
 ```
 my-blog/
-├── docs/                 # 所有源码都在这里
-├── node_modules/
-├── package.json
-└── .gitignore
+├── docs/                    # 源码目录
+│   ├── .vuepress/           # VuePress 配置
+│   ├── _posts/              # 博客文章
+│   ├── about/               # 关于页面
+│   └── README.md            # 首页
+├── package.json             # 项目配置
+├── package-lock.json        # 依赖锁定
+└── .gitignore               # Git 忽略规则
 ```
 
-重点是 `docs/` 目录，博客的所有内容都放这里。
-
-## docs 目录
+## .vuepress 目录
 
 ```
-docs/
-├── .vuepress/            # 配置和资源
-│   ├── config.ts         # 主配置，改网站信息都在这
-│   ├── styles/           # 自定义样式
-│   └── public/           # Logo、图标等静态文件
-│
-├── _posts/               # 所有博客文章
-│   ├── blog-xxx.md
-│   ├── java-xxx.md
-│   └── ...
-│
-├── about/                # 关于页面
-│   └── README.md
-│
-└── README.md             # 首页
+.vuepress/
+├── config.ts                # 主配置文件
+├── styles/
+│   └── index.scss           # 自定义样式
+├── public/
+│   ├── logo.svg             # 网站 Logo
+│   └── favicon.ico          # 网站图标
+├── .cache/                  # 构建缓存（自动生成）
+└── .temp/                   # 临时文件（自动生成）
 ```
 
-## 几个关键文件
+## _posts 目录
 
-**config.ts** - 主配置文件，网站标题、导航栏、页脚都在这里改。用 TypeScript 写的，有类型提示，不容易写错。
+存放所有博客文章，每篇文章为一个 `.md` 文件。
 
-**_posts/** - 文章目录，所有 `.md` 文件放这里就会自动被识别为博客文章。
+```
+_posts/
+├── blog-tech-architecture.md
+├── blog-directory-structure.md
+├── blog-deployment.md
+├── blog-usage-guide.md
+├── java-basics.md
+├── spring-boot-intro.md
+└── ...
+```
 
-**README.md** - 首页配置，控制首页显示什么内容、什么样式。
+## 自动生成页面
 
-## 自动生成的页面
+vuepress-theme-hope 根据文章 frontmatter 自动生成以下页面：
 
-有个很方便的地方，这些页面不用自己创建，主题会自动生成：
-
-- `/posts/` - 文章列表
-- `/category/` - 分类页
-- `/tag/` - 标签页
-- `/timeline/` - 时间线
-
-只要你写文章的时候填了 `categories` 和 `tags`，这些页面就自动有内容了。
+| 页面 | URL | 说明 |
+|------|-----|------|
+| 文章列表 | `/posts/` | 所有文章 |
+| 分类 | `/category/` | 按分类归档 |
+| 标签 | `/tag/` | 按标签归档 |
+| 时间线 | `/timeline/` | 按时间归档 |
 
 ## 构建输出
 
-运行 `npm run build` 之后，生成的文件在 `docs/.vuepress/dist/`。这个目录就是最终要部署的内容。
+构建产物位于 `docs/.vuepress/dist/`：
 
 ```
 dist/
-├── index.html
-├── posts/
-├── category/
-├── tag/
-├── timeline/
-├── assets/               # CSS、JS
-├── sitemap.xml           # SEO 用
-└── robots.txt
+├── index.html               # 首页
+├── posts/                   # 文章列表
+├── category/                # 分类页
+├── tag/                     # 标签页
+├── timeline/                # 时间线页
+├── assets/                  # 静态资源
+│   ├── *.css
+│   └── *.js
+├── sitemap.xml              # 站点地图
+├── robots.txt               # 爬虫规则
+└── 404.html                 # 404 页面
 ```
 
-## 日常改什么
+## 文件说明
 
-平时写文章就往 `_posts/` 里加 `.md` 文件。偶尔改改配置或者换换 Logo，其他基本不用动。
+| 文件/目录 | 用途 |
+|-----------|------|
+| `config.ts` | 网站配置（标题、导航、插件等） |
+| `styles/index.scss` | 自定义 CSS 样式 |
+| `public/` | 静态资源（图片、图标等） |
+| `_posts/` | 博客文章源文件 |
+| `about/README.md` | 关于页面内容 |
+| `README.md` | 首页配置 |

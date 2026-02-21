@@ -1,5 +1,5 @@
 ---
-title: 博客日常操作
+title: 博客操作指南
 date: 2026-02-21
 categories:
   - 项目文档
@@ -9,129 +9,155 @@ tags:
 author: 老Z
 ---
 
-## 怎么写文章
+## 开发命令
 
-文章放在 `docs/_posts/` 目录下，新建一个 `.md` 文件就行。
+```bash
+# 启动开发服务器
+npm run dev
 
-文件开头要写 frontmatter，告诉博客系统这篇文章的基本信息：
+# 构建生产版本
+npm run build
+```
+
+开发服务器地址：`http://localhost:8080`
+
+## 添加文章
+
+在 `docs/_posts/` 目录下创建 Markdown 文件。
+
+### 文章格式
 
 ```markdown
 ---
 title: 文章标题
 date: 2026-02-21
 categories:
-  - 分类名
+  - 分类名称
 tags:
   - 标签1
   - 标签2
+author: 老Z
 ---
 
-这里是正文...
+## 章节标题
+
+文章内容...
+
+<!-- more -->
+
+更多内容...
 ```
 
-`<!-- more -->` 这个标记可以用在文章摘要后面，首页列表只显示摘要部分，点击才看全文。
+### Frontmatter 字段
 
-## 本地预览
+| 字段 | 必填 | 类型 | 说明 |
+|------|------|------|------|
+| title | 是 | string | 文章标题 |
+| date | 是 | string | 发布日期（YYYY-MM-DD） |
+| categories | 是 | string[] | 分类 |
+| tags | 是 | string[] | 标签 |
+| author | 否 | string | 作者 |
+
+### 摘要分割
+
+`<!-- more -->` 之前的内容作为文章摘要，在列表页显示。
+
+## 部署流程
 
 ```bash
+# 1. 本地预览
 npm run dev
-```
 
-然后打开 `http://localhost:8080` 就能看到效果。改了文件会自动刷新，挺方便的。
+# 2. 构建
+npm run build
 
-## 发布文章
-
-```bash
+# 3. 提交代码
 git add .
-git commit -m "发新文章"
-git push
+git commit -m "更新文章"
+git push origin main
+
+# 4. 等待自动部署完成（约1-2分钟）
 ```
 
-推送到 GitHub 之后，Cloudflare 会自动构建部署，等一两分钟就能在线上看到了。
+## 配置修改
 
-## 常用的 Markdown 语法
+### 导航栏
 
-代码块：
-````markdown
-```java
-public class Hello {
-    public static void main(String[] args) {
-        System.out.println("Hello");
-    }
-}
-```
-````
+编辑 `docs/.vuepress/config.ts`：
 
-表格：
-```markdown
-| 列1 | 列2 |
-|-----|-----|
-| 内容 | 内容 |
-```
-
-引用：
-```markdown
-> 这是引用的文字
-```
-
-图片：
-```markdown
-![图片描述](/path/to/image.png)
-```
-
-## 分类和标签
-
-这两个都是自动生成的，写文章的时候填上就行：
-
-```yaml
-categories:
-  - Java技术
-tags:
-  - Spring Boot
-  - 后端
-```
-
-分类建议用大类，比如"Java技术"、"前端技术"、"数据库"这种。标签可以更细一点，具体到框架或工具名。
-
-## 改网站配置
-
-配置文件是 `docs/.vuepress/config.ts`，改什么就打开看看，结构挺清晰的。
-
-比如改导航栏：
 ```typescript
 navbar: [
   { text: '首页', link: '/' },
   { text: '文章', link: '/posts/' },
-  // 加新的...
+  { text: '分类', link: '/category/' },
+  { text: '标签', link: '/tag/' },
+  { text: '时间线', link: '/timeline/' },
+  { text: '关于我', link: '/about/' },
 ]
 ```
 
-改完记得 `npm run dev` 看看效果，没问题再 push。
-
-## 换 Logo
-
-把新 Logo 文件放到 `docs/.vuepress/public/` 目录，然后在 `config.ts` 里改：
+### 网站信息
 
 ```typescript
-logo: '/新logo.svg',
+export default defineUserConfig({
+  title: '网站标题',
+  description: '网站描述',
+})
+
+theme: hopeTheme({
+  author: { name: '作者名' },
+  logo: '/logo.svg',
+  footer: '页脚内容',
+})
 ```
 
-## 自动生成的页面
+### 自定义样式
 
-这些页面不用自己写，主题自动生成：
+编辑 `docs/.vuepress/styles/index.scss`。
 
-- `/posts/` - 所有文章列表
-- `/category/` - 分类页面
-- `/tag/` - 标签页面
-- `/timeline/` - 时间线
+## 静态资源
 
-## 一些小技巧
+将图片等静态文件放到 `docs/.vuepress/public/` 目录，引用时使用根路径：
 
-1. 文件名用英文，url 会比较干净
-2. 日期格式 `YYYY-MM-DD`，不然可能识别不了
-3. 文章多了可以在 `_posts` 下建子目录分类存放，不影响构建
-4. 图片可以放 `public` 目录，引用时直接 `/图片名.png`
+```markdown
+![图片描述](/image.png)
+```
 
-## 遇到问题怎么办
+## 分类与标签
 
-大多数问题看报错信息就能找到原因。实在不行就去 GitHub 搜 issue，基本都有人遇到过。
+### 分类
+
+```yaml
+categories:
+  - Java技术
+```
+
+### 标签
+
+```yaml
+tags:
+  - Spring Boot
+  - MyBatis
+```
+
+分类和标签会自动生成对应页面。
+
+## 常见问题
+
+### 本地开发无法访问
+
+检查端口是否被占用，或指定其他端口：
+
+```bash
+npm run dev -- --port 8081
+```
+
+### 构建失败
+
+1. 删除 `node_modules` 和 `package-lock.json`
+2. 重新执行 `npm install`
+3. 再次构建
+
+### 文章不显示
+
+确认 frontmatter 格式正确，date 格式为 `YYYY-MM-DD`。

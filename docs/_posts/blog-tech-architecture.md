@@ -1,5 +1,5 @@
 ---
-title: 博客技术架构介绍
+title: 博客技术架构
 date: 2026-02-21
 categories:
   - 项目文档
@@ -9,58 +9,111 @@ tags:
 author: 老Z
 ---
 
-## 为什么选择这个技术栈
+## 技术栈
 
-在搭建这个博客之前，我对比了好几个方案。WordPress 太重，Hexo 主题太少，Hugo 的模板语法不太习惯。最后选了 VuePress 2 + vuepress-theme-hope，主要是因为：
+| 组件 | 版本 | 说明 |
+|------|------|------|
+| VuePress | 2.0.0-rc.26 | 静态站点生成器 |
+| vuepress-theme-hope | 2.0.0-rc.102 | 博客主题 |
+| Vue | 3.5.x | 前端框架 |
+| Vite | 6.x | 构建工具 |
+| TypeScript | 5.x | 配置语言 |
+| Sass | 1.77.x | 样式预处理器 |
 
-- Markdown 写作体验好
-- Vue 生态熟悉，方便魔改
-- 构建速度快，Vite 加持
-- 主题功能够用，文档也全
+## 架构图
 
-## 用到的主要技术
+```
+┌─────────────────────────────────────────┐
+│              Cloudflare CDN             │
+│            (全球节点分发)               │
+└─────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────┐
+│           Cloudflare Pages              │
+│          (静态文件托管 + CI/CD)         │
+└─────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────┐
+│              VuePress 2                 │
+│  ┌───────────┐  ┌───────────────────┐  │
+│  │ Markdown  │  │ vuepress-theme-   │  │
+│  │   源文件  │  │     hope          │  │
+│  └───────────┘  └───────────────────┘  │
+└─────────────────────────────────────────┘
+                    │
+                    ▼
+┌─────────────────────────────────────────┐
+│          Vite + Vue 3 + TS              │
+│             (构建工具链)                │
+└─────────────────────────────────────────┘
+```
 
-核心就是 VuePress 2，配合 vuepress-theme-hope 主题。版本信息：
+## 主题功能
 
-- VuePress: 2.0.0-rc.26
-- vuepress-theme-hope: 2.0.0-rc.102
-- Vue 3.5 + Vite 6
-- TypeScript 写配置
-- Sass 写样式
+vuepress-theme-hope 提供以下内置功能：
 
-说实话这套组合还是有些坑的，毕竟是 rc 版本，API 偶尔会变。但总体来说能用，遇到问题查 issue 基本都能解决。
+### 博客功能
+- 文章列表（`/posts/`）
+- 分类页面（`/category/`）
+- 标签页面（`/tag/`）
+- 时间线（`/timeline/`）
 
-## 主题自带的功能
-
-hope 主题自带的东西挺多的，基本开箱即用：
-
-**博客相关**
-- 文章列表、分类、标签、时间线，都是自动根据文章 frontmatter 生成的
-- 不用像以前那样手动维护分类页面
-
-**SEO 相关**
+### SEO 功能
 - sitemap.xml 自动生成
 - robots.txt 自动生成
-- meta 标签也处理得不错
+- Open Graph meta 标签
 
-**其他**
-- 暗黑模式支持
-- 图片点击放大
-- 代码一键复制
+### 其他功能
+- 暗黑模式
+- 图片点击放大（PhotoSwipe）
+- 代码块复制按钮
 - 响应式布局
+- RSS/Atom/JSON Feed 支持
 
-## 关于评论
+## 构建流程
 
-之前试过 Valine，但遇到了 401 错误，懒得折腾就先关了。后面有空可能会换 Giscus，毕竟基于 GitHub Discussions，稳定性应该好一些。
+```
+Markdown + Frontmatter
+         │
+         ▼ VuePress 解析
+         │
+         ▼ 主题渲染
+         │
+         ▼ Vite 编译
+         │
+         ▼
+静态 HTML/CSS/JS
+         │
+         ▼
+部署到 Cloudflare Pages
+```
 
-## 构建和部署
+## 目录结构
 
-本地 `npm run dev` 开发，`npm run build` 构建，构建产物在 `docs/.vuepress/dist/`。
+```
+my-blog/
+├── docs/
+│   ├── .vuepress/
+│   │   ├── config.ts      # 主配置
+│   │   ├── styles/        # 样式
+│   │   └── public/        # 静态资源
+│   ├── _posts/            # 博客文章
+│   ├── about/             # 关于页面
+│   └── README.md          # 首页
+├── package.json
+└── node_modules/
+```
 
-部署用的 Cloudflare Pages，推送到 GitHub 自动触发部署，挺省心的。之前考虑过阿里云 OSS，但国内访问虽然快，配置起来麻烦，还要单独搞 CDN。
+## 常用命令
 
-## 一点体会
+```bash
+npm run dev      # 启动开发服务器
+npm run build    # 构建生产版本
+```
 
-静态博客的好处是省心，不用担心服务器挂了、数据库崩了。坏处是每次发文章都要重新构建，不过反正也就十几秒，可以接受。
+## 相关链接
 
-如果你也想搭博客，我的建议是：先想清楚自己要什么功能，然后选最简单的方案。不要追求大而全，能写文章、能被人访问到就够了。
+- [VuePress 2 文档](https://v2.vuepress.vuejs.org/zh/)
+- [vuepress-theme-hope 文档](https://theme-hope.vuejs.press/zh/)
