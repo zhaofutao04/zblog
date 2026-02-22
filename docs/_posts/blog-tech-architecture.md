@@ -22,32 +22,31 @@ author: 老Z
 
 ## 架构图
 
-```
-┌─────────────────────────────────────────┐
-│              Cloudflare CDN             │
-│            (全球节点分发)               │
-└─────────────────────────────────────────┘
-                    │
-                    ▼
-┌─────────────────────────────────────────┐
-│           Cloudflare Pages              │
-│          (静态文件托管 + CI/CD)         │
-└─────────────────────────────────────────┘
-                    │
-                    ▼
-┌─────────────────────────────────────────┐
-│              VuePress 2                 │
-│  ┌───────────┐  ┌───────────────────┐  │
-│  │ Markdown  │  │ vuepress-theme-   │  │
-│  │   源文件  │  │     hope          │  │
-│  └───────────┘  └───────────────────┘  │
-└─────────────────────────────────────────┘
-                    │
-                    ▼
-┌─────────────────────────────────────────┐
-│          Vite + Vue 3 + TS              │
-│             (构建工具链)                │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph CDN["Cloudflare CDN"]
+        A1["全球节点分发"]
+    end
+
+    subgraph Pages["Cloudflare Pages"]
+        B1["静态文件托管"]
+        B2["CI/CD 自动部署"]
+    end
+
+    subgraph VuePress["VuePress 2"]
+        C1["Markdown 源文件"]
+        C2["vuepress-theme-hope"]
+    end
+
+    subgraph Build["构建工具链"]
+        D1["Vite 7.x"]
+        D2["Vue 3"]
+        D3["TypeScript"]
+    end
+
+    CDN --> Pages
+    Pages --> VuePress
+    VuePress --> Build
 ```
 
 ## 主题功能
@@ -74,20 +73,13 @@ vuepress-theme-hope 提供以下内置功能：
 
 ## 构建流程
 
-```
-Markdown + Frontmatter
-         │
-         ▼ VuePress 解析
-         │
-         ▼ 主题渲染
-         │
-         ▼ Vite 编译
-         │
-         ▼
-静态 HTML/CSS/JS
-         │
-         ▼
-部署到 Cloudflare Pages
+```mermaid
+flowchart TB
+    A["Markdown + Frontmatter"] --> B["VuePress 解析"]
+    B --> C["主题渲染"]
+    C --> D["Vite 编译"]
+    D --> E["静态 HTML/CSS/JS"]
+    E --> F["部署到 Cloudflare Pages"]
 ```
 
 ## 目录结构

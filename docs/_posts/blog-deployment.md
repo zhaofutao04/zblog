@@ -11,23 +11,12 @@ author: 老Z
 
 ## 部署架构
 
-```
-┌──────────────┐     git push      ┌──────────────┐     webhook     ┌──────────────┐
-│   本地开发   │ ───────────────▶ │   GitHub     │ ──────────────▶ │  Cloudflare  │
-│   环境       │                   │   仓库       │                 │   Pages      │
-└──────────────┘                   └──────────────┘                 └──────────────┘
-                                                                            │
-                                                                            ▼
-                                                                    ┌──────────────┐
-                                                                    │  Cloudflare  │
-                                                                    │     CDN      │
-                                                                    └──────────────┘
-                                                                            │
-                                                                            ▼
-                                                                    ┌──────────────┐
-                                                                    │   用户访问   │
-                                                                    │www.zhaofutao.cn│
-                                                                    └──────────────┘
+```mermaid
+flowchart LR
+    A["本地开发环境"] -->|"git push"| B["GitHub 仓库"]
+    B -->|"webhook"| C["Cloudflare Pages"]
+    C --> D["Cloudflare CDN"]
+    D --> E["用户访问<br/>www.zhaofutao.cn"]
 ```
 
 ## Cloudflare Pages 配置
@@ -48,18 +37,13 @@ author: 老Z
 
 ## 部署流程
 
-```
-1. 推送代码到 GitHub main 分支
-        ↓
-2. Cloudflare 检测到推送，触发构建
-        ↓
-3. 拉取代码，执行 pnpm install
-        ↓
-4. 执行 pnpm run build
-        ↓
-5. 将 docs/.vuepress/dist/ 部署到边缘节点
-        ↓
-6. CDN 全球分发
+```mermaid
+flowchart TB
+    A["推送代码到 GitHub main 分支"] --> B["Cloudflare 检测到推送，触发构建"]
+    B --> C["拉取代码，执行 pnpm install"]
+    C --> D["执行 pnpm run build"]
+    D --> E["将 docs/.vuepress/dist/ 部署到边缘节点"]
+    E --> F["CDN 全球分发"]
 ```
 
 ## 部署命令

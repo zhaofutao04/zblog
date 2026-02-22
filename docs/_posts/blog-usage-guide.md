@@ -64,19 +64,11 @@ author: 老Z
 
 ## 部署流程
 
-```bash
-# 1. 本地预览
-pnpm run dev
-
-# 2. 构建
-pnpm run build
-
-# 3. 提交代码
-git add .
-git commit -m "更新文章"
-git push origin main
-
-# 4. 等待自动部署完成（约1-2分钟）
+```mermaid
+flowchart LR
+    A["本地预览<br/>pnpm run dev"] --> B["构建<br/>pnpm run build"]
+    B --> C["提交代码<br/>git push"]
+    C --> D["等待自动部署<br/>1-2分钟"]
 ```
 
 ## 配置修改
@@ -154,9 +146,15 @@ pnpm run dev -- --port 8081
 
 ### 构建失败
 
-1. 删除 `node_modules` 和 `pnpm-lock.yaml`
-2. 重新执行 `pnpm install`
-3. 再次构建
+```mermaid
+flowchart TB
+    A["构建失败"] --> B["删除 node_modules 和 pnpm-lock.yaml"]
+    B --> C["重新执行 pnpm install"]
+    C --> D["再次构建"]
+    D --> E{"成功?"}
+    E -->|"是"| F["完成"]
+    E -->|"否"| G["查看错误日志"]
+```
 
 ### 文章不显示
 
