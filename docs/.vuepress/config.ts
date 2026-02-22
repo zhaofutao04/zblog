@@ -63,6 +63,11 @@ export default defineUserConfig({
     displayFooter: true,
     fullscreen: true,
 
+    // Markdown 增强功能
+    markdown: {
+      mermaid: true,
+    },
+
     // 插件配置
     plugins: {
       // 启用博客功能
