@@ -1,6 +1,6 @@
 import { defineClientConfig } from '@vuepress/client'
-import { CopyPageWidget } from '../../packages/vuepress-plugin-copy-page/lib/client/CopyPageWidget.js'
-import '../../packages/vuepress-plugin-copy-page/lib/styles/index.scss'
+import { CopyPageWidget } from 'vuepress-plugin-copy-page/client'
+import 'vuepress-plugin-copy-page/styles/index.scss'
 
 export default defineClientConfig({
   rootComponents: [CopyPageWidget],
