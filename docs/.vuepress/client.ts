@@ -15,7 +15,6 @@ const CopyPageWidget = {
     const page = usePageData()
     const showMenu = ref(false)
     const copied = ref(false)
-    const showModal = ref(false)
     const menuRef = ref<HTMLElement | null>(null)
 
     // 获取 Markdown 源码
@@ -40,15 +39,10 @@ const CopyPageWidget = {
       }
     }
 
-    // ESC 键关闭模态框
+    // ESC 键关闭菜单
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        if (showModal.value) {
-          showModal.value = false
-        }
-        if (showMenu.value) {
-          showMenu.value = false
-        }
+      if (event.key === 'Escape' && showMenu.value) {
+        showMenu.value = false
       }
     }
 
@@ -114,21 +108,17 @@ const CopyPageWidget = {
       }, 2000)
     }
 
-    // 查看 Markdown 原文
+    // 查看 Markdown 原文（新标签页打开）
     const viewAsMarkdown = () => {
-      showModal.value = true
       showMenu.value = false
-    }
-
-    // 关闭模态框
-    const closeModal = () => {
-      showModal.value = false
-    }
-
-    // 从模态框复制
-    const copyFromModal = async () => {
-      await copyAsMarkdown()
-      showModal.value = false
+      if (markdownSource.value) {
+        // 使用 Blob URL 在新标签页打开纯文本
+        const blob = new Blob([markdownSource.value], { type: 'text/plain;charset=utf-8' })
+        const url = URL.createObjectURL(blob)
+        window.open(url, '_blank')
+        // 延迟释放 URL，确保新页面能加载
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+      }
     }
 
     return () => {
@@ -177,7 +167,7 @@ const CopyPageWidget = {
                   h('path', { d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1' })
                 ])
           ]),
-          h('span', { class: 'copy-page-label' }, copied.value ? 'Copied!' : 'Copy'),
+          h('span', { class: 'copy-page-label' }, copied.value ? 'Copied!' : 'Copy page'),
         ]),
 
         // 下拉菜单
@@ -204,8 +194,8 @@ const CopyPageWidget = {
               ])
             ]),
             h('span', { class: 'menu-item-text' }, [
-              h('span', { class: 'menu-item-title' }, 'Copy as Markdown'),
-              h('span', { class: 'menu-item-desc' }, 'Copy page content to clipboard'),
+              h('span', { class: 'menu-item-title' }, 'Copy page'),
+              h('span', { class: 'menu-item-desc' }, 'Copy page as Markdown for LLMs'),
             ]),
           ]),
 
@@ -232,97 +222,9 @@ const CopyPageWidget = {
             ]),
             h('span', { class: 'menu-item-text' }, [
               h('span', { class: 'menu-item-title' }, 'View as Markdown'),
-              h('span', { class: 'menu-item-desc' }, 'Preview raw markdown source'),
+              h('span', { class: 'menu-item-desc' }, 'View this page as plain text'),
             ]),
           ]),
-        ]) : null,
-
-        // Markdown 预览模态框
-        showModal.value ? h('div', {
-          class: 'copy-page-modal-overlay',
-          onClick: closeModal,
-        }, [
-          h('div', {
-            class: 'copy-page-modal',
-            onClick: (e: MouseEvent) => e.stopPropagation(),
-          }, [
-            // 模态框头部
-            h('div', { class: 'copy-page-modal-header' }, [
-              h('div', { class: 'modal-header-left' }, [
-                h('span', { class: 'modal-icon' }, [
-                  h('svg', {
-                    xmlns: 'http://www.w3.org/2000/svg',
-                    width: '18',
-                    height: '18',
-                    viewBox: '0 0 24 24',
-                    fill: 'none',
-                    stroke: 'currentColor',
-                    strokeWidth: '2',
-                    strokeLinecap: 'round',
-                    strokeLinejoin: 'round',
-                  }, [
-                    h('path', { d: 'M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z' }),
-                    h('polyline', { points: '14,2 14,8 20,8' }),
-                  ])
-                ]),
-                h('h3', { class: 'modal-title' }, 'Markdown Source'),
-              ]),
-              h('button', {
-                class: 'modal-close-btn',
-                onClick: closeModal,
-              }, [
-                h('svg', {
-                  xmlns: 'http://www.w3.org/2000/svg',
-                  width: '18',
-                  height: '18',
-                  viewBox: '0 0 24 24',
-                  fill: 'none',
-                  stroke: 'currentColor',
-                  strokeWidth: '2',
-                  strokeLinecap: 'round',
-                  strokeLinejoin: 'round',
-                }, [
-                  h('line', { x1: '18', y1: '6', x2: '6', y2: '18' }),
-                  h('line', { x1: '6', y1: '6', x2: '18', y2: '18' })
-                ])
-              ])
-            ]),
-
-            // 模态框内容
-            h('div', { class: 'copy-page-modal-body' }, [
-              h('pre', { class: 'markdown-preview' },
-                markdownSource.value || 'No markdown source available'
-              )
-            ]),
-
-            // 模态框底部
-            h('div', { class: 'copy-page-modal-footer' }, [
-              h('button', {
-                class: 'modal-btn modal-btn-secondary',
-                onClick: closeModal,
-              }, 'Close'),
-              h('button', {
-                class: 'modal-btn modal-btn-primary',
-                onClick: copyFromModal,
-              }, [
-                h('svg', {
-                  xmlns: 'http://www.w3.org/2000/svg',
-                  width: '14',
-                  height: '14',
-                  viewBox: '0 0 24 24',
-                  fill: 'none',
-                  stroke: 'currentColor',
-                  strokeWidth: '2',
-                  strokeLinecap: 'round',
-                  strokeLinejoin: 'round',
-                }, [
-                  h('rect', { x: '9', y: '9', width: '13', height: '13', rx: '2', ry: '2' }),
-                  h('path', { d: 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1' })
-                ]),
-                'Copy Markdown'
-              ]),
-            ])
-          ])
         ]) : null
       ])
     }
