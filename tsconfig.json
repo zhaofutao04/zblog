@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@vuepress/client": ["node_modules/@vuepress/client"]
+    }
+  },
+  "include": [
+    "docs/.vuepress/**/*.ts",
+    "docs/.vuepress/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules",
+    "docs/.vuepress/dist",
+    "docs/.vuepress/.temp",
+    "docs/.vuepress/.cache"
+  ]
+}
