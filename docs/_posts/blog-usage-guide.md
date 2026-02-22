@@ -13,10 +13,10 @@ author: 老Z
 
 ```bash
 # 启动开发服务器
-npm run dev
+pnpm run dev
 
 # 构建生产版本
-npm run build
+pnpm run build
 ```
 
 开发服务器地址：`http://localhost:8080`
@@ -66,10 +66,10 @@ author: 老Z
 
 ```bash
 # 1. 本地预览
-npm run dev
+pnpm run dev
 
 # 2. 构建
-npm run build
+pnpm run build
 
 # 3. 提交代码
 git add .
@@ -149,13 +149,13 @@ tags:
 检查端口是否被占用，或指定其他端口：
 
 ```bash
-npm run dev -- --port 8081
+pnpm run dev -- --port 8081
 ```
 
 ### 构建失败
 
-1. 删除 `node_modules` 和 `package-lock.json`
-2. 重新执行 `npm install`
+1. 删除 `node_modules` 和 `pnpm-lock.yaml`
+2. 重新执行 `pnpm install`
 3. 再次构建
 
 ### 文章不显示

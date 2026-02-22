@@ -34,10 +34,10 @@ author: 老Z
 
 | 配置项 | 值 |
 |--------|-----|
-| 构建命令 | `npm run build` |
+| 构建命令 | `pnpm run build` |
 | 输出目录 | `docs/.vuepress/dist` |
 | Node.js 版本 | 22.x |
-| 包管理器 | npm |
+| 包管理器 | pnpm |
 
 ## 域名配置
 
@@ -53,9 +53,9 @@ author: 老Z
         ↓
 2. Cloudflare 检测到推送，触发构建
         ↓
-3. 拉取代码，执行 npm install
+3. 拉取代码，执行 pnpm install
         ↓
-4. 执行 npm run build
+4. 执行 pnpm run build
         ↓
 5. 将 docs/.vuepress/dist/ 部署到边缘节点
         ↓
@@ -66,10 +66,10 @@ author: 老Z
 
 ```bash
 # 本地预览
-npm run dev
+pnpm run dev
 
 # 构建
-npm run build
+pnpm run build
 
 # 提交并部署
 git add .
@@ -90,7 +90,7 @@ Cloudflare Pages 自动提供：
 ### Vercel
 
 ```
-Build Command: npm run build
+Build Command: pnpm run build
 Output Directory: docs/.vuepress/dist
 ```
 
@@ -110,8 +110,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install
-      - run: npm run build
+      - run: pnpm install
+      - run: pnpm run build
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -124,7 +124,7 @@ jobs:
 
 1. 查看 Cloudflare 构建日志
 2. 检查 Node.js 版本兼容性
-3. 确认依赖完整（`npm install`）
+3. 确认依赖完整（`pnpm install`）
 
 ### 更新未生效
 

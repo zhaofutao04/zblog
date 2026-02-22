@@ -16,7 +16,7 @@ author: 老Z
 | VuePress | 2.0.0-rc.26 | 静态站点生成器 |
 | vuepress-theme-hope | 2.0.0-rc.102 | 博客主题 |
 | Vue | 3.5.x | 前端框架 |
-| Vite | 6.x | 构建工具 |
+| Vite | 7.x | 构建工具 |
 | TypeScript | 5.x | 配置语言 |
 | Sass | 1.77.x | 样式预处理器 |
 
@@ -106,11 +106,22 @@ my-blog/
 └── node_modules/
 ```
 
+## 自定义插件
+
+### Copy Page 插件
+
+博客集成了 `vuepress-plugin-copy-page` 插件，方便将文章复制为 Markdown 格式供 LLM 使用。
+
+功能：
+- 在文章标题旁显示"Copy page"按钮
+- 支持复制整篇文章的 Markdown 源码
+- 支持在新标签页预览 Markdown
+
 ## 常用命令
 
 ```bash
-npm run dev      # 启动开发服务器
-npm run build    # 构建生产版本
+pnpm run dev      # 启动开发服务器
+pnpm run build    # 构建生产版本
 ```
 
 ## 相关链接

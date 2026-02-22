@@ -19,7 +19,8 @@ my-blog/
 │   ├── about/               # 关于页面
 │   └── README.md            # 首页
 ├── package.json             # 项目配置
-├── package-lock.json        # 依赖锁定
+├── pnpm-lock.yaml           # 依赖锁定
+├── tsconfig.json            # TypeScript 配置
 └── .gitignore               # Git 忽略规则
 ```
 
@@ -28,6 +29,7 @@ my-blog/
 ```
 .vuepress/
 ├── config.ts                # 主配置文件
+├── client.ts                # 客户端配置（Vue 组件注册）
 ├── styles/
 │   └── index.scss           # 自定义样式
 ├── public/
@@ -46,10 +48,7 @@ _posts/
 ├── blog-tech-architecture.md
 ├── blog-directory-structure.md
 ├── blog-deployment.md
-├── blog-usage-guide.md
-├── java-basics.md
-├── spring-boot-intro.md
-└── ...
+└── blog-usage-guide.md
 ```
 
 ## 自动生成页面
