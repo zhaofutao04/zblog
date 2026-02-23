@@ -33,8 +33,8 @@ importers:
         specifier: 2.0.0-rc.26
         version: 2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)
       vuepress-plugin-copy-page:
-        specifier: 1.0.2
-        version: 1.0.2(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28))
+        specifier: 1.1.5
+        version: 1.1.5(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28))
       vuepress-theme-hope:
         specifier: 2.0.0-rc.102
         version: 2.0.0-rc.102(katex@0.16.28)(markdown-it@14.1.1)(mermaid@11.12.3)(sass-embedded@1.97.3)(sass@1.97.3)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28))
@@ -2488,8 +2488,9 @@ packages:
       vidstack:
         optional: true
 
-  vuepress-plugin-copy-page@1.0.2:
-    resolution: {integrity: sha512-H3i41hi6FM9+oophWYCyAJaZIxnrEkC8ZvKzWBFggkGLUSrnvxM9JNdlr4JqQAzAvWY5vYLuER7dYS1lQIY6JQ==}
+  vuepress-plugin-copy-page@1.1.5:
+    resolution: {integrity: sha512-WXZswlI/6W/ll01euOWMsqTQ42RQqmPEdV9txdG409XNftl2ZWztsjN70MpA7dxEJDCWgmv0vtZiShQjGlgLcA==}
+    engines: {node: '>=18.0.0'}
     peerDependencies:
       vue: ^3.0.0
       vuepress: '>=2.0.0-rc.0'
@@ -5181,7 +5182,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  vuepress-plugin-copy-page@1.0.2(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)):
+  vuepress-plugin-copy-page@1.1.5(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)):
     dependencies:
       vue: 3.5.28
       vuepress: 2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)
