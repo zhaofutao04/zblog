@@ -38,6 +38,7 @@ export default defineUserConfig({
       { text: '标签', link: '/tag/' },
       { text: '时间线', link: '/timeline/' },
       { text: '关于我', link: '/about/' },
+      { text: '友链', link: '/links/' },
     ],
 
     // 侧边栏
