@@ -304,238 +304,1474 @@ flowchart TB
     J -.-> D
 ```
 
-### 2. 代码实现示例
+### 2. 前端实现（数据采集与传输）
 
-#### 安全的支付数据处理（Java）
+前端主要负责支付数据的采集、验证和安全传输。关键原则是**最小化敏感数据处理**和**安全传输**。
 
-```java
-// PCI DSS 合规的支付服务
-@Service
-public class PaymentService {
+```mermaid
+flowchart LR
+    subgraph "前端安全处理流程"
+        A[用户输入卡号] --> B[实时验证格式]
+        B --> C[输入掩码显示]
+        C --> D[客户端加密<br/>可选]
+        D --> E[HTTPS 传输]
+        E --> F[内存清理]
+    end
+```
 
-    private final EncryptionService encryptionService;
-    private final TokenizationService tokenService;
-    private final AuditLogger auditLogger;
+#### 支付表单组件（React + TypeScript）
 
-    // 禁止存储 CVV
-    private static final Set<String> FORBIDDEN_FIELDS =
-        Set.of("cvv", "cvv2", "cvc", "cid", "pin", "pinBlock");
+```typescript
+// components/PaymentForm.tsx
+import React, { useState, useCallback, useEffect } from 'react';
 
-    /**
-     * 处理支付请求
-     * PCI DSS 要求 3.2.1：禁止存储敏感认证数据
-     */
-    public PaymentResponse processPayment(PaymentRequest request) {
-        // 验证请求不包含禁止存储的字段
-        validateNoSensitiveData(request);
+// PCI DSS 要求 3.3：显示时掩码 PAN（前6后4）
+const maskPAN = (pan: string): string => {
+  if (!pan || pan.length < 8) return '******';
+  const cleaned = pan.replace(/\s/g, '');
+  return `${cleaned.slice(0, 6)}${'*'.repeat(cleaned.length - 10)}${cleaned.slice(-4)}`;
+};
 
-        // 记录审计日志（不包含 PAN）
-        auditLogger.logPaymentAttempt(
-            maskPAN(request.getPan()),
-            request.getAmount(),
-            request.getMerchantId()
-        );
+// Luhn 算法验证卡号
+const validateLuhn = (pan: string): boolean => {
+  const cleaned = pan.replace(/\D/g, '');
+  let sum = 0;
+  let isEven = false;
 
-        // 标记化 PAN
-        String token = tokenService.tokenize(request.getPan());
+  for (let i = cleaned.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleaned[i], 10);
 
-        // 发送到支付网关
-        PaymentResponse response = sendToGateway(request);
-
-        // 返回响应（使用 token 替代 PAN）
-        response.setToken(token);
-        response.setPan(null); // 确保不返回完整 PAN
-
-        return response;
+    if (isEven) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
     }
 
-    /**
-     * PAN 掩码显示
-     * PCI DSS 要求 3.3：显示时掩码（最多显示前6后4）
-     */
-    private String maskPAN(String pan) {
-        if (pan == null || pan.length() < 8) {
-            return "******";
-        }
-        int length = pan.length();
-        return pan.substring(0, 6) + "*".repeat(length - 10) + pan.substring(length - 4);
+    sum += digit;
+    isEven = !isEven;
+  }
+
+  return sum % 10 === 0;
+};
+
+// 卡号格式化（每4位添加空格）
+const formatPAN = (value: string): string => {
+  const cleaned = value.replace(/\D/g, '');
+  return cleaned.replace(/(.{4})/g, '$1 ').trim();
+};
+
+// CVV 验证（3-4位数字）
+const validateCVV = (cvv: string): boolean => {
+  return /^\d{3,4}$/.test(cvv);
+};
+
+interface PaymentFormData {
+  pan: string;
+  expiryMonth: string;
+  expiryYear: string;
+  cvv: string;
+  cardholderName: string;
+}
+
+export const PaymentForm: React.FC = () => {
+  const [formData, setFormData] = useState<PaymentFormData>({
+    pan: '',
+    expiryMonth: '',
+    expiryYear: '',
+    cvv: '',
+    cardholderName: '',
+  });
+
+  const [errors, setErrors] = useState<Partial<PaymentFormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // PCI DSS 要求：CVV 不应存储，仅在内存中使用
+  // 组件卸载时清理敏感数据
+  useEffect(() => {
+    return () => {
+      // 清理内存中的敏感数据
+      setFormData({
+        pan: '',
+        expiryMonth: '',
+        expiryYear: '',
+        cvv: '',
+        cardholderName: '',
+      });
+    };
+  }, []);
+
+  // 处理卡号输入
+  const handlePANChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+
+    // 限制最大长度（19位，含空格）
+    if (value.length > 19) return;
+
+    const formatted = formatPAN(value);
+    setFormData(prev => ({ ...prev, pan: formatted }));
+
+    // 实时验证
+    if (value.length >= 13 && !validateLuhn(value)) {
+      setErrors(prev => ({ ...prev, pan: '卡号无效' }));
+    } else {
+      setErrors(prev => ({ ...prev, pan: undefined }));
+    }
+  }, []);
+
+  // 处理 CVV 输入
+  const handleCVVChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+
+    // 限制最大长度
+    if (value.length > 4) return;
+
+    setFormData(prev => ({ ...prev, cvv: value }));
+  }, []);
+
+  // 表单验证
+  const validateForm = (): boolean => {
+    const newErrors: Partial<PaymentFormData> = {};
+
+    const cleanedPAN = formData.pan.replace(/\s/g, '');
+    if (cleanedPAN.length < 13 || cleanedPAN.length > 19) {
+      newErrors.pan = '卡号长度无效';
+    } else if (!validateLuhn(cleanedPAN)) {
+      newErrors.pan = '卡号无效';
     }
 
-    /**
-     * 验证不包含禁止存储的数据
-     */
-    private void validateNoSensitiveData(PaymentRequest request) {
-        Map<String, Object> dataMap = requestToMap(request);
-        for (String forbidden : FORBIDDEN_FIELDS) {
-            if (dataMap.containsKey(forbidden)) {
-                auditLogger.logSecurityViolation("Attempt to store forbidden field: " + forbidden);
-                throw new SecurityViolationException("Forbidden field detected");
-            }
-        }
+    if (!validateCVV(formData.cvv)) {
+      newErrors.cvv = 'CVV 无效';
     }
+
+    if (!formData.expiryMonth || !formData.expiryYear) {
+      newErrors.expiryMonth = '请选择有效期';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // 提交支付
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // 准备支付数据
+      const paymentData = {
+        pan: formData.pan.replace(/\s/g, ''),
+        expiry_month: formData.expiryMonth,
+        expiry_year: formData.expiryYear,
+        cvv: formData.cvv, // 仅传输，不存储
+        cardholder_name: formData.cardholderName,
+      };
+
+      // 发送到后端（通过 HTTPS）
+      const response = await fetch('/api/v1/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // CSRF 保护
+          'X-CSRF-Token': getCSRFToken(),
+        },
+        body: JSON.stringify(paymentData),
+        // 确保包含凭据
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('支付请求失败');
+      }
+
+      const result = await response.json();
+
+      // 处理支付结果
+      console.log('支付成功:', result.transaction_id);
+
+    } catch (error) {
+      console.error('支付失败:', error);
+      setErrors({ pan: '支付处理失败，请重试' });
+    } finally {
+      setIsSubmitting(false);
+
+      // PCI DSS 最佳实践：提交后立即清除 CVV
+      setFormData(prev => ({ ...prev, cvv: '' }));
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="payment-form">
+      <div className="form-group">
+        <label>卡号</label>
+        <input
+          type="text"
+          value={formData.pan}
+          onChange={handlePANChange}
+          placeholder="1234 5678 9012 3456"
+          maxLength={19}
+          autoComplete="cc-number"
+          className={errors.pan ? 'error' : ''}
+        />
+        {errors.pan && <span className="error-message">{errors.pan}</span>}
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label>有效期</label>
+          <div className="expiry-inputs">
+            <select
+              value={formData.expiryMonth}
+              onChange={(e) => setFormData(prev => ({ ...prev, expiryMonth: e.target.value }))}
+            >
+              <option value="">月</option>
+              {Array.from({ length: 12 }, (_, i) => (
+                <option key={i} value={String(i + 1).padStart(2, '0')}>
+                  {String(i + 1).padStart(2, '0')}
+                </option>
+              ))}
+            </select>
+            <select
+              value={formData.expiryYear}
+              onChange={(e) => setFormData(prev => ({ ...prev, expiryYear: e.target.value }))}
+            >
+              <option value="">年</option>
+              {Array.from({ length: 10 }, (_, i) => {
+                const year = new Date().getFullYear() + i;
+                return (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label>CVV</label>
+          <input
+            type="password"
+            value={formData.cvv}
+            onChange={handleCVVChange}
+            placeholder="***"
+            maxLength={4}
+            autoComplete="cc-csc"
+          />
+        </div>
+      </div>
+
+      <div className="form-group">
+        <label>持卡人姓名</label>
+        <input
+          type="text"
+          value={formData.cardholderName}
+          onChange={(e) => setFormData(prev => ({ ...prev, cardholderName: e.target.value }))}
+          placeholder="ZHANG SAN"
+          autoComplete="cc-name"
+        />
+      </div>
+
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? '处理中...' : '确认支付'}
+      </button>
+    </form>
+  );
+};
+
+// CSRF Token 获取
+function getCSRFToken(): string {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta?.getAttribute('content') || '';
 }
 ```
 
-#### 数据加密实现
+#### 安全传输工具类
 
-```java
+```typescript
+// utils/secureTransport.ts
+
+/**
+ * PCI DSS 要求 4.1：加密传输中的持卡人数据
+ */
+export class SecureTransport {
+  private static readonly API_BASE = '/api/v1';
+
+  /**
+   * 安全的 POST 请求
+   */
+  static async securePost<T>(endpoint: string, data: unknown): Promise<T> {
+    // 检查是否使用 HTTPS
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      throw new Error('必须使用 HTTPS 连接');
+    }
+
+    const response = await fetch(`${this.API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Request-ID': crypto.randomUUID(),
+        'X-Client-Version': APP_VERSION,
+      },
+      body: JSON.stringify(data),
+      credentials: 'include',
+      // 防止缓存敏感数据
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new PaymentError(error.message, error.code);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * 敏感数据脱敏日志
+   */
+  static sanitizeForLog(data: Record<string, unknown>): Record<string, unknown> {
+    const sensitiveFields = ['pan', 'cvv', 'cvc', 'cvv2', 'pin', 'card_number'];
+    const sanitized = { ...data };
+
+    for (const field of sensitiveFields) {
+      if (sanitized[field] && typeof sanitized[field] === 'string') {
+        const value = sanitized[field] as string;
+        if (field === 'pan' || field === 'card_number') {
+          sanitized[field] = maskPAN(value);
+        } else {
+          sanitized[field] = '***';
+        }
+      }
+    }
+
+    return sanitized;
+  }
+}
+
+// 自定义错误类
+export class PaymentError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode?: number
+  ) {
+    super(message);
+    this.name = 'PaymentError';
+  }
+}
+```
+
+#### Content Security Policy 配置
+
+```typescript
+// utils/csp.ts
+
+/**
+ * PCI DSS 要求 6.6：保护应用程序免受攻击
+ * CSP 防止 XSS 和数据注入攻击
+ */
+export const cspDirectives = {
+  'default-src': ["'self'"],
+  'script-src': ["'self'", "https://js.stripe.com"],
+  'style-src': ["'self'", "'unsafe-inline'"],
+  'img-src': ["'self'", "data:", "https:"],
+  'connect-src': ["'self'", "https://api.your-domain.com"],
+  'frame-src': ["https://js.stripe.com", "https://hooks.stripe.com"],
+  'form-action': ["'self'"],
+  'base-uri': ["'self'"],
+  'object-src': ["'none'"],
+  'upgrade-insecure-requests': [],
+};
+
+export function generateCSPHeader(): string {
+  return Object.entries(cspDirectives)
+    .map(([directive, values]) => {
+      if (values.length === 0) return directive;
+      return `${directive} ${values.join(' ')}`;
+    })
+    .join('; ');
+}
+```
+
+### 3. 后端实现（Golang）
+
+后端负责系统架构、数据传输、存储和加密。核心原则是**最小权限**和**数据保护**。
+
+```mermaid
+flowchart TB
+    subgraph "后端安全架构"
+        A[API Gateway] --> B[认证中间件]
+        B --> C[Rate Limiter]
+        C --> D[Payment Service]
+        D --> E[Encryption Service]
+        D --> F[Tokenization Service]
+        D --> G[Audit Logger]
+        E --> H[(加密数据库)]
+        F --> I[支付网关]
+        G --> J[(日志存储<br/>WORM)]
+    end
+```
+
+#### 项目结构
+
+```
+payment-service/
+├── cmd/
+│   └── server/
+│       └── main.go
+├── internal/
+│   ├── api/
+│   │   ├── handler/
+│   │   │   └── payment.go
+│   │   └── middleware/
+│   │       ├── auth.go
+│   │       ├── ratelimit.go
+│   │       └── audit.go
+│   ├── service/
+│   │   ├── payment.go
+│   │   ├── tokenization.go
+│   │   └── encryption.go
+│   ├── repository/
+│   │   └── payment.go
+│   └── model/
+│       └── payment.go
+├── pkg/
+│   ├── crypto/
+│   │   └── aesgcm.go
+│   └── audit/
+│       └── logger.go
+├── config/
+│   └── config.yaml
+└── go.mod
+```
+
+#### 数据模型（internal/model/payment.go）
+
+```go
+package model
+
+import (
+	"time"
+)
+
+// PaymentRequest 支付请求
+// PCI DSS 要求 3.2.1：禁止存储敏感认证数据
+type PaymentRequest struct {
+	PAN            string `json:"pan" validate:"required,luhn"`
+	ExpiryMonth    string `json:"expiry_month" validate:"required,len=2"`
+	ExpiryYear     string `json:"expiry_year" validate:"required,len=4"`
+	CVV            string `json:"cvv" validate:"required,len=3|len=4"` // 仅传输，不存储
+	CardholderName string `json:"cardholder_name" validate:"required"`
+	Amount         int64  `json:"amount" validate:"required,gt=0"`
+	Currency       string `json:"currency" validate:"required,len=3"`
+	MerchantID     string `json:"merchant_id" validate:"required"`
+}
+
+// PaymentResponse 支付响应
+type PaymentResponse struct {
+	TransactionID string    `json:"transaction_id"`
+	Token         string    `json:"token"` // 标记化后的 PAN
+	Status        string    `json:"status"`
+	Amount        int64     `json:"amount"`
+	Currency      string    `json:"currency"`
+	MaskedPAN     string    `json:"masked_pan"` // 掩码后的 PAN
+	CreatedAt     time.Time `json:"created_at"`
+}
+
+// Transaction 交易记录（存储到数据库）
+// 敏感字段已加密或标记化
+type Transaction struct {
+	ID              string    `db:"id" json:"id"`
+	MerchantID      string    `db:"merchant_id" json:"merchant_id"`
+	EncryptedPAN    []byte    `db:"encrypted_pan" json:"-"` // 加密存储
+	Token           string    `db:"token" json:"token"`     // 标记化 PAN
+	ExpiryMonth     string    `db:"expiry_month" json:"expiry_month"`
+	ExpiryYear      string    `db:"expiry_year" json:"expiry_year"`
+	CardholderName  string    `db:"cardholder_name" json:"cardholder_name"`
+	Amount          int64     `db:"amount" json:"amount"`
+	Currency        string    `db:"currency" json:"currency"`
+	Status          string    `db:"status" json:"status"`
+	GatewayResponse string    `db:"gateway_response" json:"-"`
+	CreatedAt       time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt       time.Time `db:"updated_at" json:"updated_at"`
+}
+
+// AuditLog 审计日志
+// PCI DSS 要求 10.2：记录所有对持卡人数据的访问
+type AuditLog struct {
+	ID           string    `db:"id" json:"id"`
+	EventType    string    `db:"event_type" json:"event_type"`
+	UserID       string    `db:"user_id" json:"user_id"`
+	MerchantID   string    `db:"merchant_id" json:"merchant_id"`
+	Resource     string    `db:"resource" json:"resource"`
+	Action       string    `db:"action" json:"action"`
+	MaskedPAN    string    `db:"masked_pan" json:"masked_pan"` // 仅存储掩码
+	SourceIP     string    `db:"source_ip" json:"source_ip"`
+	UserAgent    string    `db:"user_agent" json:"user_agent"`
+	Status       string    `db:"status" json:"status"`
+	ErrorMessage string    `db:"error_message" json:"error_message,omitempty"`
+	Checksum     string    `db:"checksum" json:"checksum"` // 完整性校验
+	CreatedAt    time.Time `db:"created_at" json:"created_at"`
+}
+```
+
+#### 加密服务（pkg/crypto/aesgcm.go）
+
+```go
+package crypto
+
+import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
+	"errors"
+	"io"
+
+	"golang.org/x/crypto/hkdf"
+)
+
+// AESGCMService AES-GCM 加密服务
 // PCI DSS 要求 3.4：使用强加密保护存储的 PAN
-@Component
-public class EncryptionService {
+type AESGCMService struct {
+	keyProvider KeyProvider
+}
 
-    private static final String ALGORITHM = "AES/GCM/NoPadding";
-    private static final int GCM_TAG_LENGTH = 128; // 位
-    private static final int GCM_IV_LENGTH = 12;   // 字节
+// KeyProvider 密钥提供者接口
+type KeyProvider interface {
+	GetCurrentKey() ([]byte, uint32, error)
+	GetKeyByVersion(version uint32) ([]byte, error)
+}
 
-    private final SecretKey secretKey;
+// NewAESGCMService 创建加密服务
+func NewAESGCMService(provider KeyProvider) *AESGCMService {
+	return &AESGCMService{
+		keyProvider: provider,
+	}
+}
 
-    public EncryptionService(@Value("${encryption.key-hsm-path}") String hsmPath) {
-        // 从 HSM 获取密钥（推荐）或使用密钥管理系统
-        this.secretKey = getKeyFromHSM(hsmPath);
-    }
+// Encrypt 加密数据
+// 返回格式: base64(version + iv + ciphertext + tag)
+func (s *AESGCMService) Encrypt(plaintext string) (string, error) {
+	if plaintext == "" {
+		return "", nil
+	}
 
-    /**
-     * 加密 PAN
-     */
-    public String encrypt(String plainText) throws Exception {
-        // 每次加密使用新的 IV
-        byte[] iv = new byte[GCM_IV_LENGTH];
-        SecureRandom.getInstanceStrong().nextBytes(iv);
+	key, version, err := s.keyProvider.GetCurrentKey()
+	if err != nil {
+		return "", err
+	}
 
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, spec);
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
 
-        byte[] encrypted = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
 
-        // IV + 密文 组合存储
-        ByteBuffer buffer = ByteBuffer.allocate(iv.length + encrypted.length);
-        buffer.put(iv);
-        buffer.put(encrypted);
+	// 生成随机 IV (12 bytes for GCM)
+	iv := make([]byte, gcm.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return "", err
+	}
 
-        return Base64.getEncoder().encodeToString(buffer.array());
-    }
+	// 加密
+	ciphertext := gcm.Seal(nil, iv, []byte(plaintext), nil)
 
-    /**
-     * 解密 PAN
-     */
-    public String decrypt(String encryptedText) throws Exception {
-        byte[] decoded = Base64.getDecoder().decode(encryptedText);
+	// 组合: version(4) + iv(12) + ciphertext
+	result := make([]byte, 4+len(iv)+len(ciphertext))
+	result[0] = byte(version >> 24)
+	result[1] = byte(version >> 16)
+	result[2] = byte(version >> 8)
+	result[3] = byte(version)
+	copy(result[4:], iv)
+	copy(result[4+len(iv):], ciphertext)
 
-        ByteBuffer buffer = ByteBuffer.wrap(decoded);
-        byte[] iv = new byte[GCM_IV_LENGTH];
-        buffer.get(iv);
+	return base64.StdEncoding.EncodeToString(result), nil
+}
 
-        byte[] encrypted = new byte[buffer.remaining()];
-        buffer.get(encrypted);
+// Decrypt 解密数据
+func (s *AESGCMService) Decrypt(encrypted string) (string, error) {
+	if encrypted == "" {
+		return "", nil
+	}
 
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
-        GCMParameterSpec spec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec);
+	data, err := base64.StdEncoding.DecodeString(encrypted)
+	if err != nil {
+		return "", err
+	}
 
-        byte[] decrypted = cipher.doFinal(encrypted);
-        return new String(decrypted, StandardCharsets.UTF_8);
-    }
+	if len(data) < 4 {
+		return "", errors.New("invalid encrypted data")
+	}
+
+	// 提取版本号
+	version := uint32(data[0])<<24 | uint32(data[1])<<16 | uint32(data[2])<<8 | uint32(data[3])
+
+	// 获取对应版本的密钥
+	key, err := s.keyProvider.GetKeyByVersion(version)
+	if err != nil {
+		return "", err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	ivSize := gcm.NonceSize()
+	if len(data) < 4+ivSize {
+		return "", errors.New("invalid encrypted data length")
+	}
+
+	iv := data[4 : 4+ivSize]
+	ciphertext := data[4+ivSize:]
+
+	plaintext, err := gcm.Open(nil, iv, ciphertext, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(plaintext), nil
+}
+
+// DeriveKey 从主密钥派生子密钥
+func DeriveKey(masterKey []byte, context string, keyLen int) ([]byte, error) {
+	hkdf := hkdf.New(sha256.New, masterKey, nil, []byte(context))
+	key := make([]byte, keyLen)
+	if _, err := io.ReadFull(hkdf, key); err != nil {
+		return nil, err
+	}
+	return key, nil
 }
 ```
 
-#### 日志与监控实现
+#### 标记化服务（internal/service/tokenization.go）
 
-```java
-// PCI DSS 要求 10：记录和监控所有访问
-@Aspect
-@Component
-public class SecurityAuditAspect {
+```go
+package service
 
-    private final AuditLogger auditLogger;
+import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
+	"fmt"
+	"sync"
+	"time"
 
-    /**
-     * 记录所有对敏感数据的访问
-     * PCI DSS 要求 10.2：记录所有个人用户对持卡人数据的访问
-     */
-    @Around("@annotation(SensitiveDataAccess)")
-    public Object auditDataAccess(ProceedingJoinPoint joinPoint) throws Throwable {
-        String userId = SecurityContext.getCurrentUserId();
-        String action = joinPoint.getSignature().getName();
-        String resource = extractResourceId(joinPoint.getArgs());
-        Instant timestamp = Instant.now();
+	"github.com/your-org/payment-service/internal/model"
+	"github.com/your-org/payment-service/pkg/crypto"
+)
 
-        // 记录访问尝试
-        auditLogger.log(AuditEvent.builder()
-            .eventType("DATA_ACCESS_ATTEMPT")
-            .userId(userId)
-            .action(action)
-            .resource(resource)
-            .timestamp(timestamp)
-            .sourceIp(SecurityContext.getCurrentIp())
-            .userAgent(SecurityContext.getUserAgent())
-            .build());
-
-        try {
-            Object result = joinPoint.proceed();
-
-            // 记录成功访问
-            auditLogger.log(AuditEvent.builder()
-                .eventType("DATA_ACCESS_SUCCESS")
-                .userId(userId)
-                .action(action)
-                .resource(resource)
-                .timestamp(timestamp)
-                .build());
-
-            return result;
-        } catch (Exception e) {
-            // 记录失败访问
-            auditLogger.log(AuditEvent.builder()
-                .eventType("DATA_ACCESS_FAILURE")
-                .userId(userId)
-                .action(action)
-                .resource(resource)
-                .errorMessage(e.getMessage())
-                .timestamp(timestamp)
-                .build());
-
-            throw e;
-        }
-    }
+// TokenizationService 标记化服务
+// PCI DSS 要求 3.4：使用标记化保护 PAN
+type TokenizationService struct {
+	encryption   *crypto.AESGCMService
+	tokenStore   TokenStore
+	mu           sync.RWMutex
+	tokenPrefix  string // Token 前缀，如 "tok_"
 }
 
-// 审计日志服务
-@Service
-public class AuditLogger {
+// TokenStore Token 存储接口
+type TokenStore interface {
+	SaveTokenMapping(token, encryptedPAN string) error
+	GetEncryptedPAN(token string) (string, error)
+	DeleteToken(token string) error
+}
 
-    private final AuditRepository repository;
+// NewTokenizationService 创建标记化服务
+func NewTokenizationService(
+	encryption *crypto.AESGCMService,
+	store TokenStore,
+	prefix string,
+) *TokenizationService {
+	return &TokenizationService{
+		encryption:  encryption,
+		tokenStore:  store,
+		tokenPrefix: prefix,
+	}
+}
 
-    /**
-     * 写入审计日志
-     * PCI DSS 要求 10.5：保护审计日志不被篡改
-     */
-    public void log(AuditEvent event) {
-        // 确保日志不包含完整的 PAN 或敏感数据
-        sanitizeEvent(event);
+// Tokenize 将 PAN 转换为 Token
+func (s *TokenizationService) Tokenize(pan string) (string, error) {
+	if pan == "" {
+		return "", errors.New("PAN cannot be empty")
+	}
 
-        // 添加完整性校验
-        event.setChecksum(calculateChecksum(event));
+	// 加密 PAN
+	encryptedPAN, err := s.encryption.Encrypt(pan)
+	if err != nil {
+		return "", fmt.Errorf("encrypt PAN failed: %w", err)
+	}
 
-        // 存储到只追加存储（WORM）
-        repository.append(event);
+	// 生成 Token
+	token, err := s.generateToken()
+	if err != nil {
+		return "", fmt.Errorf("generate token failed: %w", err)
+	}
 
-        // 同时发送到远程日志服务器（要求 10.5.3）
-        sendToRemoteSIEM(event);
-    }
+	// 存储 Token-PAN 映射
+	if err := s.tokenStore.SaveTokenMapping(token, encryptedPAN); err != nil {
+		return "", fmt.Errorf("save token mapping failed: %w", err)
+	}
 
-    /**
-     * 计算日志完整性校验和
-     */
-    private String calculateChecksum(AuditEvent event) {
-        String data = String.format("%s|%s|%s|%s",
-            event.getEventType(),
-            event.getUserId(),
-            event.getResource(),
-            event.getTimestamp());
+	return token, nil
+}
 
-        return DigestUtils.sha256Hex(data + getHMACKey());
-    }
+// Detokenize 从 Token 还原 PAN
+func (s *TokenizationService) Detokenize(token string) (string, error) {
+	if token == "" {
+		return "", errors.New("token cannot be empty")
+	}
+
+	// 获取加密的 PAN
+	encryptedPAN, err := s.tokenStore.GetEncryptedPAN(token)
+	if err != nil {
+		return "", fmt.Errorf("token not found: %w", err)
+	}
+
+	// 解密 PAN
+	pan, err := s.encryption.Decrypt(encryptedPAN)
+	if err != nil {
+		return "", fmt.Errorf("decrypt PAN failed: %w", err)
+	}
+
+	return pan, nil
+}
+
+// generateToken 生成安全 Token
+func (s *TokenizationService) generateToken() (string, error) {
+	// 使用加密安全的随机数生成器
+	timestamp := time.Now().UnixNano()
+	randomBytes := make([]byte, 16)
+	if _, err := rand.Read(randomBytes); err != nil {
+		return "", err
+	}
+
+	// 组合时间戳和随机数生成唯一 Token
+	data := fmt.Sprintf("%d-%x-%d", timestamp, randomBytes, time.Now().UnixNano())
+	hash := sha256.Sum256([]byte(data))
+	token := hex.EncodeToString(hash[:])
+
+	return s.tokenPrefix + token[:32], nil
+}
+
+// MaskPAN 掩码 PAN（前6后4）
+// PCI DSS 要求 3.3：显示时掩码
+func MaskPAN(pan string) string {
+	if len(pan) < 8 {
+		return "******"
+	}
+	return pan[:6] + "******" + pan[len(pan)-4:]
+}
+```
+
+#### 支付服务（internal/service/payment.go）
+
+```go
+package service
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/your-org/payment-service/internal/model"
+	"github.com/your-org/payment-service/pkg/audit"
+	"github.com/your-org/payment-service/pkg/crypto"
+	"go.uber.org/zap"
+)
+
+// PaymentService 支付服务
+type PaymentService struct {
+	repo          PaymentRepository
+	encryption    *crypto.AESGCMService
+	tokenization  *TokenizationService
+	auditLogger   *audit.Logger
+	gateway       PaymentGateway
+	logger        *zap.Logger
+}
+
+// PaymentRepository 支付存储接口
+type PaymentRepository interface {
+	CreateTransaction(ctx context.Context, tx *model.Transaction) error
+	GetTransaction(ctx context.Context, id string) (*model.Transaction, error)
+	UpdateTransactionStatus(ctx context.Context, id, status string) error
+}
+
+// PaymentGateway 支付网关接口
+type PaymentGateway interface {
+	ProcessPayment(ctx context.Context, req *PaymentGatewayRequest) (*PaymentGatewayResponse, error)
+}
+
+// PaymentGatewayRequest 网关请求
+type PaymentGatewayRequest struct {
+	PAN         string
+	ExpiryMonth string
+	ExpiryYear  string
+	CVV         string
+	Amount      int64
+	Currency    string
+}
+
+// PaymentGatewayResponse 网关响应
+type PaymentGatewayResponse struct {
+	TransactionID string
+	Status        string
+	AuthCode      string
+	ResponseCode  string
+	Message       string
+}
+
+// NewPaymentService 创建支付服务
+func NewPaymentService(
+	repo PaymentRepository,
+	encryption *crypto.AESGCMService,
+	tokenization *TokenizationService,
+	auditLogger *audit.Logger,
+	gateway PaymentGateway,
+	logger *zap.Logger,
+) *PaymentService {
+	return &PaymentService{
+		repo:         repo,
+		encryption:   encryption,
+		tokenization: tokenization,
+		auditLogger:  auditLogger,
+		gateway:      gateway,
+		logger:       logger,
+	}
+}
+
+// ProcessPayment 处理支付
+// PCI DSS 要求 3.2.1：禁止存储 CVV
+func (s *PaymentService) ProcessPayment(
+	ctx context.Context,
+	req *model.PaymentRequest,
+	clientIP string,
+	userAgent string,
+) (*model.PaymentResponse, error) {
+	startTime := time.Now()
+	transactionID := uuid.New().String()
+
+	// 记录支付开始（不记录敏感数据）
+	s.auditLogger.Log(ctx, &model.AuditLog{
+		EventType:  "PAYMENT_ATTEMPT",
+		Resource:   fmt.Sprintf("transaction/%s", transactionID),
+		Action:     "process_payment",
+		MaskedPAN:  MaskPAN(req.PAN),
+		SourceIP:   clientIP,
+		UserAgent:  userAgent,
+		Status:     "started",
+	})
+
+	// 1. 加密 PAN
+	encryptedPAN, err := s.encryption.Encrypt(req.PAN)
+	if err != nil {
+		s.logger.Error("encrypt PAN failed", zap.Error(err))
+		return nil, fmt.Errorf("encryption failed")
+	}
+
+	// 2. 标记化 PAN
+	token, err := s.tokenization.Tokenize(req.PAN)
+	if err != nil {
+		s.logger.Error("tokenize PAN failed", zap.Error(err))
+		return nil, fmt.Errorf("tokenization failed")
+	}
+
+	// 3. 创建交易记录
+	transaction := &model.Transaction{
+		ID:             transactionID,
+		MerchantID:     req.MerchantID,
+		EncryptedPAN:   []byte(encryptedPAN),
+		Token:          token,
+		ExpiryMonth:    req.ExpiryMonth,
+		ExpiryYear:     req.ExpiryYear,
+		CardholderName: req.CardholderName,
+		Amount:         req.Amount,
+		Currency:       req.Currency,
+		Status:         "pending",
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
+	}
+
+	if err := s.repo.CreateTransaction(ctx, transaction); err != nil {
+		s.logger.Error("create transaction failed", zap.Error(err))
+		return nil, fmt.Errorf("create transaction failed")
+	}
+
+	// 4. 发送到支付网关（CVV 仅在此使用，不存储）
+	gatewayResp, err := s.gateway.ProcessPayment(ctx, &PaymentGatewayRequest{
+		PAN:         req.PAN,
+		ExpiryMonth: req.ExpiryMonth,
+		ExpiryYear:  req.ExpiryYear,
+		CVV:         req.CVV, // 仅传输，不存储
+		Amount:      req.Amount,
+		Currency:    req.Currency,
+	})
+
+	if err != nil {
+		// 更新交易状态为失败
+		_ = s.repo.UpdateTransactionStatus(ctx, transactionID, "failed")
+
+		s.auditLogger.Log(ctx, &model.AuditLog{
+			EventType:    "PAYMENT_FAILED",
+			Resource:     fmt.Sprintf("transaction/%s", transactionID),
+			Action:       "process_payment",
+			MaskedPAN:    MaskPAN(req.PAN),
+			SourceIP:     clientIP,
+			Status:       "failed",
+			ErrorMessage: err.Error(),
+		})
+
+		return nil, fmt.Errorf("gateway error: %w", err)
+	}
+
+	// 5. 更新交易状态
+	if err := s.repo.UpdateTransactionStatus(ctx, transactionID, gatewayResp.Status); err != nil {
+		s.logger.Error("update transaction status failed", zap.Error(err))
+	}
+
+	// 6. 记录支付成功
+	s.auditLogger.Log(ctx, &model.AuditLog{
+		EventType: "PAYMENT_SUCCESS",
+		Resource:  fmt.Sprintf("transaction/%s", transactionID),
+		Action:    "process_payment",
+		MaskedPAN: MaskPAN(req.PAN),
+		SourceIP:  clientIP,
+		Status:    "success",
+	})
+
+	s.logger.Info("payment processed",
+		zap.String("transaction_id", transactionID),
+		zap.String("masked_pan", MaskPAN(req.PAN)),
+		zap.Int64("amount", req.Amount),
+		zap.Duration("duration", time.Since(startTime)),
+	)
+
+	return &model.PaymentResponse{
+		TransactionID: transactionID,
+		Token:         token,
+		Status:        gatewayResp.Status,
+		Amount:        req.Amount,
+		Currency:      req.Currency,
+		MaskedPAN:     MaskPAN(req.PAN),
+		CreatedAt:     time.Now(),
+	}, nil
+}
+```
+
+#### 审计日志服务（pkg/audit/logger.go）
+
+```go
+package audit
+
+import (
+	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/your-org/payment-service/internal/model"
+	"go.uber.org/zap"
+)
+
+// Logger 审计日志记录器
+// PCI DSS 要求 10：记录和监控所有对持卡人数据的访问
+type Logger struct {
+	repo      AuditRepository
+	siem      SIEMForwarder
+	hmacKey   []byte
+	logger    *zap.Logger
+}
+
+// AuditRepository 审计日志存储接口
+type AuditRepository interface {
+	Append(ctx context.Context, log *model.AuditLog) error
+}
+
+// SIEMForwarder SIEM 转发接口
+// PCI DSS 要求 10.5.3：将日志发送到远程服务器
+type SIEMForwarder interface {
+	Forward(ctx context.Context, log *model.AuditLog) error
+}
+
+// NewLogger 创建审计日志记录器
+func NewLogger(
+	repo AuditRepository,
+	siem SIEMForwarder,
+	hmacKey []byte,
+	logger *zap.Logger,
+) *Logger {
+	return &Logger{
+		repo:    repo,
+		siem:    siem,
+		hmacKey: hmacKey,
+		logger:  logger,
+	}
+}
+
+// Log 记录审计日志
+func (l *Logger) Log(ctx context.Context, log *model.AuditLog) error {
+	// 生成 ID
+	if log.ID == "" {
+		log.ID = uuid.New().String()
+	}
+
+	// 设置时间
+	if log.CreatedAt.IsZero() {
+		log.CreatedAt = time.Now()
+	}
+
+	// 清理敏感数据（确保不记录完整 PAN）
+	l.sanitizeLog(log)
+
+	// 计算完整性校验和
+	log.Checksum = l.calculateChecksum(log)
+
+	// 存储到 WORM 存储
+	if err := l.repo.Append(ctx, log); err != nil {
+		l.logger.Error("failed to append audit log", zap.Error(err))
+		return err
+	}
+
+	// 转发到 SIEM
+	if l.siem != nil {
+		if err := l.siem.Forward(ctx, log); err != nil {
+			// SIEM 转发失败不应影响主流程
+			l.logger.Warn("failed to forward to SIEM", zap.Error(err))
+		}
+	}
+
+	return nil
+}
+
+// sanitizeLog 清理日志中的敏感数据
+func (l *Logger) sanitizeLog(log *model.AuditLog) {
+	// 确保日志中的 PAN 是掩码格式
+	if len(log.MaskedPAN) > 10 {
+		// 如果看起来是完整 PAN，进行掩码
+		if !l.isMasked(log.MaskedPAN) {
+			log.MaskedPAN = log.MaskedPAN[:6] + "******" + log.MaskedPAN[len(log.MaskedPAN)-4:]
+		}
+	}
+}
+
+// isMasked 检查是否已掩码
+func (l *Logger) isMasked(pan string) bool {
+	return len(pan) > 6 && pan[6] == '*'
+}
+
+// calculateChecksum 计算日志完整性校验和
+// PCI DSS 要求 10.5：保护审计日志不被篡改
+func (l *Logger) calculateChecksum(log *model.AuditLog) string {
+	data := fmt.Sprintf("%s|%s|%s|%s|%s",
+		log.EventType,
+		log.UserID,
+		log.Resource,
+		log.Action,
+		log.CreatedAt.Format(time.RFC3339Nano),
+	)
+
+	h := hmac.New(sha256.New, l.hmacKey)
+	h.Write([]byte(data))
+	return hex.EncodeToString(h.Sum(nil))
+}
+```
+
+#### HTTP Handler（internal/api/handler/payment.go）
+
+```go
+package handler
+
+import (
+	"encoding/json"
+	"net/http"
+	"strings"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/your-org/payment-service/internal/model"
+	"github.com/your-org/payment-service/internal/service"
+	"go.uber.org/zap"
+)
+
+// PaymentHandler 支付处理器
+type PaymentHandler struct {
+	payment   *service.PaymentService
+	validator *validator.Validate
+	logger    *zap.Logger
+}
+
+// NewPaymentHandler 创建支付处理器
+func NewPaymentHandler(
+	payment *service.PaymentService,
+	logger *zap.Logger,
+) *PaymentHandler {
+	return &PaymentHandler{
+		payment:   payment,
+		validator: validator.New(),
+		logger:    logger,
+	}
+}
+
+// ProcessPayment 处理支付请求
+// POST /api/v1/payments
+func (h *PaymentHandler) ProcessPayment(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	// 1. 解析请求
+	var req model.PaymentRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	// 2. 验证请求
+	if err := h.validator.Struct(req); err != nil {
+		h.writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	// 3. 验证 Luhn 算法
+	if !h.validateLuhn(req.PAN) {
+		h.writeError(w, http.StatusBadRequest, "invalid card number")
+		return
+	}
+
+	// 4. 获取客户端信息
+	clientIP := h.getClientIP(r)
+	userAgent := r.UserAgent()
+
+	// 5. 处理支付
+	resp, err := h.payment.ProcessPayment(ctx, &req, clientIP, userAgent)
+	if err != nil {
+		h.logger.Error("payment failed",
+			zap.Error(err),
+			zap.String("merchant_id", req.MerchantID),
+		)
+		h.writeError(w, http.StatusInternalServerError, "payment processing failed")
+		return
+	}
+
+	// 6. 返回响应
+	h.writeJSON(w, http.StatusOK, resp)
+}
+
+// validateLuhn Luhn 算法验证
+func (h *PaymentHandler) validateLuhn(pan string) bool {
+	pan = strings.ReplaceAll(pan, " ", "")
+	if len(pan) < 13 || len(pan) > 19 {
+		return false
+	}
+
+	sum := 0
+	isEven := false
+
+	for i := len(pan) - 1; i >= 0; i-- {
+		digit := int(pan[i] - '0')
+
+		if isEven {
+			digit *= 2
+			if digit > 9 {
+				digit -= 9
+			}
+		}
+
+		sum += digit
+		isEven = !isEven
+	}
+
+	return sum%10 == 0
+}
+
+// getClientIP 获取客户端 IP
+func (h *PaymentHandler) getClientIP(r *http.Request) string {
+	// 检查 X-Forwarded-For
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		ips := strings.Split(xff, ",")
+		if len(ips) > 0 {
+			return strings.TrimSpace(ips[0])
+		}
+	}
+
+	// 检查 X-Real-IP
+	if xri := r.Header.Get("X-Real-IP"); xri != "" {
+		return xri
+	}
+
+	return r.RemoteAddr
+}
+
+// writeJSON 写入 JSON 响应
+func (h *PaymentHandler) writeJSON(w http.ResponseWriter, status int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
+}
+
+// writeError 写入错误响应
+func (h *PaymentHandler) writeError(w http.ResponseWriter, status int, message string) {
+	h.writeJSON(w, status, map[string]string{
+		"error": message,
+	})
+}
+```
+
+#### 中间件（internal/api/middleware/）
+
+```go
+// middleware/auth.go
+package middleware
+
+import (
+	"context"
+	"net/http"
+	"strings"
+)
+
+// AuthMiddleware 认证中间件
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 获取 Authorization header
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, `{"error":"missing authorization header"}`, http.StatusUnauthorized)
+			return
+		}
+
+		// 验证 Bearer token
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			http.Error(w, `{"error":"invalid authorization format"}`, http.StatusUnauthorized)
+			return
+		}
+
+		token := parts[1]
+
+		// 验证 token（这里应该调用 JWT 验证服务）
+		userID, err := validateToken(token)
+		if err != nil {
+			http.Error(w, `{"error":"invalid token"}`, http.StatusUnauthorized)
+			return
+		}
+
+		// 将用户信息添加到 context
+		ctx := context.WithValue(r.Context(), "user_id", userID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+// middleware/ratelimit.go
+package middleware
+
+import (
+	"net/http"
+	"sync"
+	"time"
+)
+
+// RateLimiter 速率限制器
+type RateLimiter struct {
+	requests map[string]*clientInfo
+	mu       sync.RWMutex
+	limit    int           // 每分钟最大请求数
+	window   time.Duration // 时间窗口
+}
+
+type clientInfo struct {
+	count     int
+	resetTime time.Time
+}
+
+// NewRateLimiter 创建速率限制器
+func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
+	limiter := &RateLimiter{
+		requests: make(map[string]*clientInfo),
+		limit:    limit,
+		window:   window,
+	}
+
+	// 定期清理过期记录
+	go limiter.cleanup()
+
+	return limiter
+}
+
+// Middleware 速率限制中间件
+func (rl *RateLimiter) Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		clientIP := getClientIP(r)
+
+		if !rl.allow(clientIP) {
+			http.Error(w, `{"error":"rate limit exceeded"}`, http.StatusTooManyRequests)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (rl *RateLimiter) allow(ip string) bool {
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+
+	now := time.Now()
+
+	info, exists := rl.requests[ip]
+	if !exists || now.After(info.resetTime) {
+		rl.requests[ip] = &clientInfo{
+			count:     1,
+			resetTime: now.Add(rl.window),
+		}
+		return true
+	}
+
+	if info.count >= rl.limit {
+		return false
+	}
+
+	info.count++
+	return true
+}
+
+func (rl *RateLimiter) cleanup() {
+	ticker := time.NewTicker(time.Minute)
+	for range ticker.C {
+		rl.mu.Lock()
+		now := time.Now()
+		for ip, info := range rl.requests {
+			if now.After(info.resetTime) {
+				delete(rl.requests, ip)
+			}
+		}
+		rl.mu.Unlock()
+	}
+}
+```
+
+#### 主程序（cmd/server/main.go）
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/your-org/payment-service/internal/api/handler"
+	"github.com/your-org/payment-service/internal/api/middleware"
+	"github.com/your-org/payment-service/internal/service"
+	"github.com/your-org/payment-service/pkg/audit"
+	"github.com/your-org/payment-service/pkg/crypto"
+	"go.uber.org/zap"
+)
+
+func main() {
+	// 初始化日志
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
+	// 初始化加密服务
+	keyProvider := NewHSMKeyProvider() // 从 HSM 获取密钥
+	encryption := crypto.NewAESGCMService(keyProvider)
+
+	// 初始化标记化服务
+	tokenStore := NewRedisTokenStore()
+	tokenization := service.NewTokenizationService(encryption, tokenStore, "tok_")
+
+	// 初始化审计日志
+	auditRepo := NewElasticsearchAuditRepo()
+	siemForwarder := NewSplunkForwarder()
+	auditLogger := audit.NewLogger(auditRepo, siemForwarder, getHMACKey(), logger)
+
+	// 初始化支付网关
+	gateway := NewStripeGateway()
+
+	// 初始化支付服务
+	paymentRepo := NewPostgresPaymentRepo()
+	paymentService := service.NewPaymentService(
+		paymentRepo,
+		encryption,
+		tokenization,
+		auditLogger,
+		gateway,
+		logger,
+	)
+
+	// 初始化 Handler
+	paymentHandler := handler.NewPaymentHandler(paymentService, logger)
+
+	// 配置路由
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/v1/payments", paymentHandler.ProcessPayment)
+
+	// 配置中间件
+	rateLimiter := middleware.NewRateLimiter(100, time.Minute)
+
+	handler := middleware.LoggingMiddleware(logger)(
+		middleware.RecoveryMiddleware(
+			middleware.CORSMiddleware(
+				middleware.SecurityHeadersMiddleware(
+					middleware.AuthMiddleware(
+						rateLimiter.Middleware(mux),
+					),
+				),
+			),
+		),
+	)
+
+	// 配置服务器
+	srv := &http.Server{
+		Addr:         ":8080",
+		Handler:      handler,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	// 启动服务器
+	go func() {
+		logger.Info("starting server", zap.String("addr", srv.Addr))
+		if err := srv.ListenAndServeTLS("cert.pem", "key.pem"); err != nil && err != http.ErrServerClosed {
+			logger.Fatal("server failed", zap.Error(err))
+		}
+	}()
+
+	// 优雅关闭
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	logger.Info("shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Fatal("server forced to shutdown", zap.Error(err))
+	}
+
+	logger.Info("server exited")
 }
 ```
 
