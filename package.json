@@ -24,6 +24,6 @@
     "vuepress-theme-hope": "2.0.0-rc.102"
   },
   "dependencies": {
-    "vuepress-plugin-copy-page": "^1.1.6"
+    "vuepress-plugin-copy-page": "1.2.2-rc.1"
   }
 }

@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       vuepress-plugin-copy-page:
-        specifier: ^1.1.6
-        version: 1.1.6(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28))
+        specifier: 1.2.2-rc.1
+        version: 1.2.2-rc.1(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28))
     devDependencies:
       '@vuepress/bundler-vite':
         specifier: 2.0.0-rc.26
@@ -2489,8 +2489,8 @@ packages:
       vidstack:
         optional: true
 
-  vuepress-plugin-copy-page@1.1.6:
-    resolution: {integrity: sha512-AyqcS/bXWTEnSnTJCzjQHNstNd2BHvOFOnzSGPmQ5aC2KiMDZMebaWCg03sUs0fJCoX2LhWzHO+ygWnRwQxopQ==}
+  vuepress-plugin-copy-page@1.2.2-rc.1:
+    resolution: {integrity: sha512-eyPlEMg6DT5Lz9ysai3ddb2P1GjHmgUetu9esSaeyTwMg4YpPpNCN3DlxtYkYm1AM65BPWluDUjZ/VLCnvNiPw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       vue: ^3.0.0
@@ -5183,7 +5183,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  vuepress-plugin-copy-page@1.1.6(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)):
+  vuepress-plugin-copy-page@1.2.2-rc.1(vue@3.5.28)(vuepress@2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)):
     dependencies:
       vue: 3.5.28
       vuepress: 2.0.0-rc.26(@vuepress/bundler-vite@2.0.0-rc.26(@types/node@25.3.0)(sass-embedded@1.97.3)(sass@1.97.3))(vue@3.5.28)
