@@ -2179,6 +2179,65 @@ SecRule IP:PAY_RATE "@gt 10" \
 | WAF | Cloudflare, AWS WAF | 托管 Web 应用防护 |
 | 合规监控 | Vanta, Drata | 自动化合规监控 |
 
+### 推荐阅读文章
+
+#### 官方与权威资源
+
+| 来源 | 文章 | 说明 |
+|------|------|------|
+| PCI SSC | [PCI DSS v4.0 标准文档](https://www.pcisecuritystandards.org/document_library/) | 官方标准文档，最权威 |
+| PCI SSC | [PCI DSS v4.0 Summary of Changes](https://www.pcisecuritystandards.org/documents/PCI_DSS_v4-0_Summary_of_Changes.pdf) | 4.0 版本变更摘要 |
+| Microsoft | [PCI DSS 合规指南](https://learn.microsoft.com/zh-cn/compliance/regulatory/offering-pci-dss) | Azure 合规性详解 |
+| AWS | [AWS PCI DSS 合规](https://aws.amazon.com/compliance/pci-dss-level-1-faqs/) | AWS 云环境合规指南 |
+| NIST | [SP 800-57 密钥管理建议](https://csrc.nist.gov/publications/detail/sp/800-57-part-1/rev-5/final) | 密钥管理最佳实践 |
+
+#### 技术深度文章
+
+| 来源 | 文章 | 重点内容 |
+|------|------|----------|
+| Stripe | [Stripe PCI 合规指南](https://stripe.com/docs/security/guide) | 支付集成合规实践 |
+| Cloudflare | [什么是 PCI DSS 合规](https://www.cloudflare.com/learning/privacy/what-is-pci-dss-compliance/) | 基础概念入门 |
+| Datadog | [PCI DSS 监控指南](https://www.datadoghq.com/blog/pci-compliance-monitoring/) | 监控与日志最佳实践 |
+| F5 | [PCI DSS v4.0 要求应对](https://www.f5.com/labs/education/pci-dss-4-0) | WAF 与安全控制 |
+| Okta | [PCI DSS 身份认证要求](https://www.okta.com/blog/2022/05/pci-dss-4-0-identity/) | MFA 与访问控制 |
+
+#### 中文技术博客
+
+| 来源 | 文章 | 说明 |
+|------|------|------|
+| CSDN | [PCI DSS 4.0 新要求详解](https://blog.csdn.net/bocco/article/details/130627568) | 4.0 版本四大变化 |
+| CSDN | [PCI DSS 金融行业实践指南](https://blog.csdn.net/wstever/article/details/151831002) | 项目实战经验 |
+| CSDN | [支付网关自动化合规检查](https://blog.csdn.net/2501_94480392/article/details/157283460) | 自动化测试实践 |
+| 百度云 | [PCI DSS 认证全解析](https://cloud.baidu.com/article/4075816) | 认证流程与企业价值 |
+| 腾讯云 | [PCI DSS 云上合规](https://cloud.tencent.com/document/product/282) | 云环境合规实践 |
+
+#### 书籍推荐
+
+| 书名 | 作者 | 说明 |
+|------|------|------|
+| PCI DSS: A Pocket Guide | Steve Wright | 入门指南，简洁易懂 |
+| PCI Compliance | Branden R. Williams | 全面介绍合规流程 |
+| Information Security Management Principles | David Alexander | 信息安全管理基础 |
+| Security Engineering | Ross Anderson | 安全工程权威著作 |
+
+#### 视频课程
+
+| 平台 | 课程 | 说明 |
+|------|------|------|
+| Coursera | [PCI DSS Fundamentals](https://www.coursera.org/) | 基础课程 |
+| Udemy | PCI DSS 4.0 Complete Guide | 4.0 完整指南 |
+| YouTube | PCI SSC Official Channel | 官方视频资源 |
+| B站 | PCI DSS 合规入门 | 中文入门视频 |
+
+#### 安全社区与论坛
+
+| 社区 | 链接 | 说明 |
+|------|------|------|
+| PCI SSC Community | [community.pcisecuritystandards.org](https://community.pcisecuritystandards.org/) | 官方社区 |
+| OWASP | [owasp.org](https://owasp.org/) | Web 安全资源 |
+| Reddit r/security | [reddit.com/r/security](https://reddit.com/r/security) | 安全讨论社区 |
+| Stack Exchange Security | [security.stackexchange.com](https://security.stackexchange.com/) | 安全问答 |
+
 ### 官方资源
 
 - [PCI Security Standards Council](https://www.pcisecuritystandards.org/)
