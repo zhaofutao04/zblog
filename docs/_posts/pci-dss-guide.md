@@ -1901,21 +1901,291 @@ mindmap
 
 ## 合规工具与资源
 
-### 推荐工具
+### 开源组件推荐
+
+#### 支付处理与标记化
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **Hyperswitch** | Rust | 开源支付路由器，支持授权、捕获和标记化 | [juspay/hyperswitch](https://github.com/juspay/hyperswitch) |
+| **Stripe SDKs** | 多语言 | 官方 SDK，支持客户端标记化 | [stripe](https://github.com/stripe) |
+| **PayPal Checkout** | JS | 客户端支付集成，避免敏感数据接触服务器 | [paypal/paypal-checkout-components](https://github.com/paypal/paypal-checkout-components) |
+| **Square SDK** | 多语言 | 支付 SDK，内置 PCI 合规支持 | [square](https://github.com/square) |
+
+#### 密钥管理与加密
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **HashiCorp Vault** | Go | 密钥管理、加密服务、动态凭证 | [hashicorp/vault](https://github.com/hashicorp/vault) |
+| **OpenBao** | Go | Vault 的开源分支（BSL 许可证替代） | [openbao/openbao](https://github.com/openbao/openbao) |
+| **Sealed Secrets** | Go | Kubernetes 密钥加密 | [bitnami-labs/sealed-secrets](https://github.com/bitnami-labs/sealed-secrets) |
+| **SOPS** | Go | 密钥加密文件编辑器 | [getsops/sops](https://github.com/getsops/sops) |
+| **age** | Go | 简单现代的加密工具 | [FiloSottile/age](https://github.com/FiloSottile/age) |
+
+#### 审计与日志
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **Elastic Stack (ELK)** | Java/Go | 日志聚合、分析、可视化 | [elastic](https://github.com/elastic) |
+| **Grafana Loki** | Go | 轻量级日志聚合系统 | [grafana/loki](https://github.com/grafana/loki) |
+| **Fluentd** | Ruby | 日志收集与转发 | [fluent/fluentd](https://github.com/fluent/fluentd) |
+| **Auditd** | C | Linux 审计系统 | 内核自带 |
+| **OpenAudit** | PHP | IT 资产审计 | [OCSInventory-NG/OCSInventory-Server](https://github.com/OCSInventory-NG/OCSInventory-Server) |
+
+#### 漏洞扫描与安全测试
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **OWASP ZAP** | Java | Web 应用安全扫描 | [zaproxy/zaproxy](https://github.com/zaproxy/zaproxy) |
+| **Trivy** | Go | 容器/文件系统漏洞扫描 | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) |
+| **OWASP Dependency-Check** | Java | 依赖漏洞检测 | [jeremylong/DependencyCheck](https://github.com/jeremylong/DependencyCheck) |
+| **Clair** | Go | 容器漏洞静态分析 | [quay/clair](https://github.com/quay/clair) |
+| **Grype** | Go | 容器/文件系统漏洞扫描 | [anchore/grype](https://github.com/anchore/grype) |
+
+#### Web 应用防火墙
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **ModSecurity** | C | 开源 WAF 引擎 | [SpiderLabs/ModSecurity](https://github.com/SpiderLabs/ModSecurity) |
+| **OWASP CRS** | Lua | ModSecurity 核心规则集 | [coreruleset/coreruleset](https://github.com/coreruleset/coreruleset) |
+| **NAXSI** | C | Nginx WAF 模块 | [nbs-system/naxsi](https://github.com/nbs-system/naxsi) |
+| **BunkerWeb** | Python | 现代化 Web 应用防火墙 | [bunkerity/bunkerweb](https://github.com/bunkerity/bunkerweb) |
+
+#### 密码与认证
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **Keycloak** | Java | 身份与访问管理 | [keycloak/keycloak](https://github.com/keycloak/keycloak) |
+| **Authentik** | Python | 身份提供商 | [goauthentik/authentik](https://github.com/goauthentik/authentik) |
+| **Dex** | Go | OIDC 身份提供商 | [dexidp/dex](https://github.com/dexidp/dex) |
+| **Casbin** | Go | 访问控制库 | [casbin/casbin](https://github.com/casbin/casbin) |
+| **Argon2** | 多语言 | 密码哈希算法实现 | 各语言有对应实现 |
+
+#### 网络安全
+
+| 项目 | 语言 | 描述 | GitHub |
+|------|------|------|--------|
+| **Caddy** | Go | 自动 HTTPS 的 Web 服务器 | [caddyserver/caddy](https://github.com/caddyserver/caddy) |
+| **Traefik** | Go | 云原生边缘路由器 | [traefik/traefik](https://github.com/traefik/traefik) |
+| **WireGuard** | C | 现代 VPN 协议 | [WireGuard/wireguard-go](https://github.com/WireGuard/wireguard-go) |
+| **Netmaker** | Go | WireGuard 网络管理 | [gravitl/netmaker](https://github.com/gravitl/netmaker) |
+
+### 开源组件集成示例
+
+#### HashiCorp Vault + Golang 集成
+
+```go
+package vault
+
+import (
+	"context"
+	"fmt"
+
+	vault "github.com/hashicorp/vault/api"
+)
+
+// VaultClient Vault 客户端
+type VaultClient struct {
+	client *vault.Client
+}
+
+// NewVaultClient 创建 Vault 客户端
+func NewVaultClient(addr, token string) (*VaultClient, error) {
+	config := vault.DefaultConfig()
+	config.Address = addr
+
+	client, err := vault.NewClient(config)
+	if err != nil {
+		return nil, fmt.Errorf("create vault client: %w", err)
+	}
+
+	client.SetToken(token)
+
+	return &VaultClient{client: client}, nil
+}
+
+// Encrypt 使用 Transit 引擎加密数据
+// PCI DSS 要求 3.4：使用强加密
+func (v *VaultClient) Encrypt(ctx context.Context, keyName string, plaintext []byte) (string, error) {
+	path := fmt.Sprintf("transit/encrypt/%s", keyName)
+
+	resp, err := v.client.Logical().WriteWithContext(ctx, path, map[string]interface{}{
+		"plaintext": plaintext,
+	})
+	if err != nil {
+		return "", fmt.Errorf("encrypt: %w", err)
+	}
+
+	return resp.Data["ciphertext"].(string), nil
+}
+
+// Decrypt 使用 Transit 引擎解密数据
+func (v *VaultClient) Decrypt(ctx context.Context, keyName, ciphertext string) ([]byte, error) {
+	path := fmt.Sprintf("transit/decrypt/%s", keyName)
+
+	resp, err := v.client.Logical().WriteWithContext(ctx, path, map[string]interface{}{
+		"ciphertext": ciphertext,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("decrypt: %w", err)
+	}
+
+	// Base64 解码
+	plaintext := resp.Data["plaintext"].(string)
+	return []byte(plaintext), nil
+}
+
+// GenerateToken 生成支付令牌
+// 使用 Vault 的格式保留加密 (FPE)
+func (v *VaultClient) GenerateToken(ctx context.Context, pan string) (string, error) {
+	// 使用 Transit 引擎的 FPE 功能
+	// 保持 PAN 格式（16位数字）
+	path := "transit/encode/payment-fpe"
+
+	resp, err := v.client.Logical().WriteWithContext(ctx, path, map[string]interface{}{
+		"plaintext":  pan,
+		"tweak":      "pci-dss-token",
+		"format":     "token", // 返回格式保留的令牌
+	})
+	if err != nil {
+		return "", fmt.Errorf("generate token: %w", err)
+	}
+
+	return resp.Data["ciphertext"].(string), nil
+}
+
+// RotateKey 轮换加密密钥
+// PCI DSS 要求 3.6.4：定期轮换密钥
+func (v *VaultClient) RotateKey(ctx context.Context, keyName string) error {
+	path := fmt.Sprintf("transit/keys/%s/rotate", keyName)
+
+	_, err := v.client.Logical().WriteWithContext(ctx, path, nil)
+	if err != nil {
+		return fmt.Errorf("rotate key: %w", err)
+	}
+
+	return nil
+}
+```
+
+#### OWASP ZAP 自动化扫描
+
+```yaml
+# .github/workflows/security-scan.yml
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * 1' # 每周一凌晨 2 点
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+    name: OWASP ZAP Security Scan
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.7.0
+        with:
+          target: 'https://staging.your-domain.com'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
+          issue_title: 'ZAP Security Scan'
+          fail_action: false
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report
+          path: report_html.html
+```
+
+#### Trivy 容器漏洞扫描
+
+```yaml
+# .github/workflows/trivy-scan.yml
+name: Container Security Scan
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Image
+        run: docker build -t payment-service:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'payment-service:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+```
+
+#### ModSecurity WAF 配置
+
+```nginx
+# /etc/nginx/modsecurity.conf
+
+# 加载 OWASP 核心规则集
+Include /etc/modsecurity/crs/crs-setup.conf
+Include /etc/modsecurity/crs/rules/*.conf
+
+# PCI DSS 特定规则
+
+# 阻止信用卡号泄露
+SecRule RESPONSE_BODY "@verifyCC \d{13,16}" \
+    "id:100001,phase:4,deny,log,msg:'Possible Credit Card Leak'"
+
+# 强制 HTTPS
+SecRule SERVER_PORT "@eq 80" \
+    "id:100002,phase:1,deny,log,msg:'HTTP not allowed',redirect:https://%{HTTP_HOST}%{REQUEST_URI}"
+
+# 阻止 SQL 注入
+SecRule REQUEST_URI|REQUEST_BODY "@rx (?i:union.*select|select.*from|insert.*into)" \
+    "id:100003,phase:2,deny,log,msg:'SQL Injection Attempt'"
+
+# 限制支付接口请求频率
+SecAction "id:100004,phase:1,nolog,initcol:ip=%{REMOTE_ADDR},setvar:ip.pay_rate=+1,expirevar:ip.pay_rate=60"
+SecRule IP:PAY_RATE "@gt 10" \
+    "id:100005,phase:1,deny,log,msg:'Rate limit exceeded'"
+```
+
+### 商业工具
 
 | 类别 | 工具 | 用途 |
 |------|------|------|
 | 漏洞扫描 | Nessus, Qualys | ASV 合规扫描 |
-| 渗透测试 | Burp Suite, Metasploit | 应用安全测试 |
-| 日志管理 | Splunk, ELK Stack | SIEM 日志聚合 |
-| 密钥管理 | HashiCorp Vault, AWS KMS | 密钥生命周期管理 |
-| WAF | Cloudflare, AWS WAF | Web 应用防护 |
+| 渗透测试 | Burp Suite Pro | 应用安全测试 |
+| 日志管理 | Splunk | SIEM 日志聚合 |
+| 密钥管理 | AWS KMS, Azure Key Vault | 托管密钥服务 |
+| WAF | Cloudflare, AWS WAF | 托管 Web 应用防护 |
+| 合规监控 | Vanta, Drata | 自动化合规监控 |
 
 ### 官方资源
 
 - [PCI Security Standards Council](https://www.pcisecuritystandards.org/)
 - [PCI DSS Documents](https://www.pcisecuritystandards.org/document_library/)
 - [PCI SAQ](https://www.pcisecuritystandards.org/merchants/self_assessment_form/)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 
 ## 总结
 
