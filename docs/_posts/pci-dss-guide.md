@@ -2201,15 +2201,14 @@ SecRule IP:PAY_RATE "@gt 10" \
 | F5 | [PCI DSS v4.0 要求应对](https://www.f5.com/labs/education/pci-dss-4-0) | WAF 与安全控制 |
 | Okta | [PCI DSS 身份认证要求](https://www.okta.com/blog/2022/05/pci-dss-4-0-identity/) | MFA 与访问控制 |
 
-#### 中文技术博客
+#### 中文技术资源
 
 | 来源 | 文章 | 说明 |
 |------|------|------|
-| CSDN | [PCI DSS 4.0 新要求详解](https://blog.csdn.net/bocco/article/details/130627568) | 4.0 版本四大变化 |
-| CSDN | [PCI DSS 金融行业实践指南](https://blog.csdn.net/wstever/article/details/151831002) | 项目实战经验 |
-| CSDN | [支付网关自动化合规检查](https://blog.csdn.net/2501_94480392/article/details/157283460) | 自动化测试实践 |
 | 百度云 | [PCI DSS 认证全解析](https://cloud.baidu.com/article/4075816) | 认证流程与企业价值 |
 | 腾讯云 | [PCI DSS 云上合规](https://cloud.tencent.com/document/product/282) | 云环境合规实践 |
+| 阿里云 | [PCI DSS 合规白皮书](https://www.aliyun.com/activity/security/pci-dss) | 阿里云合规方案 |
+| 华为云 | [支付卡行业安全合规](https://www.huaweicloud.com/product/hcs.html) | 云安全解决方案 |
 
 #### 书籍推荐
 
