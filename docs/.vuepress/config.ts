@@ -95,7 +95,7 @@ export default defineUserConfig({
     }),
     copyPagePlugin({
       includes: ['/posts/'],
-      styleMode: 'rich'
+      copyTemplate: 'withUrl'
     }),
   ],
 })
