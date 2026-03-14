@@ -27,9 +27,9 @@ author: 老Z
 - 负责解决网络可达性问题
 - 提供稳定的海外网络环境
 
-**🤖 API 代理线路**：`IDE → CC Switch → ClipProxyAPI → AI 服务商`
-- 负责 AI 服务的统一接入和认证
-- 提供透明的 API 转发和负载均衡
+**🤖 API 代理线路**：`IDE → CC Switch → cliproxyapi → AI 服务商`
+- 负责 AI 服务的统一接入和认证管理
+- 提供透明的 API 转发和智能路由
 
 两条线路各司其职，既保证了网络的稳定性，又实现了 API 调用的便捷性。
 
@@ -52,7 +52,7 @@ flowchart TD
         direction TB
         subgraph DockerServices["Docker Compose 服务"]
             WGEasy["wg-easy<br/>VPN服务端<br/>管理界面+HTTP代理"]
-            ClipProxy["ClipProxyAPI<br/>AI代理服务"]
+            ClipProxy["cliproxyapi<br/>AI智能网关"]
         end
         LoginProcess["容器内身份验证<br/>登录命令执行"]
     end
@@ -268,61 +268,51 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 ```
 
-### 第二脉：智能代理 - ClipProxyAPI 统一网关 🤖
+### 第二脉：智能代理 - cliproxyapi 统一网关 🤖
 
-如果说 WireGuard 解决了"能不能连"的问题，那么 ClipProxyAPI 就解决了"怎么连得更好"的问题。它就像是一位专业的"API 管家"，统一管理各种 AI 服务的认证和调用。
+如果说 WireGuard 解决了"能不能连"的问题，那么 cliproxyapi 就解决了"怎么连得更好"的问题。它是一款专业的 AI API 代理工具，能够统一管理多个 AI 服务商的认证和调用，为开发者提供透明的 API 访问体验。
 
 #### 3.2.1 Docker Compose 部署方式
 
-ClipProxyAPI 同样采用 Docker Compose 容器化部署，并在容器内执行身份验证：
+cliproxyapi 采用 Docker Compose 容器化部署，提供稳定的 AI API 代理服务：
 
 ```yaml
-# clipproxy-compose.yml
+# docker-compose.yml
 version: '3.8'
 services:
-  clipproxy:
-    image: clipproxy/clipproxy:latest
-    container_name: clipproxy
+  cliproxyapi:
+    image: routerformecn/cliproxyapi:latest
+    container_name: cliproxyapi
     environment:
-      - MODE=headless
-      - BROWSER_AUTH=false
-      - API_PORT=8080
       - LOG_LEVEL=info
     ports:
       - "8080:8080"
     volumes:
-      - ./data:/app/data
       - ./config:/app/config
-      - ./auth:/app/auth
+      - ./logs:/app/logs
     restart: unless-stopped
-    depends_on:
-      - redis
-    # 开启交互模式支持容器内登录
+    # 开启交互模式支持认证操作
     stdin_open: true
     tty: true
-
-  redis:
-    image: redis:alpine
-    container_name: clipproxy-redis
-    volumes:
-      - ./redis-data:/data
-    restart: unless-stopped
 ```
+
+**注意**：cliproxyapi 是一个轻量级的代理工具，不需要额外的 Redis 等依赖服务。
 
 #### 3.2.2 容器内身份验证
 
-部署完成后，需要在容器内执行登录命令：
+部署完成后，需要在容器内执行登录认证：
 
 ```bash
 # 进入容器
-docker-compose exec clipproxy bash
+docker-compose exec cliproxyapi bash
 
 # 在容器内执行登录（需要先启动VPN）
-clipproxy auth login --provider claude
-clipproxy auth login --provider openai
+# 具体认证命令请参考官方文档
+cliproxyapi auth --provider claude
+cliproxyapi auth --provider openai
 
-# 验证登录状态
-clipproxy auth status
+# 验证服务状态
+cliproxyapi status
 
 # 退出容器
 exit
@@ -371,21 +361,21 @@ CC Switch 运行在本地 9000 端口，统一管理多个 AI 服务提供商：
   },
   "providers": [
     {
-      "name": "ClipProxy-Claude",
+      "name": "cliproxyapi-Claude",
       "type": "anthropic",
       "endpoint": "http://your.server.ip:8080/v1",
       "api_key": "your_proxy_token",
       "models": ["claude-3-sonnet", "claude-3-opus", "claude-3-haiku"]
     },
     {
-      "name": "ClipProxy-OpenAI",
+      "name": "cliproxyapi-OpenAI",
       "type": "openai",
       "endpoint": "http://your.server.ip:8080/v1",
       "api_key": "your_proxy_token",
       "models": ["gpt-4", "gpt-3.5-turbo", "gpt-4-turbo"]
     }
   ],
-  "default_provider": "ClipProxy-Claude",
+  "default_provider": "cliproxyapi-Claude",
   "load_balance": true
 }
 ```
@@ -394,7 +384,7 @@ CC Switch 运行在本地 9000 端口，统一管理多个 AI 服务提供商：
 
 ### IDE 工具集成配置
 
-IDE/编辑器通过 CC Switch 连接到 ClipProxyAPI，形成完整的代理链路：
+IDE/编辑器通过 CC Switch 连接到 cliproxyapi，形成完整的代理链路：
 
 **Claude Code 配置：**
 ```json
@@ -471,9 +461,9 @@ docker-compose up -d
 3. **代理不稳定**
 ```bash
 # 重启代理服务
-docker-compose restart clipproxy
+docker-compose restart cliproxyapi
 # 检查日志
-docker-compose logs -f clipproxy
+docker-compose logs -f cliproxyapi
 ```
 
 ## 关键软件文档与资源
@@ -485,7 +475,7 @@ docker-compose logs -f clipproxy
 - **Clash Verge**: https://github.com/clash-verge-rev/clash-verge-rev
 - **WireGuard Tools**: https://www.wireguard.com/install/
 - **Docker Compose**: https://docs.docker.com/compose/
-- **ClipProxyAPI**: https://github.com/clipproxy/clipproxy-api
+- **cliproxyapi**: https://help.router-for.me/cn/introduction/what-is-cliproxyapi.html
 - **CC Switch**: https://github.com/ccswitch/ccswitch
 
 ### 服务商资源
@@ -515,9 +505,9 @@ docker-compose logs -f clipproxy
 
 **🌟 技术链路梳理：**
 ```
-本地开发 → CC Switch → ClipProxy → AI 服务商
-    ↓           ↓          ↓         ↓
-  IDE 编辑器  统一 API 管理  认证代理   Claude/GPT
+本地开发 → CC Switch → cliproxyapi → AI 服务商
+    ↓           ↓          ↓           ↓
+  IDE 编辑器  统一 API 管理  智能网关    Claude/GPT
 ```
 
 现在，你可以在熟悉的 IDE 中享受 AI 助手的强大能力，就像使用本地工具一样自然流畅。AI 开发的新时代已经到来，而你已经准备就绪！
