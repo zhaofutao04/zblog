@@ -37,6 +37,14 @@ author: 老Z
 
 ```mermaid
 flowchart TB
+    %% 隐藏节点用于对齐
+    subgraph " "
+        direction TB
+        spacer1[" "]
+        spacer2[" "]
+        spacer3[" "]
+    end
+
     %% ========== 本地开发环境 ==========
     subgraph Local["💻 本地开发环境"]
         direction LR
@@ -44,20 +52,22 @@ flowchart TB
         Browser["🌐 浏览器"]
         CCSwitch["🔄 CC Switch<br/>API管理器"]
         Clash["⚡ Clash Verge<br/>代理客户端"]
-        WGClient["🔐 WireGuard<br/>VPN客户端"]
+        WGClient["🔐 WireGuard<br/>VPN核心客户端"]
     end
 
     %% ========== 海外云服务器 ==========
     subgraph Cloud["☁️ 海外云服务器 (Docker Ecosystem)"]
         direction LR
-        WGServer["🏰 wg-easy<br/>VPN服务端"]
+        WGServer["🏰 wg-easy<br/>WireGuard管理界面"]
         ApiGateway["🤖 cliproxyapi<br/>AI网关"]
         AuthLayer["🔑 认证层<br/>身份验证"]
+        CloudSpacer1[" "]
+        CloudSpacer2[" "]
     end
 
     %% ========== AI 服务生态 ==========
     subgraph AIEcosystem["🎯 AI 服务生态"]
-        direction LR
+        direction TB
         Claude["🧠 Claude<br/>Anthropic"]
         OpenAI["✨ GPT<br/>OpenAI"]
         Copilot["😸 Copilot<br/>GitHub"]
@@ -153,11 +163,16 @@ sudo usermod -aG docker $USER
 
 ### 第一脉：网络隧道 - WireGuard 高速专线 🌐
 
-WireGuard 就像是连接本地和海外的"专用高速公路"，具有现代化、高性能、易配置的特点。配合 wg-easy 管理工具，我们可以轻松实现"一键连接海外"。
+**WireGuard** 是现代化的高性能VPN协议，就像是连接本地和海外的"专用高速公路"。**wg-easy** 则是基于 WireGuard 构建的 Web 界面管理工具，它将复杂的命令行配置封装成了友好的图形界面。
 
-#### 3.1.1 服务端部署
+**技术关系解析：**
+- 🔧 **WireGuard**: 核心VPN协议，负责数据加密传输
+- 🎛️ **wg-easy**: 管理界面工具，负责配置文件生成、用户管理、二维码分享
+- 🚀 **协同工作**: wg-easy 简化配置流程，WireGuard 提供安全通道
 
-创建 `docker-compose.yml` 文件：
+#### 3.1.1 服务端部署 - wg-easy 管理界面
+
+wg-easy 为 WireGuard 提供 Web 管理界面，让 VPN 配置变得简单。创建 `docker-compose.yml` 文件：
 
 ```yaml
 version: '3.8'
@@ -248,21 +263,23 @@ rules:
 ```
 
 **配置流程：**
-1. 从 wg-easy 管理界面下载客户端配置
-2. 在 Clash Verge 中导入 WireGuard 配置文件
-3. Clash 在本地 7890 端口提供 HTTP 代理服务
+1. 通过 wg-easy 的 Web 界面生成 WireGuard 配置文件
+2. 将配置文件导入 Clash Verge（支持 WireGuard 协议）
+3. Clash 基于 WireGuard 隧道在本地 7890 端口提供 HTTP 代理服务
 
-**WireGuard Tools 配置：**
+**WireGuard 原生客户端配置：**
+
+使用 wg-easy 生成的配置文件，可直接导入 WireGuard 官方客户端：
 
 ```ini
-# wg-client.conf
+# wg-client.conf (从 wg-easy 管理界面下载)
 [Interface]
-PrivateKey = your_private_key
-Address = 10.8.0.2/24
+PrivateKey = your_private_key  # wg-easy 自动生成
+Address = 10.8.0.2/24         # wg-easy 分配的内网IP
 DNS = 1.1.1.1
 
 [Peer]
-PublicKey = server_public_key
+PublicKey = server_public_key  # wg-easy 服务器公钥
 Endpoint = your.server.ip:51820
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
