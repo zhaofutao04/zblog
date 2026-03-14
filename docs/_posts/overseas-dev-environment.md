@@ -37,13 +37,6 @@ author: 老Z
 
 ```mermaid
 flowchart TB
-    %% 隐藏节点用于对齐
-    subgraph " "
-        direction TB
-        spacer1[" "]
-        spacer2[" "]
-        spacer3[" "]
-    end
 
     %% ========== 本地开发环境 ==========
     subgraph Local["💻 本地开发环境"]
