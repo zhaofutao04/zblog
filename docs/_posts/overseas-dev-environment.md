@@ -56,8 +56,6 @@ flowchart TB
         WGServer["🏰 wg-easy<br/>WireGuard管理界面"]
         ApiGateway["🤖 cliproxyapi<br/>AI网关"]
         AuthLayer["🔑 认证层<br/>身份验证"]
-        CloudSpacer1[" "]
-        CloudSpacer2[" "]
     end
 
     %% ========== AI 服务生态 ==========
