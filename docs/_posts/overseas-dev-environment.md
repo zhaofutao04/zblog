@@ -1,5 +1,5 @@
 ---
-title: 国内如何跑通claude code等编程工具
+title: Claude Code 国内使用指南：WireGuard + CLIProxyAPI 代理搭建实践
 date: 2026-03-14
 categories:
   - AI大模型
@@ -78,7 +78,8 @@ flowchart TB
 
     %% 代理层连接
     CCSwitch -->|API转发| ApiGateway
-    ApiGateway -.->|触发认证| AuthLayer
+    WGServer -.->|认证| AuthLayer
+    ApiGateway -.->|认证| AuthLayer
 
     %% 服务层连接
     AuthLayer -.->|身份验证| AIEcosystem
