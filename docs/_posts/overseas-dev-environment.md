@@ -17,40 +17,66 @@ author: 老Z
 
 随着现代软件开发的全球化，开发者经常需要访问海外的开发工具和AI编程助手，如 Claude Code、GitHub Copilot 等。本文将从技术角度介绍如何搭建稳定的海外开发环境，主要包括基础设施、网络代理和AI工具配置三个部分。
 
-## 架构图
+## 系统架构图
 
 ```mermaid
-flowchart TB
+flowchart TD
     subgraph Local["本地环境"]
-        IDE[IDE/编辑器]
+        direction TB
         Browser[浏览器]
-        WGClient[WireGuard客户端]
-        Clash[Clash Verge]
-        CCSwitch[CC Switch]
+        IDE[IDE/编辑器]
+        subgraph VPNClients["VPN客户端工具"]
+            WGClient[WireGuard客户端]
+            Clash[Clash Verge]
+        end
+        CCSwitch["CC Switch<br/>(统一API管理)"]
     end
 
-    subgraph VPC["海外VPC服务器 (Docker Compose)"]
-        WGEasy[wg-easy 容器]
-        ClipProxy[ClipProxyAPI 容器]
-        LoginCmd[容器内登录验证]
+    subgraph VPC["海外VPC服务器"]
+        direction TB
+        subgraph DockerServices["Docker Compose 服务"]
+            WGEasy["wg-easy<br/>VPN服务端<br/>管理界面+HTTP代理"]
+            ClipProxy["ClipProxyAPI<br/>AI代理服务"]
+        end
+        LoginProcess["容器内身份验证<br/>登录命令执行"]
     end
 
-    subgraph Services["AI服务"]
-        Claude[Claude API]
-        OpenAI[OpenAI API]
-        GitHub[GitHub Copilot]
+    subgraph AIServices["AI服务提供商"]
+        direction LR
+        Claude["Claude API<br/>(Anthropic)"]
+        OpenAI["OpenAI API<br/>(ChatGPT)"]
+        GitHub["GitHub Copilot<br/>(Microsoft)"]
     end
 
-    WGClient -->|WireGuard 隧道| WGEasy
-    Clash -->|HTTP代理| WGEasy
-    IDE -->|API请求| CCSwitch
-    CCSwitch -->|转发请求| ClipProxy
-    ClipProxy -->|容器内验证| LoginCmd
-    ClipProxy -->|认证后代理| Services
+    %% 浏览器连接VPN
+    Browser -.->|使用VPN访问| VPNClients
 
-    style VPC fill:#e1f5fe
-    style Services fill:#f3e5f5
-    style Local fill:#e8f5e8
+    %% VPN隧道连接
+    WGClient ==>|WireGuard隧道| WGEasy
+    Clash ==>|HTTP代理连接| WGEasy
+
+    %% API调用链路
+    IDE -->|发送API请求| CCSwitch
+    CCSwitch -->|转发到代理| ClipProxy
+
+    %% 认证流程
+    ClipProxy -.->|触发认证| LoginProcess
+    LoginProcess -.->|验证身份| AIServices
+
+    %% 正常API代理
+    ClipProxy ==>|认证成功后代理| AIServices
+
+    %% 样式定义
+    classDef localBox fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef vpcBox fill:#e1f5fe,stroke:#2196f3,stroke-width:2px
+    classDef serviceBox fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef keyComponent fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+
+    %% 应用样式
+    class Local localBox
+    class VPC vpcBox
+    class AIServices serviceBox
+    class CCSwitch,ClipProxy keyComponent
 ```
 
 ## 第一部分：账号准备
