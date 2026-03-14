@@ -39,74 +39,60 @@ author: 老Z
 flowchart TB
     %% ========== 本地开发环境 ==========
     subgraph Local["💻 本地开发环境"]
-        direction TB
-        subgraph DevTools["开发工具"]
-            IDE["🖥️ IDE / 编辑器<br/>VS Code · JetBrains"]
-            Browser["🌐 浏览器<br/>Chrome · Safari"]
-        end
-
-        subgraph Proxies["代理客户端"]
-            CCSwitch["🔄 CC Switch<br/>API 统一管理器"]
-            Clash["⚡ Clash Verge<br/>智能路由代理"]
-            WGClient["🔐 WireGuard<br/>VPN 隧道客户端"]
-        end
+        direction LR
+        IDE["🖥️ IDE<br/>编辑器"]
+        Browser["🌐 浏览器"]
+        CCSwitch["🔄 CC Switch<br/>API管理器"]
+        Clash["⚡ Clash Verge<br/>代理客户端"]
+        WGClient["🔐 WireGuard<br/>VPN客户端"]
     end
 
     %% ========== 海外云服务器 ==========
     subgraph Cloud["☁️ 海外云服务器 (Docker Ecosystem)"]
-        direction TB
-        subgraph Services["🐳 容器化服务"]
-            WGServer["🏰 wg-easy<br/>┌─ VPN 服务端<br/>└─ 管理控制台"]
-            ApiGateway["🤖 cliproxyapi<br/>┌─ AI API 网关<br/>└─ 智能路由引擎"]
-        end
-
-        AuthLayer["🔑 容器认证层<br/>统一身份验证"]
+        direction LR
+        WGServer["🏰 wg-easy<br/>VPN服务端"]
+        ApiGateway["🤖 cliproxyapi<br/>AI网关"]
+        AuthLayer["🔑 认证层<br/>身份验证"]
     end
 
     %% ========== AI 服务生态 ==========
     subgraph AIEcosystem["🎯 AI 服务生态"]
         direction LR
-        Claude["🧠 Claude<br/>Anthropic"]
-        OpenAI["✨ GPT<br/>OpenAI"]
-        Copilot["😸 Copilot<br/>GitHub"]
-        Others["🔮 Others<br/>..."]
+        Claude["🧠 Claude"]
+        OpenAI["✨ GPT"]
+        Copilot["😸 Copilot"]
+        Others["🔮 Others"]
     end
 
     %% ========== 连接关系 ==========
-    %% 开发工具连接
-    IDE -.->|"🔌 本地调用"| CCSwitch
-    Browser -.->|"🌐 HTTP 代理"| Clash
+    %% 开发层连接
+    IDE -.->|API调用| CCSwitch
+    Browser -.->|HTTP代理| Clash
 
-    %% VPN 网络层
-    WGClient ===>|"🚇 加密隧道"| WGServer
-    Clash ===>|"🌉 代理桥接"| WGServer
+    %% 网络层连接
+    WGClient ==>|加密隧道| WGServer
+    Clash ==>|代理桥接| WGServer
 
-    %% API 代理层
-    CCSwitch -->|"📡 API 转发"| ApiGateway
-    ApiGateway -.->|"🔐 认证触发"| AuthLayer
+    %% 代理层连接
+    CCSwitch -->|API转发| ApiGateway
+    ApiGateway -.->|触发认证| AuthLayer
 
-    %% 服务访问层
-    AuthLayer -.->|"✅ 身份验证"| AIEcosystem
-    ApiGateway ==>|"🚀 智能路由"| AIEcosystem
+    %% 服务层连接
+    AuthLayer -.->|身份验证| AIEcosystem
+    ApiGateway ==>|智能路由| AIEcosystem
 
     %% ========== 视觉样式 ==========
-    %% 环境分组样式
     classDef localStyle fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px,color:#0c4a6e
     classDef cloudStyle fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#064e3b
     classDef aiStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e
-
-    %% 核心组件样式
-    classDef coreComponent fill:#fff7ed,stroke:#ea580c,stroke-width:3px,color:#9a3412,font-weight:bold
+    classDef coreComponent fill:#fff7ed,stroke:#ea580c,stroke-width:3px,color:#9a3412
     classDef devTool fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#334155
-    classDef networkTool fill:#fafafa,stroke:#71717a,stroke-width:1px,color:#3f3f46
 
-    %% 应用样式
     class Local localStyle
     class Cloud cloudStyle
     class AIEcosystem aiStyle
     class CCSwitch,ApiGateway,AuthLayer coreComponent
-    class IDE,Browser devTool
-    class Clash,WGClient,WGServer networkTool
+    class IDE,Browser,Clash,WGClient,WGServer devTool
 ```
 
 ## 第一步：账号准备 🎫
@@ -134,7 +120,7 @@ flowchart TB
 要搭建稳定的海外开发环境，选择合适的VPC服务商就像选择办公室地址一样重要。我们需要的不仅是一台服务器，更是一个可靠的"海外基地"。
 
 **推荐服务商：**
-- **[WEPC.AU](https://wepc.au/)** - 澳洲优质服务商
+- **[WEPC.AU](https://wepc.au/aff.php?aff=2465)** - 澳洲优质服务商
   - ✅ 家庭 IP 段，天然规避风控
   - ✅ 多地区节点，延迟表现优秀
   - ✅ 带宽充足，价格合理
@@ -494,7 +480,7 @@ docker-compose logs -f cliproxyapi
 
 ### 服务商资源
 
-- **WEPC.AU**: https://wepc.au/ (海外VPC服务)
+- **WEPC.AU**: https://wepc.au/aff.php?aff=2465 (海外VPC服务)
 - **其他推荐VPC服务商**：
   - Vultr: https://www.vultr.com/
   - DigitalOcean: https://www.digitalocean.com/
