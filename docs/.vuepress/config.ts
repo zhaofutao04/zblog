@@ -30,6 +30,7 @@ export default defineUserConfig({
     // 导航栏
     navbar: [
       { text: '首页', link: '/' },
+      { text: 'AI大模型', link: '/category/AI大模型/' },
       { text: '支付', link: '/category/支付/' },
       { text: 'web3', link: '/category/web3/' },
       { text: '建站', link: '/category/建站/' },
