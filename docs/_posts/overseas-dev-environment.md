@@ -36,63 +36,77 @@ author: 老Z
 ## 系统架构图
 
 ```mermaid
-flowchart TD
-    subgraph Local["本地环境"]
+flowchart TB
+    %% ========== 本地开发环境 ==========
+    subgraph Local["💻 本地开发环境"]
         direction TB
-        Browser[浏览器]
-        IDE[IDE/编辑器]
-        subgraph VPNClients["VPN客户端工具"]
-            WGClient[WireGuard客户端]
-            Clash[Clash Verge]
+        subgraph DevTools["开发工具"]
+            IDE["🖥️ IDE / 编辑器<br/>VS Code · JetBrains"]
+            Browser["🌐 浏览器<br/>Chrome · Safari"]
         end
-        CCSwitch["CC Switch<br/>(统一API管理)"]
+
+        subgraph Proxies["代理客户端"]
+            CCSwitch["🔄 CC Switch<br/>API 统一管理器"]
+            Clash["⚡ Clash Verge<br/>智能路由代理"]
+            WGClient["🔐 WireGuard<br/>VPN 隧道客户端"]
+        end
     end
 
-    subgraph VPC["海外VPC服务器"]
+    %% ========== 海外云服务器 ==========
+    subgraph Cloud["☁️ 海外云服务器 (Docker Ecosystem)"]
         direction TB
-        subgraph DockerServices["Docker Compose 服务"]
-            WGEasy["wg-easy<br/>VPN服务端<br/>管理界面+HTTP代理"]
-            ClipProxy["cliproxyapi<br/>AI智能网关"]
+        subgraph Services["🐳 容器化服务"]
+            WGServer["🏰 wg-easy<br/>┌─ VPN 服务端<br/>└─ 管理控制台"]
+            ApiGateway["🤖 cliproxyapi<br/>┌─ AI API 网关<br/>└─ 智能路由引擎"]
         end
-        LoginProcess["容器内身份验证<br/>登录命令执行"]
+
+        AuthLayer["🔑 容器认证层<br/>统一身份验证"]
     end
 
-    subgraph AIServices["AI服务提供商"]
+    %% ========== AI 服务生态 ==========
+    subgraph AIEcosystem["🎯 AI 服务生态"]
         direction LR
-        Claude["Claude API<br/>(Anthropic)"]
-        OpenAI["OpenAI API<br/>(ChatGPT)"]
-        GitHub["GitHub Copilot<br/>(Microsoft)"]
+        Claude["🧠 Claude<br/>Anthropic"]
+        OpenAI["✨ GPT<br/>OpenAI"]
+        Copilot["😸 Copilot<br/>GitHub"]
+        Others["🔮 Others<br/>..."]
     end
 
-    %% 浏览器通过本地代理访问
-    Browser -->|HTTP代理 7890| Clash
+    %% ========== 连接关系 ==========
+    %% 开发工具连接
+    IDE -.->|"🔌 本地调用"| CCSwitch
+    Browser -.->|"🌐 HTTP 代理"| Clash
 
-    %% VPN隧道连接
-    WGClient ==>|WireGuard隧道| WGEasy
-    Clash ==>|通过WireGuard隧道| WGEasy
+    %% VPN 网络层
+    WGClient ===>|"🚇 加密隧道"| WGServer
+    Clash ===>|"🌉 代理桥接"| WGServer
 
-    %% API调用链路
-    IDE -->|发送API请求| CCSwitch
-    CCSwitch -->|转发到代理| ClipProxy
+    %% API 代理层
+    CCSwitch -->|"📡 API 转发"| ApiGateway
+    ApiGateway -.->|"🔐 认证触发"| AuthLayer
 
-    %% 认证流程
-    ClipProxy -.->|触发认证| LoginProcess
-    LoginProcess -.->|验证身份| AIServices
+    %% 服务访问层
+    AuthLayer -.->|"✅ 身份验证"| AIEcosystem
+    ApiGateway ==>|"🚀 智能路由"| AIEcosystem
 
-    %% 正常API代理
-    ClipProxy ==>|认证成功后代理| AIServices
+    %% ========== 视觉样式 ==========
+    %% 环境分组样式
+    classDef localStyle fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px,color:#0c4a6e
+    classDef cloudStyle fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#064e3b
+    classDef aiStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e
 
-    %% 样式定义
-    classDef localBox fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
-    classDef vpcBox fill:#e1f5fe,stroke:#2196f3,stroke-width:2px
-    classDef serviceBox fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
-    classDef keyComponent fill:#fff3e0,stroke:#ff9800,stroke-width:3px
+    %% 核心组件样式
+    classDef coreComponent fill:#fff7ed,stroke:#ea580c,stroke-width:3px,color:#9a3412,font-weight:bold
+    classDef devTool fill:#f8fafc,stroke:#64748b,stroke-width:1px,color:#334155
+    classDef networkTool fill:#fafafa,stroke:#71717a,stroke-width:1px,color:#3f3f46
 
     %% 应用样式
-    class Local localBox
-    class VPC vpcBox
-    class AIServices serviceBox
-    class CCSwitch,ClipProxy keyComponent
+    class Local localStyle
+    class Cloud cloudStyle
+    class AIEcosystem aiStyle
+    class CCSwitch,ApiGateway,AuthLayer coreComponent
+    class IDE,Browser devTool
+    class Clash,WGClient,WGServer networkTool
 ```
 
 ## 第一步：账号准备 🎫
