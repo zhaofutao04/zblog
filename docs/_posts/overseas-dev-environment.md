@@ -29,10 +29,10 @@ flowchart TB
         CCSwitch[CC Switch]
     end
 
-    subgraph VPC["海外VPC服务器"]
+    subgraph VPC["海外VPC服务器 (Docker Compose)"]
         WGEasy[wg-easy 容器]
-        ClipProxy[ClipProxyAPI]
-        Docker[Docker Compose]
+        ClipProxy[ClipProxyAPI 容器]
+        LoginCmd[容器内登录验证]
     end
 
     subgraph Services["AI服务"]
@@ -42,10 +42,11 @@ flowchart TB
     end
 
     WGClient -->|WireGuard 隧道| WGEasy
-    Clash -->|HTTP代理| VPC
-    CCSwitch -->|API代理| ClipProxy
-    ClipProxy -->|认证代理| Services
-    IDE -->|通过代理访问| Services
+    Clash -->|HTTP代理| WGEasy
+    IDE -->|API请求| CCSwitch
+    CCSwitch -->|转发请求| ClipProxy
+    ClipProxy -->|容器内验证| LoginCmd
+    ClipProxy -->|认证后代理| Services
 
     style VPC fill:#e1f5fe
     style Services fill:#f3e5f5
@@ -153,7 +154,7 @@ docker-compose logs -f wg-easy
 
 #### 3.1.3 客户端配置
 
-**Clash Verge 配置示例：**
+**Clash Verge HTTP代理配置示例：**
 
 ```yaml
 # clash-config.yaml
@@ -166,20 +167,18 @@ log-level: info
 external-controller: 127.0.0.1:9090
 
 proxies:
-  - name: "WG-Proxy"
-    type: wireguard
+  - name: "WG-HTTP"
+    type: http
     server: your.server.ip
-    port: 51820
-    ip: 10.8.0.2
-    private-key: "your_private_key"
-    public-key: "server_public_key"
-    udp: true
+    port: 8888  # wg-easy HTTP代理端口
+    username: ""
+    password: ""
 
 proxy-groups:
   - name: "Auto"
     type: select
     proxies:
-      - "WG-Proxy"
+      - "WG-HTTP"
       - "DIRECT"
 
 rules:
@@ -188,6 +187,8 @@ rules:
   - DOMAIN-SUFFIX,github.com,Auto
   - MATCH,DIRECT
 ```
+
+**注意：** Clash Verge 通过 HTTP 代理方式连接到 wg-easy 服务，而不是直接使用 WireGuard 协议。
 
 **WireGuard Tools 配置：**
 
@@ -207,7 +208,9 @@ PersistentKeepalive = 25
 
 ### 3.2 AI代理线路 - ClipProxyAPI
 
-#### 3.2.1 服务端部署
+#### 3.2.1 Docker Compose 部署方式
+
+ClipProxyAPI 同样采用 Docker Compose 容器化部署，并在容器内执行身份验证：
 
 ```yaml
 # clipproxy-compose.yml
@@ -218,7 +221,7 @@ services:
     container_name: clipproxy
     environment:
       - MODE=headless
-      - BROWSER_AUTH=true
+      - BROWSER_AUTH=false
       - API_PORT=8080
       - LOG_LEVEL=info
     ports:
@@ -226,9 +229,13 @@ services:
     volumes:
       - ./data:/app/data
       - ./config:/app/config
+      - ./auth:/app/auth
     restart: unless-stopped
     depends_on:
       - redis
+    # 开启交互模式支持容器内登录
+    stdin_open: true
+    tty: true
 
   redis:
     image: redis:alpine
@@ -236,6 +243,25 @@ services:
     volumes:
       - ./redis-data:/data
     restart: unless-stopped
+```
+
+#### 3.2.2 容器内身份验证
+
+部署完成后，需要在容器内执行登录命令：
+
+```bash
+# 进入容器
+docker-compose exec clipproxy bash
+
+# 在容器内执行登录（需要先启动VPN）
+clipproxy auth login --provider claude
+clipproxy auth login --provider openai
+
+# 验证登录状态
+clipproxy auth status
+
+# 退出容器
+exit
 ```
 
 #### 3.2.2 配置文件
@@ -297,16 +323,24 @@ services:
 
 ## 开发工具集成
 
-### Claude Code 配置
+### IDE 工具集成配置
 
-在 IDE 中配置 Claude Code：
+IDE/编辑器通过 CC Switch 连接到 ClipProxyAPI，形成完整的代理链路：
 
+**Claude Code 配置：**
 ```json
 {
-  "claude.apiEndpoint": "http://localhost:8080/v1",
-  "claude.apiKey": "your_proxy_token",
-  "claude.model": "claude-3-sonnet",
-  "claude.proxy": "http://127.0.0.1:7890"
+  "claude.provider": "ccswitch",
+  "claude.endpoint": "http://localhost:9000/api",
+  "claude.model": "claude-3-sonnet"
+}
+```
+
+**其他 AI 插件配置：**
+```json
+{
+  "ai.endpoint": "http://localhost:9000/api/v1",
+  "ai.provider": "ccswitch-unified"
 }
 ```
 
@@ -371,6 +405,32 @@ docker-compose restart clipproxy
 docker-compose logs -f clipproxy
 ```
 
+## 关键软件文档与资源
+
+### 官方文档链接
+
+- **WireGuard**: https://www.wireguard.com/quickstart/
+- **wg-easy**: https://github.com/wg-easy/wg-easy
+- **Clash Verge**: https://github.com/clash-verge-rev/clash-verge-rev
+- **WireGuard Tools**: https://www.wireguard.com/install/
+- **Docker Compose**: https://docs.docker.com/compose/
+- **ClipProxyAPI**: https://github.com/clipproxy/clipproxy-api
+- **CC Switch**: https://github.com/ccswitch/ccswitch
+
+### 服务商资源
+
+- **WEPC.AU**: https://wepc.au/ (海外VPC服务)
+- **其他推荐VPC服务商**：
+  - Vultr: https://www.vultr.com/
+  - DigitalOcean: https://www.digitalocean.com/
+  - Linode: https://www.linode.com/
+
+### 客户端工具下载
+
+- **Clash Verge**: https://github.com/clash-verge-rev/clash-verge-rev/releases
+- **WireGuard 官方客户端**: https://www.wireguard.com/install/
+- **CC Switch**: https://github.com/ccswitch/ccswitch/releases
+
 ## 总结
 
 通过合理的架构设计和工具选择，可以构建一个稳定高效的海外开发环境。本方案的核心优势：
@@ -379,5 +439,7 @@ docker-compose logs -f clipproxy
 - **可维护性**：容器化部署，易于管理
 - **扩展性**：支持多用户和多服务
 - **安全性**：端到端加密，安全可控
+
+关键技术流程：`IDE → CC Switch → ClipProxyAPI（容器内认证）→ AI服务`
 
 **免责声明**：本文仅从技术角度探讨网络代理的实现方案，请读者在使用时严格遵守相关法律法规，合理合法使用相关技术。
