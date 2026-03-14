@@ -55,14 +55,11 @@ flowchart TB
         AuthLayer["🔑 认证层<br/>身份验证"]
     end
 
-    %% ========== AI 服务生态 ==========
-    subgraph AIEcosystem["🎯 AI 服务生态"]
-        direction LR
-        Claude["🧠 Claude"]
-        OpenAI["✨ GPT"]
-        Copilot["😸 Copilot"]
-        Others["🔮 Others"]
-    end
+    %% ========== AI 服务生态（横向排列）==========
+    Claude["🧠 Claude<br/>Anthropic"]
+    OpenAI["✨ GPT<br/>OpenAI"]
+    Copilot["😸 Copilot<br/>GitHub"]
+    Others["🔮 Others<br/>..."]
 
     %% ========== 连接关系 ==========
     %% 开发层连接
@@ -77,9 +74,16 @@ flowchart TB
     CCSwitch -->|API转发| ApiGateway
     ApiGateway -.->|触发认证| AuthLayer
 
-    %% 服务层连接
-    AuthLayer -.->|身份验证| AIEcosystem
-    ApiGateway ==>|智能路由| AIEcosystem
+    %% 服务层连接（横向分布）
+    AuthLayer -.->|身份验证| Claude
+    AuthLayer -.->|身份验证| OpenAI
+    AuthLayer -.->|身份验证| Copilot
+    AuthLayer -.->|身份验证| Others
+
+    ApiGateway ==>|智能路由| Claude
+    ApiGateway ==>|智能路由| OpenAI
+    ApiGateway ==>|智能路由| Copilot
+    ApiGateway ==>|智能路由| Others
 
     %% ========== 视觉样式 ==========
     classDef localStyle fill:#f0f9ff,stroke:#0ea5e9,stroke-width:2px,color:#0c4a6e
@@ -90,7 +94,7 @@ flowchart TB
 
     class Local localStyle
     class Cloud cloudStyle
-    class AIEcosystem aiStyle
+    class Claude,OpenAI,Copilot,Others aiStyle
     class CCSwitch,ApiGateway,AuthLayer coreComponent
     class IDE,Browser,Clash,WGClient,WGServer devTool
 ```
