@@ -1,0 +1,37 @@
+# 老Z的博客 - www.zhaofutao.cn
+User-agent: *
+Allow: /
+
+# 排除不需要索引的页面
+Disallow: /404.html
+Disallow: /.vuepress/
+Disallow: /*?*
+Disallow: /tag/
+Disallow: /category/
+
+# 站点地图
+Sitemap: https://www.zhaofutao.cn/sitemap.xml
+
+# 针对百度蜘蛛的特殊配置
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 1
+
+# 针对Google蜘蛛的优化
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# 针对移动端蜘蛛
+User-agent: Googlebot-Mobile
+Allow: /
+
+# 禁止恶意爬虫
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /

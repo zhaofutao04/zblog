@@ -1,5 +1,6 @@
 ---
 title: PCI DSS 支付卡行业数据安全标准入门指南
+description: 深入解析PCI DSS支付卡行业数据安全标准，涵盖12项核心要求、合规等级划分、验证流程等实践要点。专业的PCI DSS合规指南帮助企业构建安全的支付环境。
 date: 2026-02-25
 categories:
   - 支付
@@ -7,7 +8,29 @@ tags:
   - PCI DSS
   - 支付安全
   - 合规
+  - 数据安全
+  - 支付卡行业
+  - 金融科技
 author: 老Z
+head:
+  - - meta
+    - name: keywords
+      content: PCI DSS,支付卡行业数据安全标准,支付安全,合规,Visa,Mastercard,持卡人数据保护,金融科技安全
+  - - meta
+    - property: og:title
+      content: PCI DSS 支付卡行业数据安全标准入门指南 | 老Z的博客
+  - - meta
+    - property: og:description
+      content: 深入解析PCI DSS支付卡行业数据安全标准，涵盖12项核心要求、合规等级划分、验证流程等实践要点
+  - - meta
+    - property: article:author
+      content: 老Z
+  - - meta
+    - property: article:published_time
+      content: 2026-02-25
+  - - meta
+    - property: article:section
+      content: 支付安全
 ---
 
 ## 什么是 PCI DSS？

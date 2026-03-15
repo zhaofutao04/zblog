@@ -1,16 +1,173 @@
 // 自定义样式 - vuepress-theme-hope
 
+// SEO 和可读性优化
+body {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+// 标题层级优化 (对SEO友好)
+h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--vp-c-brand);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 2rem 0 1rem;
+  border-bottom: 2px solid var(--vp-c-border);
+  padding-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 1.5rem 0 0.8rem;
+}
+
+// 段落优化
+p {
+  margin: 1rem 0;
+  text-align: justify;
+}
+
 // 代码块样式
 pre {
   border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+// 内联代码
+code {
+  font-size: 0.9em;
+  background: var(--vp-code-bg);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-weight: 500;
 }
 
 // 首页特性区域
 .vp-feature {
   border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.vp-feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+// 文章列表优化
+.blog-item {
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.blog-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 // 页脚备案链接
 .vp-footer a {
   color: var(--vp-c-accent);
+  text-decoration: none;
+}
+
+.vp-footer a:hover {
+  text-decoration: underline;
+}
+
+// 面包屑导航优化
+.vp-breadcrumb {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.vp-breadcrumb a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+}
+
+.vp-breadcrumb a:hover {
+  color: var(--vp-c-brand);
+}
+
+// 社交分享按钮样式
+.social-share {
+  margin: 2rem 0;
+  padding: 1rem;
+  background: var(--vp-c-bg-soft);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.social-share .share-btn {
+  display: inline-block;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--vp-c-brand);
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.social-share .share-btn:hover {
+  background: var(--vp-c-brand-dark);
+  transform: scale(1.05);
+}
+
+// 响应式优化
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .vp-feature {
+    margin-bottom: 1rem;
+  }
+
+  .social-share .share-btn {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}
+
+// 图片优化
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// 表格优化
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+
+table th,
+table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+table th {
+  background: var(--vp-c-bg-soft);
+  font-weight: 600;
 }

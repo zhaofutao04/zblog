@@ -12,7 +12,59 @@ export default defineUserConfig({
 
   head: [
     ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }],
-    ['link', { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }]
+    ['link', { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
+
+    // SEO Meta 优化
+    ['meta', { name: 'keywords', content: '支付安全,PCI DSS,3D Secure,AI大模型,Claude Code,密码学,区块链,web3,技术博客,老Z' }],
+    ['meta', { name: 'author', content: '老Z' }],
+    ['meta', { name: 'robots', content: 'index,follow' }],
+    ['meta', { name: 'googlebot', content: 'index,follow' }],
+
+    // Open Graph / 社交媒体优化
+    ['meta', { property: 'og:site_name', content: '老Z的博客' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:url', content: 'https://www.zhaofutao.cn' }],
+    ['meta', { property: 'og:title', content: '老Z的博客 - 聊技术 聊生活 聊人生' }],
+    ['meta', { property: 'og:description', content: '专注于支付安全、密码学与AI开发的深度探索。涵盖PCI DSS、3D Secure、Claude Code、区块链等前沿技术实践。' }],
+    ['meta', { property: 'og:image', content: 'https://www.zhaofutao.cn/logo.svg' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+
+    // Twitter Card
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: '老Z的博客 - 聊技术 聊生活 聊人生' }],
+    ['meta', { name: 'twitter:description', content: '专注于支付安全、密码学与AI开发的深度探索' }],
+    ['meta', { name: 'twitter:image', content: 'https://www.zhaofutao.cn/logo.svg' }],
+
+    // 结构化数据
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "老Z的博客",
+      "description": "专注于支付安全、密码学与AI开发的深度探索",
+      "url": "https://www.zhaofutao.cn",
+      "author": {
+        "@type": "Person",
+        "name": "老Z",
+        "url": "https://www.zhaofutao.cn/about/"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "老Z"
+      },
+      "inLanguage": "zh-CN",
+      "copyrightYear": "2024"
+    })],
+
+    // 网站验证
+    ['meta', { name: 'baidu-site-verification', content: '' }], // 需要申请百度站长工具
+    ['meta', { name: 'google-site-verification', content: '' }], // 需要申请Google Search Console
+
+    // DNS预解析优化
+    ['link', { rel: 'dns-prefetch', href: '//www.google-analytics.com' }],
+    ['link', { rel: 'dns-prefetch', href: '//fonts.googleapis.com' }],
+
+    // 站点地图提示
+    ['link', { rel: 'sitemap', type: 'application/xml', href: '/sitemap.xml' }]
   ],
 
   theme: hopeTheme({
@@ -74,6 +126,31 @@ export default defineUserConfig({
     plugins: {
       // 启用博客功能
       blog: true,
+
+      // SEO优化
+      seo: {
+        canonical: 'https://www.zhaofutao.cn',
+      },
+
+      // 站点地图
+      sitemap: {
+        hostname: 'https://www.zhaofutao.cn',
+        exclude: ['/404.html'],
+      },
+
+      // PWA支持
+      pwa: {
+        cacheHTML: false,
+        showInstall: false,
+        appendBase: false,
+      },
+
+      // 搜索优化
+      searchPro: {
+        indexContent: true,
+        hotReload: true,
+      },
+
       // 公告配置
       notice: [
         {

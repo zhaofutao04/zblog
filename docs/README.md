@@ -4,6 +4,16 @@ heroImage: /logo.svg
 heroText: 老Z
 tagline: 路漫漫其修远兮，吾将上下而求索
 heroFullScreen: true
+head:
+  - - meta
+    - name: description
+      content: 专注于支付安全、密码学与AI开发的深度探索。涵盖PCI DSS、3D Secure、Claude Code、区块链等前沿技术实践。老Z的技术博客分享实战经验和最佳实践。
+  - - meta
+    - property: og:title
+      content: 老Z的博客 - 支付安全、AI大模型、密码学技术专家
+  - - meta
+    - name: keywords
+      content: 支付安全,PCI DSS,3D Secure,国际银行卡组织,Claude Code,AI大模型,密码学,RSA加密,JWT,区块链,web3,技术博客,金融科技
 ---
 
 ## 欢迎来到我的技术博客
