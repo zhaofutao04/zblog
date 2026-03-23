@@ -172,8 +172,8 @@ export default defineUserConfig({
       id: 'G-2NDJZGP77K',
     }),
     copyPagePlugin({
-      includes: ['/**'],
-      excludes: ['/tags/*', '/category/*', '/timeline/*', '/'],
+      includes: ['/'],
+      excludes: ['/tags/', '/category/', '/timeline/', '/links/'],
       copyTemplate: 'withUrl'
     }),
   ],
