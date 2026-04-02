@@ -129,4 +129,4 @@ P(t_{n+1} \mid t_1,\ldots,t_n) \approx f_\theta(t_1,\ldots,t_n)
 
 ## 下一篇
 
-**Day 2** 从**线性层、非线性、损失与梯度下降**入手，让你知道那堆参数 \(\theta\) 具体长什么样、损失怎么推着它们动。继续学习时打开 [系列计划](./llm-from-scratch-series-plan.html) 或直接读 Day 2 文章（发布后文中会互链）。
+**Day 2** 从**线性层、非线性、损失与梯度下降**入手，让你知道那堆参数 \(\theta\) 具体长什么样、损失怎么推着它们动：[Day 2｜从函数到神经网络](./llm-from-scratch-day-02-nn-basics.html)。继续学习时也可打开 [系列计划](./llm-from-scratch-series-plan.html)。
