@@ -31,7 +31,7 @@ author: 老Z
 |:---:|:---|:---|:---|:---:|
 | 1 | 地图与术语 | [llm-from-scratch-day-01-map-and-terms.html](./llm-from-scratch-day-01-map-and-terms.html) | LM/LLM、token、上下文、参数；训练 vs 推理；五句话讲清在算什么 | **已发布** |
 | 2 | 从函数到神经网络 | [llm-from-scratch-day-02-nn-basics.html](./llm-from-scratch-day-02-nn-basics.html) | 线性层、非线性、损失、梯度下降（直觉）；小网络手推 | **已发布** |
-| 3 | 反向传播与计算图 | `llm-from-scratch-day-03-backprop.md` | 链式法则、计算图、为何能高效求导 | 待写 |
+| 3 | 反向传播与计算图 | [llm-from-scratch-day-03-backprop.html](./llm-from-scratch-day-03-backprop.html) | 链式法则、计算图、为何能高效求导 | **已发布** |
 | 4 | 表示学习与嵌入 | `llm-from-scratch-day-04-embeddings.md` | one-hot → 稠密向量；embedding 是可学习矩阵 | 待写 |
 | 5 | 序列与语言建模 | `llm-from-scratch-day-05-lm-objective.md` | 自回归、\(P(w_t\|w_{<t})\)、困惑度、交叉熵形式 | 待写 |
 | 6 | RNN/门控（铺垫） | `llm-from-scratch-day-06-rnn-gates.md` | 隐状态、LSTM/GRU 解决什么；与 MLP 对比 | 待写 |
@@ -63,3 +63,4 @@ author: 老Z
 |------|------|
 | 2026-04-01 | 创建计划；发布 Day 1 |
 | 2026-04-02 | 发布 Day 2 |
+| 2026-04-03 | 发布 Day 3 |

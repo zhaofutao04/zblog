@@ -207,4 +207,4 @@ L = \frac{1}{2}(\hat{y} - y)^2
 
 ## 下一篇
 
-**Day 3** 把今天的链式法则推广成 **计算图上的反向传播**：为什么能一次反向遍历求出所有 \(\partial L/\partial \theta_i\)，以及和自动微分（PyTorch 等）的对应关系。发布后见 [系列计划](./llm-from-scratch-series-plan.html) 中的 Day 3 条目。
+**Day 3** 把今天的链式法则推广成 **计算图上的反向传播**：[Day 3｜反向传播与计算图](./llm-from-scratch-day-03-backprop.html)。也可查看 [系列计划](./llm-from-scratch-series-plan.html)。
