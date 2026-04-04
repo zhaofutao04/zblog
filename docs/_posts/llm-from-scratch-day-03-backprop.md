@@ -125,38 +125,43 @@ flowchart LR
 
 **Q1.** 计算图里为什么必须是无环的？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 有环则「当前值依赖自身」，无法确定唯一的前向求值顺序；反向拓扑序也失去良好定义（与静态循环网络不同，那是另一套展开图）。
-</details>
+
+:::
 
 **Q2.** 加法节点 \(c = a + b\) 反向时，\(\bar{a}\)、\(\bar{b}\) 与上游 \(\bar{c}\) 的关系？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 \(\bar{a} = \bar{c}\)，\(\bar{b} = \bar{c}\)（对加法，局部导数对两输入都是 1）。
-</details>
+
+:::
 
 **Q3.** 若 \(x\) 同时参与 \(u=x^2\) 和 \(v=2x\)，且 \(L=u+v\)，\(\partial L/\partial x\) 是多少？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 \(\partial L/\partial u=1\)，\(\partial L/\partial v=1\)；\(\partial u/\partial x=2x\)，\(\partial v/\partial x=2\)；故 \(\partial L/\partial x = 2x + 2\)。
-</details>
+
+:::
 
 **Q4.** 反向传播与「对每个参数做有限差分」相比，主要省在哪里？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 有限差分需要对每个参数单独扰动，代价随参数维度线性爆炸；反向传播在图上线性规模复用中间结果。
-</details>
+
+:::
 
 **Q5.** `loss.backward()` 之后，参数本身变了吗？
 
-<details>
-<summary>要点</summary>
-一般<strong>不会</strong>自动变；<code>.grad</code> 只是梯度。真正更新是 <code>optimizer.step()</code>（或你手写 \(\theta \leftarrow \theta - \eta g\)）。
-</details>
+::: details 要点
+
+一般 **不会** 自动变；`.grad` 只是梯度。真正更新是 `optimizer.step()`（或你手写 \(\theta \leftarrow \theta - \eta g\)）。
+
+:::
 
 ---
 

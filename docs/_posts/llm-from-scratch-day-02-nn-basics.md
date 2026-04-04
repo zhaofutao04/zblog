@@ -163,38 +163,43 @@ L = \frac{1}{2}(\hat{y} - y)^2
 
 **Q1.** 只有线性层、没有激活，堆三层和堆一层本质差别是什么？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 无本质差别：多个矩阵连乘可合并成一个矩阵，仍是线性映射。
-</details>
+
+:::
 
 **Q2.** 线性层 \(W\mathbf{x}+\mathbf{b}\) 里，参数存在哪里？
 
-<details>
-<summary>要点</summary>
-主要在矩阵 \(W\) 与向量 \(\mathbf{b}\) 的元素里（共 \(d_{\text{out}}d_{\text{in}}+d_{\text{out}}\) 个标量，与具体实现布局无关）。
-</details>
+::: details 要点
+
+主要在矩阵 \(W\) 与向量 \(\mathbf{b}\) 的元素里（共 \(d_{\text{out}} \cdot d_{\text{in}} + d_{\text{out}}\) 个标量，与具体实现布局无关）。
+
+:::
 
 **Q3.** 梯度下降里为什么是减梯度，而不是加？
 
-<details>
-<summary>要点</summary>
-梯度指向损失上升方向；要<strong>下降</strong>损失，沿负梯度走。
-</details>
+::: details 要点
+
+梯度指向损失上升方向；要 **下降** 损失，沿负梯度走。
+
+:::
 
 **Q4.** 对上节玩具网络，若 \(\hat{y}-y=2\)，\(h=3\)，\(\partial L/\partial w_2\) 是多少？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 \(\partial L/\partial \hat{y}=\hat{y}-y=2\)，\(\partial L/\partial w_2 = 2\times 3 = 6\)（注意若 \(L=\frac{1}{2}e^2\) 则 \(\partial L/\partial\hat{y}=e=2\)）。
-</details>
+
+:::
 
 **Q5.** LLM 的 FFN 里更常出现的激活是 ReLU 还是 GELU？
 
-<details>
-<summary>要点</summary>
-常见是 <strong>GELU</strong>（或同类平滑激活）；Day 10 会对着结构再记一版。
-</details>
+::: details 要点
+
+常见是 **GELU**（或同类平滑激活）；Day 10 会对着结构再记一版。
+
+:::
 
 ---
 

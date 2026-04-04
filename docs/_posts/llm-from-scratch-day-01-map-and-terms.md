@@ -90,38 +90,43 @@ P(t_{n+1} \mid t_1,\ldots,t_n) \approx f_\theta(t_1,\ldots,t_n)
 
 **Q1.** 「70B 模型」里的 70B 指的是什么？和「上下文 8k」是同一类概念吗？
 
-<details>
-<summary>要点</summary>
-70B 是<strong>参数量</strong>；8k 是<strong>上下文长度</strong>。一个管「模型有多大」，一个管「一次能看多长」。
-</details>
+::: details 要点
+
+70B 是 **参数量**；8k 是 **上下文长度**。一个管「模型有多大」，一个管「一次能看多长」。
+
+:::
 
 **Q2.** 为什么同一句话在不同 tokenizer 下 token 数可能不同？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 分词规则与词表不同，子词切分粒度不同。
-</details>
+
+:::
 
 **Q3.** 推理阶段会不会用反向传播更新权重？
 
-<details>
-<summary>要点</summary>
-标准产品推理<strong>不会</strong>；更新权重属于训练或单独的微调流程。
-</details>
+::: details 要点
+
+标准产品推理 **不会**；更新权重属于训练或单独的微调流程。
+
+:::
 
 **Q4.** 训练和推理各主要「吃」什么数据？
 
-<details>
-<summary>要点</summary>
-训练吃<strong>大规模语料</strong>以调参；推理主要吃<strong>用户 prompt + 已生成 token</strong>做前向计算。
-</details>
+::: details 要点
+
+训练吃 **大规模语料** 以调参；推理主要吃 **用户 prompt + 已生成 token** 做前向计算。
+
+:::
 
 **Q5.** 「LM 预测下一个 token」和「聊天里一整句回答」之间差了什么？
 
-<details>
-<summary>要点</summary>
-底层仍是逐 token 预测；<strong>一整句</strong>是多步自回归拼接的结果，还可能叠加系统提示、微调、解码策略（Day 14 再细讲）。
-</details>
+::: details 要点
+
+底层仍是逐 token 预测；**一整句** 是多步自回归拼接的结果，还可能叠加系统提示、微调、解码策略（Day 14 再细讲）。
+
+:::
 
 ## 延伸阅读（可选）
 

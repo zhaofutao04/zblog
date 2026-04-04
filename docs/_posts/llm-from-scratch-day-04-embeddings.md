@@ -101,38 +101,43 @@ X \in \mathbb{R}^{n \times d}
 
 **Q1.** Embedding 矩阵的行数、列数各由什么决定？
 
-<details>
-<summary>要点</summary>
-行数 ≈ 词表大小 <strong>|V|</strong>；列数 = 模型维度 <strong>d</strong>。
-</details>
+::: details 要点
+
+行数 ≈ 词表大小 **|V|**；列数 = 模型维度 **d**。
+
+:::
 
 **Q2.** 为什么说 embedding 是「可训练参数」而不是查静态词典？
 
-<details>
-<summary>要点</summary>
-矩阵 <strong>E</strong> 的元素随损失与反向传播更新，向量会适应语料中的用法。
-</details>
+::: details 要点
+
+矩阵 **E** 的元素随损失与反向传播更新，向量会适应语料中的用法。
+
+:::
 
 **Q3.** 同一 batch 里同一个 token 出现两次，反向时 \(E\) 的更新会怎样？
 
-<details>
-<summary>要点</summary>
-对该 token 对应行的梯度会<strong>累加</strong>（两次 lookup 各贡献一条路径）。
-</details>
+::: details 要点
+
+对该 token 对应行的梯度会 **累加**（两次 lookup 各贡献一条路径）。
+
+:::
 
 **Q4.** 仅使用 token embedding、不加位置信息，交换序列中两个 token 的位置，网络在「结构上」能区分吗？
 
-<details>
-<summary>要点</summary>
-若后续子层对位置不敏感（纯对集合做对称运算），则区分不了；Transformer 标准做法要加<strong>位置编码</strong>。
-</details>
+::: details 要点
+
+若后续子层对位置不敏感（纯对集合做对称运算），则区分不了；Transformer 标准做法要加 **位置编码**。
+
+:::
 
 **Q5.** \(|V|=50000\)，\(d=1024\)，仅输入 embedding 大约多少参数？
 
-<details>
-<summary>要点</summary>
+::: details 要点
+
 \(50000 \times 1024 = 5.12 \times 10^7\)（约 5120 万）个标量。
-</details>
+
+:::
 
 ---
 
