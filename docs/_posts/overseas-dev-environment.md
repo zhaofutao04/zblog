@@ -331,6 +331,8 @@ exit
 
 #### 3.2.3 配置文件
 
+> **模型 ID**：Anthropic / OpenAI 会更新、下线快照版模型名。下列 JSON 中的 `model_mapping`、`models`、`claude.model` **仅为示例**；请以各服务商 **控制台与 API 文档**（或 Claude Code 当前默认）中的 **model** 字符串为准，勿照搬已退役 ID。
+
 ```json
 {
   "server": {
@@ -346,14 +348,14 @@ exit
       "name": "claude",
       "endpoint": "https://api.anthropic.com",
       "model_mapping": {
-        "claude-3": "claude-3-sonnet-20240229"
+        "claude-3": "claude-3-5-sonnet-20241022"
       }
     },
     {
       "name": "openai",
       "endpoint": "https://api.openai.com",
       "model_mapping": {
-        "gpt-4": "gpt-4-turbo-preview"
+        "gpt-4": "gpt-4o"
       }
     }
   ]
@@ -376,14 +378,14 @@ CC Switch 运行在本地 9000 端口，统一管理多个 AI 服务提供商：
       "type": "anthropic",
       "endpoint": "http://your.server.ip:8080/v1",
       "api_key": "your_proxy_token",
-      "models": ["claude-3-sonnet", "claude-3-opus", "claude-3-haiku"]
+      "models": ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229"]
     },
     {
       "name": "cliproxyapi-OpenAI",
       "type": "openai",
       "endpoint": "http://your.server.ip:8080/v1",
       "api_key": "your_proxy_token",
-      "models": ["gpt-4", "gpt-3.5-turbo", "gpt-4-turbo"]
+      "models": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"]
     }
   ],
   "default_provider": "cliproxyapi-Claude",
@@ -402,7 +404,7 @@ IDE/编辑器通过 CC Switch 连接到 cliproxyapi，形成完整的代理链�
 {
   "claude.provider": "ccswitch",
   "claude.endpoint": "http://localhost:9000/api",
-  "claude.model": "claude-3-sonnet"
+  "claude.model": "claude-3-5-sonnet-20241022"
 }
 ```
 

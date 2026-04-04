@@ -13,6 +13,8 @@ author: 老Z
 
 本文是 [PCI DSS 入门指南](/posts/pci-dss-overview.html) 的技术实现篇，主要介绍如何从技术层面实现 PCI DSS 合规的支付系统。
 
+v4 合规时间表与「全面生效」日期请以 [PCI SSC 官方站点](https://www.pcisecuritystandards.org/) 及收单机构要求为准；概述篇已补充 **2026-03-31** 一类常见节点说明，实现前请再核对当期文档。
+
 ## 安全架构设计
 
 ```mermaid

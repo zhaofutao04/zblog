@@ -93,7 +93,7 @@ interface MCPServer {
 
 ### 必备 MCP 服务器推荐
 
-根据 2026 年的最新调研，以下是**最实用的 MCP 服务器**：
+结合常见实践与 [MCP 官方 servers 仓库](https://github.com/modelcontextprotocol/servers) 等来源，下面是**较常用**的 MCP 服务器组合（列表与能力随版本变化，**以各仓库 README 与发布说明为准**）：
 
 #### 🔧 开发核心类
 

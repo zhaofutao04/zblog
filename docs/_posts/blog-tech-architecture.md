@@ -16,37 +16,51 @@ author: 老Z
 | VuePress | 2.0.0-rc.26 | 静态站点生成器 |
 | vuepress-theme-hope | 2.0.0-rc.102 | 博客主题 |
 | Vue | 3.5.x | 前端框架 |
-| Vite | 7.x | 构建工具 |
+| Vite | 7.x | 构建工具（由 `@vuepress/bundler-vite` 引入） |
 | TypeScript | 5.x | 配置语言 |
 | Sass | 1.77.x | 样式预处理器 |
+| KaTeX | ^0.16.x | 数学公式（主题 `markdown.math`） |
+| Mermaid | ^11.x | 图表（主题 `markdown.mermaid`） |
+| @vuepress/plugin-slimsearch | 2.0.0-rc.121 | 全文搜索（替代已弃用的 searchPro） |
+
+站点级插件（`config.ts` 根级 `plugins`）：`@vuepress/plugin-google-analytics`、`vuepress-plugin-copy-page`。主题内还启用了 PWA、SEO、sitemap、公告等，详见仓库 `docs/.vuepress/config.ts`。
+
+根配置中 `shouldPrefetch: false`，避免 PWA 与链接预取策略冲突。
 
 ## 架构图
 
+部署侧数据流：**源码在本地或 CI 上构建**，产物才是托管对象（边缘节点不跑 VuePress）。
+
 ```mermaid
 flowchart TB
-    subgraph CDN["Cloudflare CDN"]
-        A1["全球节点分发"]
+    subgraph Source["内容与配置"]
+        S1["Markdown / Frontmatter"]
+        S2["docs/.vuepress/config.ts"]
+        S3["client.ts / 样式 / public"]
+    end
+
+    subgraph Build["本地或 CI 构建"]
+        B1["VuePress + vuepress-theme-hope"]
+        B2["Vite 7.x 打包"]
+    end
+
+    subgraph Artifact["构建产物"]
+        A1["静态 HTML/CSS/JS<br/>docs/.vuepress/dist"]
     end
 
     subgraph Pages["Cloudflare Pages"]
-        B1["静态文件托管"]
-        B2["CI/CD 自动部署"]
+        P1["静态文件托管"]
+        P2["与 GitHub 联动部署"]
     end
 
-    subgraph VuePress["VuePress 2"]
-        C1["Markdown 源文件"]
-        C2["vuepress-theme-hope"]
+    subgraph CDN["Cloudflare CDN"]
+        C1["全球边缘分发"]
     end
 
-    subgraph Build["构建工具链"]
-        D1["Vite 7.x"]
-        D2["Vue 3"]
-        D3["TypeScript"]
-    end
-
-    CDN --> Pages
-    Pages --> VuePress
-    VuePress --> Build
+    Source --> Build
+    Build --> Artifact
+    Artifact --> Pages
+    Pages --> CDN
 ```
 
 ## 主题功能
@@ -70,6 +84,8 @@ vuepress-theme-hope 提供以下内置功能：
 - 代码块复制按钮
 - 响应式布局
 - RSS/Atom/JSON Feed 支持
+- Markdown 内 **Mermaid** 与 **KaTeX**（`$...$` / `$$...$$`、`\(...\)` / `\[...\]` 等，见主题配置）
+- 全文搜索（**SlimSearch**，主题 `plugins.slimsearch`）
 
 ## 构建流程
 
@@ -89,8 +105,12 @@ my-blog/
 ├── docs/
 │   ├── .vuepress/
 │   │   ├── config.ts      # 主配置
+│   │   ├── client.ts      # 客户端增强（如 copy-page 入口）
 │   │   ├── styles/        # 样式
-│   │   └── public/        # 静态资源
+│   │   ├── public/        # 静态资源
+│   │   ├── .cache/        # 构建缓存（勿提交）
+│   │   ├── .temp/         # 临时文件（勿提交）
+│   │   └── dist/          # 构建输出（勿提交）
 │   ├── _posts/            # 博客文章
 │   ├── about/             # 关于页面
 │   └── README.md          # 首页

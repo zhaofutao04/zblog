@@ -90,16 +90,21 @@ navbar: [
 
 ### 网站信息
 
+`title`、`description` 与 `theme` 必须写在**同一个** `defineUserConfig({ ... })` 对象里（`theme` 与 `lang`、`head` 等平级），不要拆成两个独立的 `export default`。
+
 ```typescript
+import { defineUserConfig } from 'vuepress'
+import { hopeTheme } from 'vuepress-theme-hope'
+
 export default defineUserConfig({
+  lang: 'zh-CN',
   title: '网站标题',
   description: '网站描述',
-})
-
-theme: hopeTheme({
-  author: { name: '作者名' },
-  logo: '/logo.svg',
-  footer: '页脚内容',
+  theme: hopeTheme({
+    author: { name: '作者名' },
+    logo: '/logo.svg',
+    footer: '页脚内容',
+  }),
 })
 ```
 

@@ -77,6 +77,10 @@ timeline
         2024 : PCI DSS 4.0.1 发布
 ```
 
+### 合规排期提醒（v4 全面生效）
+
+PCI DSS v4.x 中部分条目曾分阶段过渡。**2026 年 3 月 31 日**起，v4 相关要求的全面生效与评估口径是业内常见排期节点（具体以你签约收单机构、卡品牌与 **PCI SSC** 最新文档为准）。规划迁移与测评前请直接查阅 [PCI Security Standards Council](https://www.pcisecuritystandards.org/) 发布的正式版本与 FAQ，勿仅依赖本文时间线。
+
 ### 版本演进关键变化
 
 | 版本 | 发布时间 | 主要变化 |
