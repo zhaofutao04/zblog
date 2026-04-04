@@ -41,16 +41,18 @@ z = w_1 x + b_1,\quad h = \sigma(z),\quad \hat{y} = w_2 h + b_2,\quad L = \tfrac
 
 ```mermaid
 flowchart LR
-  x((x)) --> z[z = w1·x+b1]
+  x((x)) --> z["z = w1*x + b1"]
   w1((w1)) --> z
   b1((b1)) --> z
-  z --> h[h = σ(z)]
-  h --> yhat["ŷ = w2·h+b2"]
+  z --> h["h = sigma(z)"]
+  h --> yhat["y_hat = w2*h + b2"]
   w2((w2)) --> yhat
   b2((b2)) --> yhat
-  yhat --> L[L = ½(ŷ-y)²]
-  y((y)) --> L
+  yhat --> loss["L = 1/2 * (y_hat - y)^2"]
+  y((y)) --> loss
 ```
+
+> 图中为 **Mermaid 语法兼容** 使用 ASCII（`sigma`、`y_hat`、`*`）；与上文 LaTeX 公式 \(\sigma,\hat{y},\frac12\) 含义相同。
 
 （上图是示意；具体实现里 \(w_1,w_2\) 也会作为叶子节点参与乘法节点。）
 
