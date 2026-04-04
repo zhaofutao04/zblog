@@ -1,6 +1,6 @@
 ---
 title: 主流 AI 编程工具怎么选：工具维度 × 模型维度
-date: 2026-04-12
+date: 2026-04-13
 categories:
   - AI大模型
   - 建站
@@ -13,89 +13,133 @@ tags:
 author: 老Z
 ---
 
-写代码用的 AI，拆开来看就两件事：**用什么工具装在身上**（插件 / 独立编辑器 / 终端），以及 **背后用哪类模型在算**（GPT、Claude、Gemini、厂商自研等）。下面只谈当前最常被提到的几款，**不追求清单最全**；具体模型名与套餐以各官网为准。
+写代码用的 AI，拆开来看就两件事：**用什么工具**（插件 / 编辑器 / 终端），以及 **用哪类模型在算**。下面只谈几款高频产品；**具体模型名与是否可选以各产品当前控制台 / 文档为准**，下文的枚举与矩阵是**分桶 + 概括**，方便你做二维对照。
 
 ---
 
-## 维度一：工具在解决什么问题
+## 一、模型维度：常见模型族（枚举）
+
+编程工具里出现的模型，可按「谁家的、干什么活」粗分为下面几类（同类里还会有 **Fast / Pro / Thinking** 等档位，名称随版本更替）：
+
+1. **OpenAI GPT / Codex 系**  
+   通用 GPT 与面向 **代码 / Agent** 的 Codex 向模型；常见于补全、多步改代码、部分产品默认档。
+
+2. **Anthropic Claude 系**  
+   **Sonnet / Opus / Haiku** 等档位（命名会迭代）；长上下文与多文件任务里常被列为可选或默认强模。
+
+3. **Google Gemini 系**  
+   在 **Copilot 部分客户端**、**Cursor / Windsurf** 等里作为可选模型；多模态 / 长文场景部分产品会推荐。
+
+4. **厂商自研代码模型**  
+   典型例子是 **Windsurf 的 SWE（如 SWE-1.x）**：与产品一块优化延迟和「工程流」；**不开放给其他工具**当通用 API。
+
+5. **其他闭源商用模型（随工具集成变化）**  
+   例如部分时期 Copilot 中的 **xAI Grok**、**轻量专用小模型**（用于低延迟补全）等；是否出现完全取决于 **GitHub / 工具方** 当期集成列表。
+
+6. **BYOK 接入的任意兼容端点**  
+   不算单一「族」，但算一种 **模型来源维度**：你在 **Cursor / Windsurf** 等里填 **自己的 API Key**，底层可能是 OpenAI 兼容网关、Anthropic、国产云厂商等——**账单与数据策略**跟工具订阅分离，需自己评估。
+
+---
+
+## 二、工具维度：四款产品在解决什么
 
 | 关注点 | 说明 |
 |--------|------|
-| **挂在哪** | 继续用 VS Code + 插件，还是换 Cursor/Windsurf 这种「带 AI 的编辑器」，抑或终端里的 Claude Code。 |
-| **交互形态** | 行内补全、侧边 Chat、多文件 Agent、是否接 MCP / 自定义规则。 |
-| **生态与治理** | 是否绑 GitHub、企业审计、团队是否允许第二套编辑器。 |
-
----
-
-## 维度二：模型在解决什么问题
-
-| 关注点 | 说明 |
-|--------|------|
-| **能力取向** | 有的偏「快改、补全」，有的偏「长上下文、多步推理、大 refactor」。 |
-| **能否切换** | 产品内下拉换模、**Auto** 代选，还是基本锁一家（如纯 Claude 路线）。 |
-| **BYOK** | 能否自带 OpenAI / Anthropic 等 **API Key**，账单走自己的云账号。 |
-| **合规与数据** | 代码是否经厂商托管模型、是否支持企业数据策略（需对照各产品说明）。 |
-
-常见「模型族」在编程场景里的大致印象（粗线条，且随版本变）：**GPT / Codex 系**工程任务覆盖广；**Claude** 长文与多文件上下文口碑好；**Gemini** 在部分 IDE 与 Copilot 多模态场景出现；**自研代码模型**（如 Windsurf 的 SWE）强调延迟与产品一体化。
-
----
-
-## 四款主流工具（工具维度）
+| **挂在哪** | VS Code + 插件、独立编辑器（Cursor / Windsurf）、终端 CLI（Claude Code）。 |
+| **交互形态** | 补全、Chat、多文件 Agent、MCP / 规则。 |
+| **生态与治理** | 是否绑 GitHub、企业审计、能否接受第二套编辑器。 |
 
 ### GitHub Copilot
 
-- **形态**：以 **VS Code / JetBrains / Vim 等插件** 为主，Chat、Agent 与 **GitHub**（PR、Issue 等）同一套账户与治理。
-- **适合**：团队已在 GitHub 上协作、希望少换工具、要企业级权限与用量管理。
-- **优**：生态成熟、模型可选多、和代码托管工作流贴得紧。
-- **劣**：强绑定 GitHub 叙事；高阶能力与 **套餐 / 高级请求计费** 强相关。
+**形态**：**VS Code / JetBrains / Vim 等插件** + Chat / Agent，与 **GitHub** 账户与企业策略一体。  
+**适合**：少换工具、重度 GitHub、要成熟治理与用量模型。  
+**优劣**：生态稳、**多模型切换**成熟；高阶能力常与 **套餐 / 高级请求** 挂钩。
 
 ### Cursor
 
-- **形态**：**独立编辑器**（VS Code 系血统）+ Chat / Composer / Agent，强调「按项目改一堆文件」。
-- **适合**：愿意为主力编辑器买单、要强 Agent、要规则（Rules）与多模型切换。
-- **优**：产品迭代快、**多模型**与项目级体验集中。
-- **劣**：订阅与 **额度 / 积分** 要持续关注；大改代码需团队约定审查习惯。
+**形态**：**独立编辑器** + Composer / Agent，强调按项目改多文件。  
+**适合**：要强 Agent、要 Rules、要 **多模型 + 自有 Key**。  
+**优劣**：迭代快；**额度 / 积分** 要算账，大改需团队审查习惯。
 
 ### Windsurf（Cascade）
 
-- **形态**：独立编辑器 + **Cascade** Agent + Tab；自有 **SWE** 模型与第三方模型并存。
-- **适合**：想和 Cursor 同类体验、又看重厂商自研低延迟或 **BYOK** 的团队。
-- **优**：**Cascade** 一条流做多步；模型下拉通常较全（含自研 + 第三方）。
-- **劣**：与 Cursor 赛道重叠，迁移与比价要自己做一遍。
+**形态**：独立编辑器 + **Cascade** + Tab；**SWE 自研** 与第三方模型并存。  
+**适合**：与 Cursor 同类，但看重 **自研低延迟** 或 **BYOK**。  
+**优劣**：模型下拉通常全；与 Cursor 需实测二选一。
 
 ### Claude Code
 
-- **形态**：**终端 CLI** + Agent，**MCP、Skills** 扩展多。
-- **适合**：习惯命令行、要长会话「代理式」改仓库、深度用 Anthropic 栈的开发者。
-- **优**：长上下文与「甩任务给 Agent」的心智清晰；扩展生态活。
-- **劣**：不是 IDE 里点按钮的路径；模型侧主要跟 **Anthropic** 订阅走。
+**形态**：**终端 CLI** + Agent，**MCP、Skills** 丰富。  
+**适合**：命令行长会话、代理式改仓库、Anthropic 栈为主。  
+**优劣**：心智清晰；模型侧 **以 Claude 为主**，非「IDE 里点按钮」路径。
 
-**顺带一提**：**JetBrains** 系内置 **AI Assistant / Junie** 是「不换 IDE」的常见选项，模型多由 JetBrains 对接多家，这里不展开，适合 IDEA / PyCharm 铁粉先内用再考虑要不要加 Copilot 或第二编辑器。
-
----
-
-## 同一张表：工具 × 模型（概括）
-
-| 工具 | 模型侧在说什么 |
-|------|----------------|
-| **Copilot** | 官方提供 **多模型切换**（如 GPT‑Codex 系、Claude、Gemini 等，以 [Model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison) 为准），按任务选模或 Auto。 |
-| **Cursor** | 常见对接 **Claude、OpenAI（含 Codex 向）、Gemini** 等，支持 **自有 Key**；详见 [Cursor Docs](https://cursor.com/docs)。 |
-| **Windsurf** | **SWE 自研** + **Claude / GPT / Gemini** 等，**BYOK** 以控制台为准；见 [Windsurf Models](https://docs.windsurf.com/windsurf/models)。 |
-| **Claude Code** | 以 **Claude**（Sonnet / Opus 等档位）为主，随 Anthropic 发布更新；见 [Claude Code 文档](https://code.claude.com/docs)。 |
+**顺带**：**JetBrains AI / Junie** 属于「不换 IDE」路线，由 JetBrains 对接多家模型，此处不单独占行。
 
 ---
 
-## 两条线一起怎么选（很短）
+## 三、工具 × 模型：二维关系
 
-1. **先定工具**：不换编辑器 → **Copilot**（或 JetBrains 内置）；接受新编辑器且要强 Agent → **Cursor / Windsurf** 实测二选一；要终端代理 → **Claude Code**。  
-2. **再定模型**：同一工具内优先用 **官方推荐的默认 / Auto** 起步；卡质量再换强推理模，卡成本再换轻量模；能 **BYOK** 的团队把「工具订阅 + 模型 API 账单」分开算清。  
-3. **定期核对**：模型列表一季度一变，以各产品 **Settings 里下拉框 + 官方文档** 为准。
+### 3.1 矩阵（概括）
+
+表中 **●** 表示该产品在**典型配置**下，用户常能**在界面里选到**或官方主推的集成（不含 BYOK 自定义后端）；**—** 表示一般**不作为该产品的一等公民**；**BYOK** 列表示是否普遍支持 **自带 API Key** 接模型。
+
+| 工具 | GPT / Codex 系 | Claude 系 | Gemini 系 | 自研 SWE 等 | BYOK |
+|------|:---:|:---:|:---:|:---:|:---:|
+| **GitHub Copilot** | ● | ● | ● | — | 一般否 |
+| **Cursor** | ● | ● | ● | — | 是 |
+| **Windsurf** | ● | ● | ● | ● | 是 |
+| **Claude Code** | — | ● | — | — | 非典型 |
+
+**说明**：Claude Code 的「模型」随 **Anthropic 订阅与产品策略** 走，通常不把它理解成「多族模型超市」；Copilot 的 **Grok / 小模型** 等未单独拆列，归入「其他集成」类，以 [官方模型页](https://docs.github.com/en/copilot/reference/ai-models/model-comparison) 为准。
+
+### 3.2 关系图（工具 → 常规模型族）
+
+下图与上表一致：**箭头表示「该产品侧常见可选或主推」**；Mermaid 里用 ASCII 节点 id，避免渲染失败。
+
+```mermaid
+flowchart LR
+  subgraph tools
+    direction TB
+    CP[Copilot]
+    CR[Cursor]
+    WS[Windsurf]
+    CC[Claude_Code]
+  end
+  subgraph families
+    direction TB
+    GPT[GPT_Codex]
+    CL[Claude]
+    GM[Gemini]
+    SWE[SWE]
+  end
+  CP --> GPT
+  CP --> CL
+  CP --> GM
+  CR --> GPT
+  CR --> CL
+  CR --> GM
+  WS --> GPT
+  WS --> CL
+  WS --> GM
+  WS --> SWE
+  CC --> CL
+```
+
+> **怎么读**：左侧是 **工具**，右侧是 **模型族**；一条边表示「该工具里通常能玩到这一类」。**BYOK** 时，Cursor / Windsurf 右侧实际连到的可能是表中未画的其它端点，图上不单独展开。
 
 ---
 
-## 官方文档（核对模型用）
+## 四、两条线一起怎么选（很短）
 
-- [GitHub Copilot：Supported AI models](https://docs.github.com/en/copilot/using-github-copilot/ai-models/supported-ai-models-in-copilot)  
+1. **先定工具**：不换编辑器 → **Copilot**（或 JetBrains 内置）；要强新编辑器 Agent → **Cursor / Windsurf** 二选一实测；要终端代理 → **Claude Code**。  
+2. **再定模型**：在已选工具内用 **默认 / Auto** 起步；要 **Claude-only** 心智 → **Claude Code** 或 Cursor/Windsurf 里锁 Claude；要 **自研 SWE** 体验 → 优先看 **Windsurf**。  
+3. **定期核对**：模型列表变化快，以 **各产品 Settings + 官方文档** 为准。
+
+---
+
+## 五、官方文档（核对模型用）
+
+- [GitHub Copilot：Model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison)  
 - [Cursor 文档](https://cursor.com/docs)  
 - [Windsurf Models](https://docs.windsurf.com/windsurf/models)  
 - [Claude Code 文档](https://code.claude.com/docs)  
@@ -104,4 +148,4 @@ author: 老Z
 
 ## 小结
 
-选型时把 **工具**（你在哪写、怎么交互）和 **模型**（谁在算、能不能换、钱怎么付）分开想，会清晰很多。本文只覆盖四款高频产品；若你的场景是 **强合规私有化** 或 **只认开源插件**，再单独加一条技术栈说明，我可以帮你缩成更短的决策分支。
+**模型维度**先按族枚举，再和 **工具维度**做一张 **矩阵 + 关系图**，选型时就是：我在哪写（工具）× 我想用哪类脑子（模型族）× 要不要 BYOK。若你只有一条硬约束（例如必须 Claude、或必须留在 VS Code），可以从矩阵里直接划掉不可行格，再剩 1～2 个组合实测即可。
