@@ -1,6 +1,6 @@
 ---
 title: 主流 AI 编程工具怎么选：工具维度 × 模型维度
-date: 2026-04-14
+date: 2026-04-15
 categories:
   - AI大模型
   - 建站
@@ -10,95 +10,106 @@ tags:
   - Cursor
   - Claude Code
   - Codex
+  - OpenAI
   - 开发工具
 author: 老Z
 ---
 
-写代码用的 AI，拆开来看就两件事：**在什么产品里干活**（工具 / 宿主），以及 **背后用哪类模型**（GPT、Codex 向、Claude、Gemini……）。下文以国内开发者**最常碰到的三条路径**为主：**GitHub Copilot、Cursor、Claude Code**；**具体模型名以各产品当期文档为准**。
+写代码用的 AI，拆开来看就两件事：**在什么产品里干活**（工具），以及 **用哪些模型档位在算**（模型族）。此前一文把 **Codex** 只写成「模型名」、不写入工具侧——这与 **OpenAI 当前产品线**不符；下面按 [OpenAI Codex 官方开发者文档](https://developers.openai.com/codex/cli/) 等对正文做了校正。
 
 ---
 
-## 「工具」里为啥没有单独一行 Codex？
+## 「Codex」别混成一件事：产品 vs 模型名
 
-**Codex** 一般指 **OpenAI 的编程向模型 / 能力线**（名称随代际会变），它出现在：
+今天至少应区分两层含义（名字相似，容易搅在一起）：
 
-- **GitHub Copilot** 里的可选模型（如各类 *Codex* / GPT 编程向档位）  
-- **Cursor** 里选的 OpenAI / Codex 向模型  
-- **ChatGPT / OpenAI 网页或客户端** 里的 coding、Agent 能力（若你主要在对话里写代码）
+### 1）OpenAI **Codex 产品**（独立工具线）
 
-也就是说：**Codex 是「模型族」这一维上的标签**，不是和「装 VS Code 插件」同级的另一个安装包。本文在 **模型族**里用 **「GPT / Codex 系」** 这一列覆盖它；**工具**列写的是你**打开哪个产品界面**。
+这是 OpenAI 的 **编码 Agent 产品线**，典型包括：
 
-若你几乎只在 **ChatGPT** 里贴代码、跑生成，可以把 **「OpenAI ChatGPT（网页/客户端）」** 理解成第四种宿主——本文不单独展开矩阵，避免和 IDE 赛道混成一张表；你心里把它当作 **「对话型宿主 + 背后 OpenAI 模型」** 即可。
+| 形态 | 是什么 |
+|------|--------|
+| **Codex CLI** | 在终端本地跑的 **coding agent**（交互式 TUI），**Rust 实现、[开源](https://github.com/openai/codex)**；可对选定目录读、改、跑代码。 |
+| **Codex IDE 扩展** | 在 **VS Code、Cursor 等 VS Code 兼容编辑器**里使用，与 **CLI 共用同一套 Agent**；支持聊天、改码、预览 diff、云端任务等（详见 [IDE 功能说明](https://developers.openai.com/codex/ide/features/)）。 |
+| **Codex Cloud** | 把更大任务丢到云端跑、再在本地/IDE 里跟进与合入（扩展与 CLI 里均可衔接）。 |
+| **与 ChatGPT 账号打通** | **ChatGPT Plus、Pro、Business、Edu、Enterprise** 等套餐包含 Codex 能力；计费与权益以 [OpenAI 定价说明](https://developers.openai.com/codex/pricing) 为准。 |
+
+因此：**Codex 完全可以、也应该出现在「工具维度」里**——和「只在 Copilot 里选一个名叫 *Codex* 的模型」不是同一回事。
+
+### 2）***GPT‑x‑Codex* 等模型档位**（名字里带 Codex）
+
+在 **Codex 产品内部**可用 `/model` 等在 **GPT‑5.4、GPT‑5.3‑Codex** 等之间切换（见 [CLI 文档](https://developers.openai.com/codex/cli/)）。  
+**GitHub Copilot** 的可选模型列表里也会出现 **带 Codex 字样的档位**——那是 **Copilot 侧集成**，与 **你是否安装 OpenAI Codex CLI/扩展** 无必然关系。
+
+**一句话**：**左边选「用不用 OpenAI Codex 这一套 Agent」**；**右边选「用哪一族/哪一档模型」**——Copilot 里的 *Codex* 档位归 **模型族**；**OpenAI Codex CLI/扩展** 归 **工具**。
 
 ---
 
 ## 一、模型维度：常见模型族（枚举）
 
-1. **OpenAI GPT / Codex 系**  
-   通用 GPT 与 **编程 / Agent 向**的 Codex 品牌或同类档位；**Copilot、Cursor** 里最常见的一类选项。
+1. **OpenAI GPT / *Codex* 向档位**  
+   通用 GPT 与 **编程 Agent 向**的命名档位（如 *GPT‑5.3‑Codex*）；既出现在 **OpenAI Codex 产品**里，也出现在 **GitHub Copilot**、**Cursor** 等的可选模型中。
 
 2. **Anthropic Claude 系**  
-   Sonnet / Opus / Haiku 等档位（命名会迭代）；长上下文、多文件任务里常被列为强选项。
+   Sonnet / Opus / Haiku 等（命名会迭代）。
 
 3. **Google Gemini 系**  
-   在 **Copilot 部分客户端**、**Cursor** 等作为可选模型出现。
+   在 **Copilot 部分客户端**、**Cursor** 等作为选项出现。
 
-4. **其它闭源集成（随工具变化）**  
-   如部分时期 Copilot 里的 **xAI Grok**、**轻量小模型**（低延迟补全）等，以官方列表为准。
+4. **其它闭源集成**  
+   如 Copilot 中曾出现的 **xAI Grok**、轻量小模型等，以当期列表为准。
 
-5. **少数产品绑定的自研代码模型**  
-   某些**商业编辑器**会推自家模型（海外讨论里偶尔出现）；**认知度因地区差异很大**，对大多数人**不是必选项**，下文矩阵不单独占列，避免喧宾夺主。
-
-6. **BYOK（自带 API Key）**  
-   在 **Cursor** 等里接自己的 OpenAI / Anthropic 等账单；底层模型族仍落回上面几类。
+5. **BYOK**  
+   在 **Cursor** 等宿主用 **自己的 API Key**；与 **ChatGPT 套餐内含的 Codex** 计费路径不同。
 
 ---
 
-## 二、工具维度：三款主流宿主（你在哪写）
+## 二、工具维度：常见宿主（你在哪写）
 
 | 关注点 | 说明 |
 |--------|------|
-| **挂在哪** | VS Code + 插件、独立编辑器（Cursor）、终端 CLI（Claude Code）。 |
-| **交互形态** | 补全、Chat、多文件 Agent、MCP / 规则。 |
-| **生态与治理** | 是否绑 GitHub、企业审计、能否接受第二套编辑器。 |
+| **挂在哪** | 插件（Copilot）、**OpenAI Codex（CLI + IDE 扩展）**、独立编辑器（Cursor 自带 AI）、终端 CLI（Claude Code）。 |
+| **交互形态** | 补全、Chat、Agent、MCP、云端委派、审批模式等。 |
 
 ### GitHub Copilot
 
-**形态**：**VS Code / JetBrains / Vim 等插件** + Chat / Agent，与 **GitHub** 一体。  
-**适合**：少换工具、重度 GitHub、要成熟治理。  
-**优劣**：稳、**多模型**（含 **GPT/Codex 向**、Claude、Gemini 等，以官方为准）；高阶常与 **套餐 / 高级请求** 挂钩。
+**形态**：**VS Code / JetBrains / Vim 等插件**，绑 **GitHub** 与企业管理。  
+**要点**：多模型可选（含 **OpenAI 侧带 Codex 字样的档位** 等），但 **不是** OpenAI Codex 产品本体。
+
+### OpenAI Codex（CLI / IDE 扩展）
+
+**形态**：**终端 `codex`** + **编辑器扩展**（与 CLI **同一 Agent**）；可 **云端任务**、**MCP**、子 Agent、网页搜索、审批模式等（以官方文档为准）。  
+**适合**：已买 **ChatGPT 付费档**、希望 **OpenAI 官方 Agent 栈**贯穿终端与 IDE 的人。  
+**要点**：与 **Copilot 是否订阅** 无绑定；与 **Cursor 自带 Composer** 可并存，是否同时用取决于团队规范。
 
 ### Cursor
 
-**形态**：**独立编辑器** + Composer / Agent。  
-**适合**：要强 Agent、Rules、**多模型 + BYOK**。  
-**优劣**：迭代快；**额度 / 积分**要算账。
+**形态**：**独立编辑器** + 自带 Chat / Composer / Agent；**也可装 OpenAI Codex 扩展**（官方列在兼容编辑器中）。  
+**适合**：要强 **多模型 / BYOK**、或 **编辑器原生 Agent + 可选 Codex 扩展** 的组合。  
+**要点**：**「Cursor 订阅」与「ChatGPT 含 Codex」** 是两条账单线，别混。
 
 ### Claude Code
 
-**形态**：**终端 CLI** + Agent，**MCP、Skills** 多。  
-**适合**：命令行、长会话改仓库、**以 Claude 为主**。  
-**优劣**：心智清晰；**不是**传统 IDE 里点按钮的路径。
+**形态**：**终端 CLI** + Agent，**MCP、Skills**。  
+**适合**：**Anthropic / Claude** 为主、要终端长会话改仓库。  
+**要点**：与 OpenAI Codex **厂商不同**；选型常是 **OpenAI 栈 vs Anthropic 栈** 之一。
 
-**JetBrains AI / Junie**：不换 IDE 的常见选项，由 JetBrains 对接多家模型，此处不展开。
-
-### 可选了解：同赛道的其它编辑器（非必知）
-
-海外技术社区里，常与 Cursor 并列被提到的还有 **Windsurf**（与 Codeium 同源）等**另一类商业编辑器**。若你**完全没听过、也无需求**，可以**直接忽略**——不构成「必须二选一」；**本文不做推荐排序**，只保留三条主路径，减少信息噪音。
+**JetBrains AI / Junie**：不换 IDE 的常见选项，此处不展开。
 
 ---
 
 ## 三、工具 × 模型：二维关系
 
-### 3.1 矩阵（三款主流宿主）
+### 3.1 矩阵（概括）
 
-**●** = 界面里常见可选或主推；**—** = 一般不作为一等公民。  
-**GPT / Codex 系** 列已包含你在 Copilot / Cursor 里看到的 **Codex 向**档位。
+**●** = 常见可选或产品主推；**—** = 通常不提供。  
+**GPT / Codex 列**：泛指 OpenAI 侧 GPT 与 *Codex* 向档位（具体名称随时间变）。
 
-| 工具 | GPT / Codex 系 | Claude 系 | Gemini 系 | BYOK |
-|------|:---:|:---:|:---:|:---:|
+| 工具 / 产品 | GPT / Codex 向 | Claude 系 | Gemini 系 | BYOK |
+|-------------|:---:|:---:|:---:|:---:|
 | **GitHub Copilot** | ● | ● | ● | 一般否 |
-| **Cursor** | ● | ● | ● | 是 |
+| **OpenAI Codex（CLI/扩展）** | ● | — | — | 一般否（随 ChatGPT 等套餐） |
+| **Cursor（自带 AI）** | ● | ● | ● | 是 |
 | **Claude Code** | — | ● | — | 非典型 |
 
 ### 3.2 关系图（工具 → 模型族）
@@ -108,6 +119,7 @@ flowchart LR
   subgraph tools
     direction TB
     CP[Copilot]
+    ODC[OpenAI_Codex]
     CR[Cursor]
     CC[Claude_Code]
   end
@@ -120,27 +132,30 @@ flowchart LR
   CP --> GC
   CP --> CL
   CP --> GM
+  ODC --> GC
   CR --> GC
   CR --> CL
   CR --> GM
   CC --> CL
 ```
 
-> **怎么读**：**Codex** 落在右侧 **GPT_Codex** 这一桶里，由 **Copilot / Cursor** 接入，而不是左侧单独多一个「Codex 工具」节点。**BYOK** 时 Cursor 还可接其它端点，图上不展开。
+> **怎么读**：**OpenAI_Codex** 是 **OpenAI 的 Agent 产品**，主要消耗 **GPT / Codex 向** 档位；**Copilot** 与 **Cursor** 也可分别接 **Claude / Gemini** 等第三方族。**Cursor** 若再装 Codex 扩展，相当于在 **同一编辑器**里叠两套能力，矩阵里仍用一行 **Cursor** 概括其自带 AI。
 
 ---
 
 ## 四、两条线怎么选（很短）
 
-1. **先定宿主**：留在 VS Code → **Copilot**；接受新编辑器 → **Cursor**；要终端 Agent → **Claude Code**。  
-2. **再定模型**：在宿主内 **默认 / Auto** 起步；要强 **Codex 向** → 在 **Copilot 或 Cursor** 的模型列表里选（名称以当期为准）；要 **Claude-only** → **Claude Code** 或 Cursor 里锁 Claude。  
-3. **定期核对**：列表变化快，以 **Settings + 官方文档** 为准。
+1. **先定厂商栈**：偏 **OpenAI + ChatGPT 账单** → 看 **OpenAI Codex（CLI/扩展）** 是否覆盖你；偏 **GitHub 一体** → **Copilot**；偏 **Anthropic** → **Claude Code**。  
+2. **再定编辑器**：死守 VS Code 插件 → **Copilot** 或 **VS Code + Codex 扩展**；接受 **Cursor** → 比较 **自带 Agent** 与 **+Codex 扩展** 是否重复投资。  
+3. **核对文档**：模型名与套餐变得快，以 **OpenAI / GitHub / Cursor / Anthropic** 当期说明为准。
 
 ---
 
 ## 五、官方文档
 
-- [GitHub Copilot：Model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison)（可看到 **GPT‑Codex 向**等条目）  
+- [OpenAI Codex CLI](https://developers.openai.com/codex/cli/)  
+- [OpenAI Codex IDE 扩展](https://developers.openai.com/codex/ide/features/)  
+- [GitHub Copilot：Model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison)  
 - [Cursor 文档](https://cursor.com/docs)  
 - [Claude Code 文档](https://code.claude.com/docs)  
 
@@ -148,4 +163,4 @@ flowchart LR
 
 ## 小结
 
-**Codex** 在 **模型维度**里，通过 **GPT / Codex 系** 这一列体现；**工具维度**写的是 **Copilot / Cursor / Claude Code** 三个常见宿主，避免把「模型品牌」和「打开哪个软件」混成一张表。若你对海外小众编辑器无感，**只盯这三款 + 必要时 ChatGPT** 就足够做决策。
+之前把 **Codex** 只写成 **Copilot/Cursor 里的模型档位**，忽略了 OpenAI 已把 **Codex** 做成 **CLI + IDE 扩展 + 云端** 的 **独立产品线**——这是本文要订正的核心。选型时：**工具行**是否包含 **OpenAI Codex**；**模型列**里的 *Codex* 字样，要分清是 **Copilot 里选的档位** 还是 **Codex 产品内切换的模型**。
