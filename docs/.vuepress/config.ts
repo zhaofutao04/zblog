@@ -117,9 +117,13 @@ export default defineUserConfig({
     displayFooter: true,
     fullscreen: true,
 
-    // Markdown 增强功能
+    // Markdown 增强功能（KaTeX：支持 $...$ / $$...$$ 与 LaTeX 风格 \(...\) / \[...\]）
     markdown: {
       mermaid: true,
+      math: {
+        type: 'katex',
+        delimiters: 'all',
+      },
     },
 
     // 插件配置

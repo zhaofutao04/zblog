@@ -33,7 +33,7 @@ author: 老Z
 | 2 | 从函数到神经网络 | [llm-from-scratch-day-02-nn-basics.html](./llm-from-scratch-day-02-nn-basics.html) | 线性层、非线性、损失、梯度下降（直觉）；小网络手推 | **已发布** |
 | 3 | 反向传播与计算图 | [llm-from-scratch-day-03-backprop.html](./llm-from-scratch-day-03-backprop.html) | 链式法则、计算图、为何能高效求导 | **已发布** |
 | 4 | 表示学习与嵌入 | `llm-from-scratch-day-04-embeddings.md` | one-hot → 稠密向量；embedding 是可学习矩阵 | 待写 |
-| 5 | 序列与语言建模 | `llm-from-scratch-day-05-lm-objective.md` | 自回归、\(P(w_t\|w_{<t})\)、困惑度、交叉熵形式 | 待写 |
+| 5 | 序列与语言建模 | `llm-from-scratch-day-05-lm-objective.md` | 自回归、\(P(w_t \mid w_{<t})\)、困惑度、交叉熵形式 | 待写 |
 | 6 | RNN/门控（铺垫） | `llm-from-scratch-day-06-rnn-gates.md` | 隐状态、LSTM/GRU 解决什么；与 MLP 对比 | 待写 |
 | 7 | 注意力机制 | `llm-from-scratch-day-07-attention.md` | Q/K/V、scaled dot-product；小矩阵手算 | 待写 |
 | 8 | Transformer 总览 | `llm-from-scratch-day-08-transformer-overview.md` | Encoder-Decoder vs Decoder-only；残差与 LayerNorm | 待写 |

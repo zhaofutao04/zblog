@@ -171,3 +171,21 @@ table th {
   background: var(--vp-c-bg-soft);
   font-weight: 600;
 }
+
+// KaTeX 数学公式：与正文协调、长行间公式可横向滚动
+.katex {
+  font-size: 1.05em;
+}
+
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35rem 0;
+  margin: 0.75rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 表格中的公式避免把单元格撑裂（必要时横向滚动）
+table .katex-display {
+  margin: 0.25rem 0;
+}

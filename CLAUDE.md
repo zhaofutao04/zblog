@@ -40,6 +40,7 @@ pnpm update
 - **包管理器**: pnpm
 - **打包工具**: Vite
 - **图表支持**: Mermaid 11.12.3
+- **数学公式**: KaTeX（`markdown.math`，`delimiters: 'all'`：支持 `$...$`、`$$...$$` 与 `\(...\)`、`\[...\]`）
 - **插件**:
   - Google Analytics (G-2NDJZGP77K)
   - vuepress-plugin-copy-page 1.3.0-RC.1（页面复制功能）
@@ -73,7 +74,7 @@ zblog/
 - 导航栏配置：AI大模型、支付、web3、建站等分类导航
 - 主题配置：Hope 主题的完整配置
 - 插件配置：Google Analytics、博客功能、公告通知等
-- Markdown 增强：支持 Mermaid 图表
+- Markdown 增强：支持 Mermaid 图表与 KaTeX 数学公式
 - 页脚配置：版权信息和 ICP 备案号
 
 ### 客户端配置 (`docs/.vuepress/client.ts`)
@@ -111,7 +112,7 @@ author: 老Z
 - Mermaid 图表（在代码块中使用 `mermaid` 语言标识）
 - Hope 主题的组件和功能
 - 代码高亮
-- 数学公式（如果配置）
+- 数学公式：KaTeX；行内 `$x$` 或 `\(x\)`，独立公式 `$$...$$` 或 `\[...\]`（勿在行内 `$` 两侧加空格，否则不解析）
 
 ### 静态资源管理
 - 图片和其他静态资源放在 `docs/.vuepress/public/` 目录
