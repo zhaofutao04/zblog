@@ -44,6 +44,7 @@ pnpm update
 - **插件**:
   - Google Analytics (G-2NDJZGP77K)
   - vuepress-plugin-copy-page 1.3.0-RC.1（页面复制功能）
+  - 主题内 **SlimSearch**（`plugins.slimsearch`，全文索引 `indexContent: true`；已弃用的 searchPro 勿再用）
 
 ## 项目结构
 

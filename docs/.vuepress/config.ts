@@ -9,6 +9,8 @@ export default defineUserConfig({
   lang: 'zh-CN',
   title: '老Z的博客',
   description: '聊技术 聊生活 聊人生',
+  // PWA 插件建议关闭链接预取，避免与 Service Worker 缓存策略冲突
+  shouldPrefetch: false,
 
   head: [
     ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }],
@@ -52,7 +54,7 @@ export default defineUserConfig({
         "name": "老Z"
       },
       "inLanguage": "zh-CN",
-      "copyrightYear": "2024"
+      "copyrightYear": "2026"
     })],
 
     // 网站验证
@@ -149,8 +151,8 @@ export default defineUserConfig({
         appendBase: false,
       },
 
-      // 搜索优化
-      searchPro: {
+      // 全文搜索（searchPro 已弃用，改用官方 SlimSearch）
+      slimsearch: {
         indexContent: true,
         hotReload: true,
       },

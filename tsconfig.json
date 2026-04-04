@@ -10,10 +10,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "@vuepress/client": ["node_modules/@vuepress/client"]
-    }
+    "baseUrl": "."
   },
   "include": [
     "docs/.vuepress/**/*.ts",
