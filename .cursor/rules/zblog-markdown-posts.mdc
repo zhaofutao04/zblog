@@ -1,0 +1,36 @@
+---
+description: zblog 博客 Markdown（KaTeX、Mermaid、中文加粗、折叠块）
+globs: docs/_posts/**/*.md
+alwaysApply: false
+---
+
+# 博客正文（`_posts`）约定
+
+## 中文与加粗
+
+`**` 紧贴汉字时，markdown-it 常无法识别强调。在中文与 `**` 之间加**半角空格**，或改用 `<strong>...</strong>`（表格内优先）。
+
+```markdown
+✅ 解释 **非线性（激活函数）** 为什么
+❌ 解释**非线性（激活函数）**为什么
+```
+
+## 折叠块里有公式
+
+原生 `<details>...</details>` 内文**不会**再走 Markdown，`\(...\)` / `$...$` 不会交给 KaTeX。自测答案等需要数学时，用主题 **markdown-hint** 容器：
+
+```markdown
+::: details 要点
+
+主要在矩阵 \(W\) 与 \(\mathbf{b}\) 的元素里（共 \(d_{\text{out}} \cdot d_{\text{in}} + d_{\text{out}}\) 个标量）。
+
+:::
+```
+
+## Mermaid
+
+- 节点标签用 **`["双引号包裹"]`**；避免未引号方括号里出现 `(` `)` `]` 与上标等。
+- 优先 **ASCII** 写运算（如 `sigma`、`y_hat`、`1/2`、`*`）；复杂符号留在正文 **KaTeX**，图下可加一句说明与 LaTeX 对应。
+- 避免用易歧义的**单字母节点 id**（如单独 `L`），可改为 `loss` 等。
+
+更多工程项见仓库根目录 `CLAUDE.md`。
