@@ -169,4 +169,4 @@ flowchart LR
 
 ## 下一篇
 
-**Day 4** 讲 **embedding**：离散 token ID 如何变成连续向量，以及「一张可查表」为何也是**可训练参数**。发布后见 [系列计划](./llm-from-scratch-series-plan.html) 中的 Day 4 条目。
+**Day 4** 讲 **embedding**：离散 token ID 如何变成连续向量，以及「一张可查表」为何也是**可训练参数**：[Day 4｜表示学习与 Embedding](./llm-from-scratch-day-04-embeddings.html)。也可查看 [系列计划](./llm-from-scratch-series-plan.html)。
