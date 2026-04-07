@@ -12,7 +12,8 @@ tags:
 author: 老Z
 ---
 
-> 系列总目录：[《LLM 底层原理 · 系列学习计划》](./llm-from-scratch-series-plan.html) · 上一篇：[Day 1](./llm-from-scratch-day-01-map-and-terms.html)
+> 系列总目录：[《LLM 底层原理 · 系列学习计划》](./llm-from-scratch-series-plan.html) · 上一篇：[Day 1](./llm-from-scratch-day-01-map-and-terms.html)  
+> 若向量、矩阵、偏导读起来吃力，可先读 **[Day 2 番外 · 小白版](./llm-from-scratch-day-02-extra-beginners.html)**（「旋钮、折线、下山」比喻），再回到本篇对照公式。
 
 Day 1 说过：LLM 是一个带参数 \(\theta\) 的函数 \(f_\theta\)，训练时用损失推着 \(\theta\) 动。今天要回答：<strong>\(\theta\) 长什么样、前向怎么算、损失是什么、梯度下降在干什么</strong> —— 仍用最小数学，但会完成一次 **纸笔手推**。
 

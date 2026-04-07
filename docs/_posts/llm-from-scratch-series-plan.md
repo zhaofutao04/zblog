@@ -48,6 +48,12 @@ author: 老Z
 | 17 | 高效微调与压缩 | `llm-from-scratch-day-17-lora-quant.md` | LoRA、量化直觉；部署 | 待写 |
 | 18 | 系统视角与读论文 | `llm-from-scratch-day-18-systems-papers.md` | 并行、显存、MoE 简介；对照模型卡读架构 | 待写 |
 
+## 番外与补充
+
+| 篇名 | 链接 | 说明 |
+|------|------|------|
+| Day 2 番外（小白向） | [llm-from-scratch-day-02-extra-beginners.html](./llm-from-scratch-day-02-extra-beginners.html) | 与 Day 2 同一套概念，用比喻与一位数算术重讲；读不懂主线 Day 2 时优先读 |
+
 ## 弹性调整
 
 - **基础弱**：Day 2～4 可放慢，每天只攻一个子主题。
@@ -65,3 +71,4 @@ author: 老Z
 | 2026-04-02 | 发布 Day 2 |
 | 2026-04-03 | 发布 Day 3 |
 | 2026-04-04 | 发布 Day 4 |
+| 2026-04-03 | 增补 Day 2 番外（小白向）与目录互链 |
