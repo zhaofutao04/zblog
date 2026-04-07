@@ -13,7 +13,7 @@ tags:
 author: 老Z
 ---
 
-长会话写代码时，最怕两件事：**上下文快满了还在猛聊**，以及**费用和限速心里没数**。Claude Code 底部有一条可定制的 **status line（状态栏）**，官方提供了 **`/statusline` 斜杠命令**，用自然语言描述需求就能自动生成脚本并写入配置 —— 这篇只讲这条命令和与之配套的最小必要知识，方便你快速用上、少踩坑。
+长会话写代码时，最怕两件事：**上下文快满了还在猛聊**，以及**费用和限速心里没数**。Claude Code 底部有一条可定制的 **status line（状态栏）**，官方提供了 **`/statusline` 斜杠命令**，用自然语言描述需求就能自动生成脚本并写入配置。下文先讲官方机制与手写要点，再介绍社区里高定制的 **[ccstatusline](https://github.com/sirmalloc/ccstatusline)**，以及 **ccusage**、**tweakcc** 等周边工具怎么选。
 
 > 官方文档：[Customize your status line](https://docs.claude.com/en/docs/claude-code/statusline)（英文，字段最全）。  
 > 本博客相关长文：[Claude Code 高级用法完全指南](./claude-code-advanced-usage-guide.html)。
@@ -84,6 +84,32 @@ author: 老Z
 
 要做 **彩色 Git 状态**、**OSC 8 可点击链接** 等，官方文档里有现成例子（依赖终端是否支持 ANSI / 超链接）。
 
+## 社区方案：[ccstatusline](https://github.com/sirmalloc/ccstatusline)（高可定制 + TUI）
+
+若你想要 **Powerline 风格、多行状态栏、可视化搭积木**，而不想长期手搓 `jq`，可以试 **[ccstatusline](https://github.com/sirmalloc/ccstatusline)**（MIT）。它是专为 **Claude Code CLI** 设计的 **status line 格式化器**：同样走官方的 **`statusLine.type: "command"`**，由 Claude Code 把 JSON 从 stdin 喂进来，它负责渲染成底部一行或多行。
+
+**大致能力**（具体 widget 与版本说明以仓库 README 为准）：
+
+- **交互配置**：`npx -y ccstatusline@latest` 或 `bunx -y ccstatusline@latest` 打开内置 TUI，增删排序组件、改配色、预览效果；可一键把命令写进 **`~/.claude/settings.json`**。  
+- **Powerline / 主题**：箭头分隔、真彩色、多内置主题；支持配置**多条独立状态行**（不再限于「挤在一行」）。  
+- **常用 Widget 示例**：模型名、输出样式、Git 分支 / 变更行数 / worktree、当前目录、各类 token 计数与 **输入输出速度**、上下文长度与百分比（含「可用上下文」口径）、会话时钟、**Session 费用（美元）**、**5 小时 block** 与重置倒计时、终端宽度、Claude Code 版本、自定义文本 / **自定义 shell 命令**、**OSC 8 可点击链接**、Skills 展示、Vim 模式、Thinking effort、系统内存等。  
+- **配置位置**：界面设置多在 **`~/.config/ccstatusline/settings.json`**；与 Claude 的衔接仍落在 `statusLine.command`（例如 `npx -y ccstatusline@latest`）。  
+- **环境变量**：Claude 配置不在默认路径时用 **`CLAUDE_CONFIG_DIR`**；部分 **Usage** 类组件会直连 Anthropic 用量接口，可走大写 **`HTTPS_PROXY`**（仓库说明里有写）。
+
+与 **`/statusline`** 的关系：**官方命令**适合「描述需求 → 生成脚本」快速落地；**ccstatusline** 适合长期维护、追求组件化和颜值。二者底层都是 **stdin JSON → 命令 → stdout**，可按需切换或保留官方生成的脚本。
+
+> Windows：仓库声明支持 PowerShell / cmd / WSL；Powerline 需配合 **Nerd Font** 等终端字体，详见其 README 的 Windows 小节。
+
+## 还有哪些相关工具（怎么选）
+
+| 方向 | 代表项目 | 说明 |
+|------|----------|------|
+| **用量 / 成本可视化** | [ccusage](https://ccusage.com/guide/statusline) 的 *Statusline Integration* | 侧重会话成本、burn rate、上下文占比等；可在 `settings.json` 里把 **`command`** 设为 `bun x` / `npx` 调用其 `statusline` 子命令。与 ccstatusline **不是互斥**：ccstatusline 文档里演示过用 **Custom Command** 嵌套跑 `ccusage`，把用量条嵌进自己的布局。 |
+| **整体 UI / 主题 / 提示词** | [tweakcc](https://github.com/Piebald-AI/tweakcc) | 定位是 Claude Code **主题、系统提示、输入高亮、thinking 文案与动效** 等「整壳」定制，**不是**专职 statusline 渲染器；但若你正在折腾终端观感，可与上述 statusline 方案搭配使用（安装方式与权限以该仓库为准）。 |
+| **社区变体** | 如 GitHub 上带 *ccstatusline* / *claude* + *statusline* 关键字的 fork、实验项目 | 功能可能更垂直（例如偏用量聚合）；建议看 **最近提交时间、Issue 活跃度、是否明确支持当前 Claude Code JSON 字段** 再决定是否上生产环境。 |
+
+**选用建议**：只要显示 **两三项**、零依赖 → 优先 **`/statusline`** 或自写短脚本；要 **多组件 + 主题 + 可维护** → **[ccstatusline](https://github.com/sirmalloc/ccstatusline)**；要 **账单 / 消耗盯得紧** → 加 **[ccusage](https://ccusage.com/guide/statusline)**（单独或嵌套）；要 **换肤、动效、提示词** → 再看 **tweakcc**。工具链变化快，**以各项目当前文档为准**。
+
 ## 关闭或还原
 
 - 对话里：**`/statusline delete`**、**`clear`**、**`remove`** 这类说法，让助手帮你拆掉状态栏（官方示例写法）。  
@@ -95,10 +121,11 @@ author: 老Z
 2. **上下文条 + 模型名** 作为默认套餐，长对话时最有安全感。  
 3. **费用与 5 小时 / 7 天限速** 若你账号有显示，可让状态栏一并展示，避免突然撞墙。  
 4. 脚本保持**短、快**；需要 `jq` 的机器先 `brew install jq`（macOS）或按发行版安装。  
-5. Windows 用户请看官方文档中的 **PowerShell / Git Bash** 小节，路径与 shebang 与 Unix 示例不同。
+5. Windows 用户请看官方文档中的 **PowerShell / Git Bash** 小节，路径与 shebang 与 Unix 示例不同。  
+6. 想要 **多行 Powerline、TUI 配组件** 时，优先装 **[ccstatusline](https://github.com/sirmalloc/ccstatusline)** 试跑，再决定要不要卸掉自写脚本。
 
 ## 小结
 
 **`/statusline`** = 用自然语言定制 Claude Code **底部状态栏**的入口：自动生成脚本 + 写配置。本质是 **stdin JSON → 你的命令 → stdout 文本**。把「上下文、费用、目录、限速」里你最关心的两三项固定在脸上，长项目会话会舒服很多。
 
-若你还想扩展 Claude Code 与外部工具联动，可继续读 [MCP 与 Skills 那篇](./claude-code-advanced-usage-guide.html)；状态栏本身不替代 MCP，但和「长时间盯屏开发」非常搭。
+需要 **可视化编辑、Powerline、多 Widget** 时，可看社区项目 **[ccstatusline](https://github.com/sirmalloc/ccstatusline)**；要 **用量与成本条** 可配合 **[ccusage](https://ccusage.com/guide/statusline)**。若你还想扩展 Claude Code 与外部工具联动，可继续读 [MCP 与 Skills 那篇](./claude-code-advanced-usage-guide.html)；状态栏本身不替代 MCP，但和「长时间盯屏开发」非常搭。
