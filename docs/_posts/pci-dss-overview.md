@@ -1,6 +1,6 @@
 ---
 title: PCI DSS 支付卡行业数据安全标准入门指南
-description: 深入解析PCI DSS支付卡行业数据安全标准，涵盖12项核心要求、合规等级划分、验证流程等实践要点。专业的PCI DSS合规指南帮助企业构建安全的支付环境。
+description: PCI DSS 入门地图：12 项要求、级别与 SAQ 粗览。非法律或 QSA 意见，实施以 PCI SSC 与收单机构为准。
 date: 2026-02-25
 categories:
   - 支付
@@ -21,7 +21,7 @@ head:
       content: PCI DSS 支付卡行业数据安全标准入门指南 | 老Z的博客
   - - meta
     - property: og:description
-      content: 深入解析PCI DSS支付卡行业数据安全标准，涵盖12项核心要求、合规等级划分、验证流程等实践要点
+      content: PCI DSS 入门地图：12 项要求、合规级别与 SAQ 粗览；细节以官方文档与收单机构为准
   - - meta
     - property: article:author
       content: 老Z
@@ -33,9 +33,11 @@ head:
       content: 支付安全
 ---
 
+本文当 **地图** 用：**不能替代** [PCI SSC](https://www.pcisecuritystandards.org/) 正式文档，也不能当 **QSA / 律师意见**。你的 **CDE 范围、商户级别、该填哪份 SAQ**，以 **收单机构与卡品牌规则** 为准。
+
 ## 什么是 PCI DSS？
 
-PCI DSS（Payment Card Industry Data Security Standard，支付卡行业数据安全标准）是一套由主要信用卡品牌（Visa、Mastercard、American Express、Discover、JCB）共同制定的安全标准，旨在保护持卡人数据安全。
+**PCI DSS**（Payment Card Industry Data Security Standard）是 Visa、Mastercard、American Express、Discover、JCB 通过 **PCI SSC** 维护的一套 **基线**：谁碰持卡人数据、谁就要按条落实控制。**合规** 降低被罚、被停机的概率，**不等于**「绝对不会泄露」。
 
 ```mermaid
 flowchart TB
@@ -54,6 +56,8 @@ flowchart TB
 ```
 
 ## PCI DSS 的发展历史
+
+从各家各标准收到 **PCI SSC** 一条线；记版本是为读老审计报告时 **对得上号**。
 
 ```mermaid
 timeline
@@ -93,7 +97,7 @@ PCI DSS v4.x 中部分条目曾分阶段过渡。**2026 年 3 月 31 日**起，
 
 ## PCI DSS 4.0 核心要求
 
-PCI DSS 4.0 包含 6 大控制目标，12 项核心要求，共计 250+ 项具体测试步骤。
+**6 个目标、12 条要求** 是骨架，下面还有 **几百条测试程序**；图表当 **导航**，勾选项以 **官方 PDF** 为准。
 
 ```mermaid
 flowchart LR
@@ -162,7 +166,7 @@ flowchart LR
 
 ## PCI DSS 合规级别
 
-根据年交易量，商户和服务提供商分为不同级别：
+**级别数字、交易量门槛** 因 **卡品牌** 而异，且会调整；下图是 **常见 Visa 商户口径** 的示意，**以你收单行下发的规则为准**。
 
 ```mermaid
 flowchart TB
@@ -190,6 +194,8 @@ flowchart TB
 | SAQ D | 所有其他商户/服务提供商 | 全部要求 |
 
 ## PCI DSS 合规流程
+
+典型 **闭环**：定范围 → 找差距 → 改 → 测 → 交 **SAQ / ROC**；中间 **季度扫、年度复评** 别断。
 
 ```mermaid
 flowchart TB
@@ -219,6 +225,8 @@ flowchart TB
 
 ## 常见违规与处罚
 
+下表 **罚款区间** 是业内常引用的 **数量级示意**，**不是** 对你案子的承诺；真出事以 **卡品牌、合同、监管** 为准。
+
 ### 违规后果
 
 | 违规类型 | 可能后果 |
@@ -236,6 +244,8 @@ flowchart TB
 5. **范围界定不清**：未正确识别 CDE 边界
 
 ## PCI DSS 4.0 新特性
+
+相对 3.2.1，**4.x** 更强调 **可测、可证、持续**，并给 **定制化方法** 留口子——但 **文档和证据** 要求更重。
 
 ### 主要变化
 
@@ -311,7 +321,7 @@ mindmap
 | 书名 | 作者 | 说明 |
 |------|------|------|
 | PCI DSS: A Pocket Guide | Steve Wright | 入门指南，简洁易懂 |
-| PCI Compliance | Branden R. Williams | 全面介绍合规流程 |
+| PCI Compliance | Branden R. Williams | 合规流程与实务，篇幅较厚 |
 | Information Security Management Principles | David Alexander | 信息安全管理基础 |
 | Security Engineering | Ross Anderson | 安全工程权威著作 |
 
@@ -343,15 +353,14 @@ mindmap
 
 ## 总结
 
-PCI DSS 合规不是一次性任务，而是持续的安全实践。核心要点：
+**PCI DSS** 是 **卡数据环境** 的 **最低基线**：**少存、少传、加密、分段、日志、人管得住**。级别和 SAQ **问收单行**，条文 **盯 SSC 原文**。
 
-1. **最小化数据存储**：不存储不需要的数据
-2. **纵深防御**：多层安全控制
-3. **持续监控**：实时检测和响应
-4. **定期审计**：保持合规状态
-5. **员工培训**：人是安全的关键
+1. **能别存就别存** PAN；禁存项 **一条都别碰**。
+2. **CDE 划清**；外面的人 **默认进不来**。
+3. **日志留着、有人看**；出事 **能追溯**。
+4. **按年 / 按季** 该做的扫描、问卷 **别拖**。
 
-> 安全是一个过程，而不是一个产品。保持合规需要持续的投入和关注。
+> 合规是 **常年运维**，不是 **测评前两周突击**。
 
 ---
 

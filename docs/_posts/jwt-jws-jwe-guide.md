@@ -1,5 +1,5 @@
 ---
-title: JWT、JWS、JWE 深入解析 - JSON Web 技术全家桶
+title: JWT / JWS / JWE：签名、加密别混在一坨
 date: 2026-02-27
 categories:
   - 安全
@@ -15,7 +15,9 @@ author: 老Z
 
 ## 概述
 
-在现代 Web 应用和 API 安全领域，JSON Web 技术栈（统称 JOSE - JSON Object Signing and Encryption）扮演着至关重要的角色。本文将深入解析 JWT、JWS、JWE 及其相关规范。
+JOSE 这一家（JWT、JWS、JWE）在 OAuth、网关、移动端里到处都是；名字多，容易把「只签名」「只加密」「嵌套起来」搞混。下面按 **JWT / JWS / JWE** 拆开写，顺带提 JWK、JWKS —— 够用来评审方案和读别人文档。
+
+> 实战铁律（RFC 8725 也在喊）：**验签 / 解密时算法列表写死在代码里**，别信 Header 里的 `alg` 随便选；`none`、密钥过短、把敏感 claims 塞进 **未加密的 JWS**，都是线上事故常客。
 
 ```mermaid
 flowchart TB
@@ -41,6 +43,8 @@ flowchart TB
 ```
 
 ## 历史发展
+
+记几个 **RFC 年份** 就行，面试够用了；细节以 [ietf.org](https://www.ietf.org/) 文本为准。
 
 ```mermaid
 timeline
@@ -74,9 +78,11 @@ timeline
 
 ## 核心概念详解
 
+先记住：**JWT 多半是「一串可验的 JSON」**；真正防窃听要靠 **JWE**，防篡改靠 **JWS**。
+
 ### 1. JWT (JSON Web Token)
 
-JWT 是一种紧凑的、URL 安全的方式，用于在各方之间传输声明（claims）。
+**JWT**：把 **claims** 塞进 **Header + Payload**（再签名或加密），**Base64URL** 拼成一串，好塞 URL、Header、Cookie。
 
 #### JWT 结构
 
@@ -335,6 +341,8 @@ JWA 定义了 JWS、JWE 和 JWK 使用的算法。
 
 ## 算法详解
 
+表里的 ⭐ 是 **个人向偏好**，上线前对齐你们 **合规 / 库默认 / 互通方**；**RSA1_5** 一类该禁就禁。
+
 ### 签名算法 (JWS)
 
 | 算法 | 类型 | 密钥长度 | 安全性 | 推荐度 |
@@ -377,6 +385,8 @@ JWA 定义了 JWS、JWE 和 JWK 使用的算法。
 
 ## JWS vs JWE 对比
 
+**JWS**：Payload **大家都能看**，只要改一个字验签就挂。**JWE**：Payload **密文**，拿错 key 解不开。别用 JWS 装密码、卡号。
+
 ```mermaid
 flowchart LR
     subgraph "JWS (签名)"
@@ -402,6 +412,8 @@ flowchart LR
 | 典型场景 | 身份认证、API 授权 | 敏感数据传输 |
 
 ## 实际应用场景
+
+OIDC 的 **id_token**、API 的 **Bearer**，多数是 **JWS**；要把整段 claims 藏起来再谈 **JWE**。
 
 ### 1. OAuth 2.0 / OIDC 认证
 
@@ -480,6 +492,8 @@ const jwe = await new jose.CompactEncrypt(
 
 ## 安全最佳实践
 
+下面不是「合规清单」，是 **踩坑高发区**：算法、密钥、`exp`/`aud`、`alg` 头、存哪。
+
 ### 1. 算法选择
 
 ```javascript
@@ -499,7 +513,7 @@ flowchart TB
     A --> D["安全存储"]
     A --> E["密钥长度"]
 
-    B --> B1["定期更换签名密钥<br/>建议每90天"]
+    B --> B1["定期轮换签名密钥<br/>周期按风控定"]
     C --> C1["签名和加密使用不同密钥"]
     D --> D1["使用 HSM 或密钥管理服务"]
     E --> E1["RSA ≥ 2048位<br/>ECDSA ≥ P-256"]
@@ -554,6 +568,8 @@ res.cookie('token', token, {
 ```
 
 ## 多语言实现示例
+
+示例只演示 **API 形态**；生产请用成熟库、别开 `verify` 的宽松默认。
 
 ### Java (Spring Security)
 
@@ -642,6 +658,8 @@ func ParseToken(tokenString string) (jwt.MapClaims, error) {
 
 ## 调试工具
 
+**jwt.io 解码出来的 Payload 是明文**——别把生产 token 粘进不可信站点。
+
 ### 在线工具
 
 1. **[jwt.io](https://jwt.io)** - JWT 解码和调试
@@ -662,39 +680,8 @@ echo "eyJzdWIiOiIxMjM0NTY3ODkwIn0" | base64 -d | jq .
 
 ## 总结
 
-```mermaid
-mindmap
-  root((JOSE 技术栈))
-    JWT
-      紧凑令牌格式
-      身份认证
-      信息交换
-    JWS
-      数字签名
-      完整性保证
-      真实性验证
-    JWE
-      数据加密
-      机密性保证
-      敏感数据传输
-    JWK
-      密钥表示
-      JWKS 密钥集
-      动态密钥分发
-    JWA
-      算法定义
-      签名算法
-      加密算法
-```
-
-**选择建议：**
-
-- **只需要验证身份**：使用 JWS（最常见的 JWT 用法）
-- **需要保护敏感数据**：使用 JWE
-- **两者都需要**：先签名后加密（Nested JWT）
-
-**算法推荐：**
-- 新项目优先选择 **ES256** 或 **EdDSA**
-- 遗留系统可使用 **RS256**
-- 避免使用 **HS256**（除非密钥管理得当）
-- 加密选择 **A256GCM** + **ECDH-ES+A256KW**
+- **JWT** 是壳；真正干活的是 **JWS（验签）** 或 **JWE（解密）**。  
+- **只认证、Payload 可公开**：**JWS** 足够；**Payload 里有隐私**：**JWE**，或别放 token 里。  
+- **嵌套**：常见套路是 **内层 JWS + 外层 JWE**（顺序别反，反了意义不对）。  
+- **算法**：新东西优先 **ES256 / EdDSA**；老系统 **RS256** 还能活；**HS256** 只有 **单服务、密钥真管得住** 再上；JWE 内容加密多用 **A256GCM**，密钥协商看互通方支持 **ECDH-ES+A256KW** 一类。  
+- **实现**：验签时 **白名单 `alg`**，校验 **exp/aud/iss**，密钥 **JWKS 轮换**——比选「星最多的算法」重要。

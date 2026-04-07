@@ -9,6 +9,8 @@ tags:
 author: 老Z
 ---
 
+本仓库当前是：**GitHub 推 main → Cloudflare Pages 构建 `pnpm run build` → 静态资源上 CDN**。下面记的是实际在用的域名与目录，换平台时只改对照表即可。
+
 ## 部署架构
 
 ```mermaid
@@ -43,7 +45,7 @@ flowchart TB
     B --> C["拉取代码，执行 pnpm install"]
     C --> D["执行 pnpm run build"]
     D --> E["将 docs/.vuepress/dist/ 部署到边缘节点"]
-    E --> F["CDN 全球分发"]
+    E --> F["CDN 边缘缓存"]
 ```
 
 ## 部署命令

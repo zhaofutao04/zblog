@@ -9,6 +9,8 @@ tags:
 author: 老Z
 ---
 
+写给自己看的「这博客由啥堆成」：版本号以根目录 `package.json` / lock 为准；表格里若和本机不一致，以依赖为准、本文后改。
+
 ## 技术栈
 
 | 组件 | 版本 | 说明 |
@@ -65,7 +67,7 @@ flowchart TB
 
 ## 主题功能
 
-vuepress-theme-hope 提供以下内置功能：
+Hope 主题默认能开的能力很多，这里只列**本博客在用或常开的**（最终以 `config.ts` 为准）：
 
 ### 博客功能
 - 文章列表（`/posts/`）
@@ -122,7 +124,7 @@ my-blog/
 
 ### Copy Page 插件
 
-博客集成了 `vuepress-plugin-copy-page` 插件，方便将文章复制为 Markdown 格式供 LLM 使用。
+装了 `vuepress-plugin-copy-page`：把整页复制成 Markdown，方便丢进 LLM；样式在 `client.ts` 里引。
 
 功能：
 - 在文章标题旁显示"Copy page"按钮

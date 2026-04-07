@@ -11,11 +11,13 @@ tags:
 author: 老Z
 ---
 
-本文是 [PCI DSS 入门指南](/posts/pci-dss-overview.html) 的技术实现篇，主要介绍如何从技术层面实现 PCI DSS 合规的支付系统。
+接 [PCI DSS 入门](/posts/pci-dss-overview.html)：下面用 **示意代码和架构图** 串一遍常见落点——**抄作业前** 先跟 **QSA / 安全设计** 对齐范围，别当合规判决书。
 
-v4 合规时间表与「全面生效」日期请以 [PCI SSC 官方站点](https://www.pcisecuritystandards.org/) 及收单机构要求为准；概述篇已补充 **2026-03-31** 一类常见节点说明，实现前请再核对当期文档。
+v4 时间表、全面生效日以 [PCI SSC](https://www.pcisecuritystandards.org/) 和 **收单行** 为准；概述里提过 **2026-03-31** 一类节点，动工前再对一遍当期 PDF。
 
 ## 安全架构设计
+
+先把 **CDE**（碰卡数据的框）和 **DMZ / 公网** 分开画清楚；后面所有防火墙、分段、日志，都挂在这张图上谈才有落点。
 
 ```mermaid
 flowchart TB
@@ -51,7 +53,7 @@ flowchart TB
 
 ## 前端实现（数据采集与传输）
 
-前端主要负责支付数据的采集、验证和安全传输。关键原则是**最小化敏感数据处理**和**安全传输**。
+浏览器这段：**少碰 PAN**、**尽快送走**；能托管字段就托管，自建表单就按下面掩码、校验、HTTPS、清内存几条兜住。
 
 ```mermaid
 flowchart LR
@@ -345,7 +347,7 @@ export function generateCSPHeader(): string {
 
 ## 后端实现（Golang）
 
-后端负责系统架构、数据传输、存储和加密。核心原则是**最小权限**和**数据保护**。
+服务端：**谁访问 CDE、记什么日志、密钥谁管**，一律 **最小权限**；PAN 能 **token 化** 就别落库明文。
 
 ```mermaid
 flowchart TB
@@ -778,6 +780,8 @@ func (l *Logger) calculateChecksum(log *model.AuditLog) string {
 
 ## 开源组件推荐
 
+表里是 **常见选型**，不是 PCI **认证清单**；上线前看许可证、维护度、是否满足你收单行的集成要求。
+
 ### 支付处理与标记化
 
 | 项目 | 语言 | 描述 | GitHub |
@@ -836,6 +840,8 @@ func (l *Logger) calculateChecksum(log *model.AuditLog) string {
 | **WireGuard** | C | 现代 VPN 协议 | [WireGuard/wireguard-go](https://github.com/WireGuard/wireguard-go) |
 
 ## 开源组件集成示例
+
+几段 **最小可跑思路**：Vault Transit、CI 里挂 ZAP/Trivy、Nginx 侧 CRS——参数和域名换成你自己的。
 
 ### HashiCorp Vault + Golang
 
@@ -979,6 +985,8 @@ SecRule IP:RATE "@gt 10" \
 
 ## 商业工具
 
+很多团队 **ASV 扫描、托管 WAF、SIEM** 直接买服务；表里的名字当 **采购时的搜索关键词**。
+
 | 类别 | 工具 | 用途 |
 |------|------|------|
 | 漏洞扫描 | Nessus, Qualys | ASV 合规扫描 |
@@ -990,13 +998,13 @@ SecRule IP:RATE "@gt 10" \
 
 ## 总结
 
-技术实现的核心要点：
+代码和架构 **对得上** PCI 条文，才算「能测、能证」：
 
-1. **前端**：数据掩码、Luhn 验证、HTTPS 传输、内存清理
-2. **后端**：AES-GCM 加密、PAN 标记化、审计日志、完整性校验
-3. **基础设施**：WAF 防护、漏洞扫描、密钥管理、日志聚合
+1. **前端**：掩码、Luhn、TLS、敏感字段 **别在 JS 里久留**。
+2. **后端**：加密/令牌化、审计链、密钥 **别写死在仓库里**。
+3. **基建**：分段、WAF、扫洞、日志 **有人看、能留存**。
 
-> 技术实现只是合规的一部分，还需要配合完善的流程和人员培训。
+> 技术只是一块；**流程、权限、培训、证据** 缺一样，测评照样挂。
 
 ---
 

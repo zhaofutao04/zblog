@@ -1,5 +1,5 @@
 ---
-title: Claude Code 高级用法完全指南：MCP、Skills与最佳实践深度解析
+title: Claude Code 进阶：MCP、Skills 与自用习惯
 date: 2026-03-15
 categories:
   - AI大模型
@@ -16,7 +16,7 @@ author: 老Z
 
 ## 前言
 
-Claude Code 作为 Anthropic 推出的 AI 驱动开发工具，正在重新定义开发者的工作流程。相比于简单的代码生成，Claude Code 通过 **MCP (Model Context Protocol)** 和 **Skills** 系统，构建了一个可扩展的 AI 开发生态。本文将从系统架构到实战应用，全面解析 Claude Code 的高级用法。
+Claude Code 是 Anthropic 那套跑在终端里的编程助手；比「只问 Chat」多出来的是 **MCP**（接外部工具）和 **Skills**（把固定套路打包）。这篇是我自己的笔记体：**MCP 怎么接、Skills 放哪、哪些配置容易绕** —— 有架构图，但不按官方宣传口径写。
 
 ## Claude Code 系统架构概览
 
@@ -54,7 +54,7 @@ Claude Code 的强大之处在于其**三层架构设计**：
 2. **协议层**：MCP 提供标准化的服务集成，Skills 提供可复用的专业知识
 3. **生态层**：社区贡献的扩展和集成
 
-## MCP (Model Context Protocol) 深度解析
+## MCP（Model Context Protocol）在干什么
 
 ### 什么是 MCP？
 
@@ -476,7 +476,7 @@ test('支付流程完整测试', async ({ page }) => {
 
 ## 2026 年发展趋势与展望
 
-### 生态发展预测
+### 后面可能往哪长（瞎猜成分大）
 
 根据调研数据，预计到 2026 年底：
 

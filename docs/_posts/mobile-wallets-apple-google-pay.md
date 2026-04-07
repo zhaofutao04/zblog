@@ -1,5 +1,5 @@
 ---
-title: Apple Pay 与 Google Pay 移动支付全面解析
+title: Apple Pay 与 Google Pay：钱包里实际发生什么
 date: 2026-02-27
 categories:
   - 支付
@@ -12,9 +12,11 @@ tags:
 author: 老Z
 ---
 
+用手机表付款都算移动支付。下面两个 **Apple Pay / Google Pay** 是「钱包壳」：**底下还是 Token + SE/TEE + NFC（或应用内通道）**，和「把磁条卡拍成照片」不是一类东西。文里数据多来自公开材料，**国家/地区、银行支持**以当地为准。
+
 ## 什么是移动支付？
 
-移动支付（Mobile Payment）是指使用移动设备（智能手机、智能手表等）完成支付交易的方式。Apple Pay 和 Google Pay 是目前全球最主流的两大移动支付平台。
+**移动支付**：拿手机、手表等设备完成扣款。**Apple Pay / Google Pay**：系统级钱包入口，发卡行仍是你背后那张卡的 **Issuer**。
 
 ```mermaid
 flowchart TB
@@ -596,7 +598,7 @@ flowchart TB
 | 日志审计 | 记录交易日志 |
 | 欺诈监控 | 实时风控系统 |
 
-## 未来趋势
+## 产品上的新花样（时间线仅供参考）
 
 ### 技术演进
 
@@ -649,7 +651,7 @@ timeline
 
 ### 相关文章
 
-- [国际七大银行卡组织全面解析](/posts/international-card-schemes.html)
+- [国际七大卡组织：各管哪一段路](/posts/international-card-schemes.html)
 - [PCI DSS 支付卡行业数据安全标准入门指南](/posts/pci-dss-overview.html)
 - [PCI DSS 技术实现指南](/posts/pci-dss-implementation.html)
 
@@ -674,17 +676,17 @@ flowchart TB
 
 | 方面 | 要点 |
 |------|------|
-| 安全性 | 两者都采用令牌化技术，真实卡号不暴露 |
-| 便捷性 | NFC 支付比刷卡更快，无需携带实体卡 |
-| 覆盖面 | 全球主要市场均支持，商户接受度高 |
-| 开发成本 | 通过支付网关集成，成本可控 |
-| 用户体验 | 原生体验优于第三方支付 |
+| 安全性 | 都是 **Token**，POS 侧通常看不到完整 PAN |
+| 便捷性 | NFC 比掏实体卡快一截；公交场景另说 |
+| 覆盖面 | **因国家/银行而异**，别按「全球」一刀切估转化率 |
+| 开发成本 | 多数走 **PSP / 网关 SDK**，自研直连成本高 |
+| 用户体验 | 系统钱包和 App 内 **HCE** 路线体验差一截，按客群选 |
 
-> 移动支付已成为现代支付的标准配置，建议商户同时支持 Apple Pay 和 Google Pay，覆盖最广泛的用户群体。
+> 做商户接入：**两个都开** 往往比纠结「哪个更强」实在；具体费率和支持卡种问收单。
 
 ---
 
 **相关文章**：
-- [国际七大银行卡组织全面解析](/posts/international-card-schemes.html)
+- [国际七大卡组织：各管哪一段路](/posts/international-card-schemes.html)
 - [PCI DSS 支付卡行业数据安全标准入门指南](/posts/pci-dss-overview.html)
 - [PCI DSS 技术实现指南](/posts/pci-dss-implementation.html)

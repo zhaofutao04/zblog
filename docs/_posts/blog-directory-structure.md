@@ -9,6 +9,8 @@ tags:
 author: 老Z
 ---
 
+clone 下来先找 `docs/`：文章在 `_posts`，站点的开关几乎都在 `.vuepress/config.ts`。下面按目录树记一遍，方便自己和协作者对齐路径。
+
 ## 项目结构
 
 ```
