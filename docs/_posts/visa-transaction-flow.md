@@ -28,17 +28,17 @@ Visa 是全球最主流的卡组织之一，日均处理超过 **2 亿笔**交�
 ```mermaid
 flowchart TB
     subgraph VisaNet
-        BASE1["BASE I\n实时授权处理\n(7×24 不间断)"]
-        VSS["VSS\nVisa Settlement Service\n清算结算服务"]
+        BASE1["BASE I<br/>实时授权处理<br/>(7×24 不间断)"]
+        VSS["VSS<br/>Visa Settlement Service<br/>清算结算服务"]
     end
 
-    Acquirer["收单机构\nAcquirer"] -->|授权报文 ISO 8583| BASE1
-    BASE1 -->|路由| Issuer["发卡银行\nIssuer"]
+    Acquirer["收单机构<br/>Acquirer"] -->|授权报文 ISO 8583| BASE1
+    BASE1 -->|路由| Issuer["发卡银行<br/>Issuer"]
     Issuer -->|响应| BASE1
     BASE1 -->|响应回传| Acquirer
 
     Acquirer -->|请款文件 TC05/TC15| VSS
-    VSS -->|净轧差 Settlement Position| SettlementBank["清算银行\nSettlement Bank"]
+    VSS -->|净轧差 Settlement Position| SettlementBank["清算银行<br/>Settlement Bank"]
 
     style BASE1 fill:#1a1f71,color:#fff
     style VSS fill:#c62828,color:#fff
@@ -69,23 +69,23 @@ VIP 是 BASE I 的现代化演进，支持：
 ```mermaid
 flowchart LR
     subgraph Cardholder["持卡人侧"]
-        CH[持卡人\nCardholder]
-        Device[支付设备\nPOS/手机/浏览器]
+        CH[持卡人<br/>Cardholder]
+        Device[支付设备<br/>POS/手机/浏览器]
     end
 
     subgraph AcquirerSide["收单侧"]
-        Merchant[商户\nMerchant]
-        PSP[支付服务商\nPSP / Payment Processor]
-        Acquirer[收单机构\nAcquirer]
+        Merchant[商户<br/>Merchant]
+        PSP[支付服务商<br/>PSP / Payment Processor]
+        Acquirer[收单机构<br/>Acquirer]
     end
 
     subgraph Network["卡组织"]
-        Visa[Visa\nVisaNet / VIP]
+        Visa[Visa<br/>VisaNet / VIP]
     end
 
     subgraph IssuerSide["发卡侧"]
-        Issuer[发卡银行\nIssuer]
-        TSP[令牌服务商\nTSP]
+        Issuer[发卡银行<br/>Issuer]
+        TSP[令牌服务商<br/>TSP]
     end
 
     CH -->|刷/插/挥/扫| Device
@@ -196,10 +196,10 @@ Visa 授权使用 **ISO 8583** 金融报文协议。理解报文结构是排查�
 flowchart TB
     subgraph 支付入口对比
         direction LR
-        A["磁条 Mag Stripe\nDE 35: Track2\nDE 22: 90x\n风险最高，已基本淘汰"] 
-        B["EMV 芯片\nDE 55: EMV Data\nDE 22: 05x\n含 ATC 防复制攻击"]
-        C["NFC/Tap\nDE 55: EMV Data\nDE 22: 07x\n含 Token PAN (DPAN)"]
-        D["CNP 卡号输入\n仅 PAN+Exp+CVV2\nDE 22: 01x\n需 3DS 降低欺诈风险"]
+        A["磁条 Mag Stripe<br/>DE 35: Track2<br/>DE 22: 90x<br/>风险最高，已基本淘汰"] 
+        B["EMV 芯片<br/>DE 55: EMV Data<br/>DE 22: 05x<br/>含 ATC 防复制攻击"]
+        C["NFC/Tap<br/>DE 55: EMV Data<br/>DE 22: 07x<br/>含 Token PAN (DPAN)"]
+        D["CNP 卡号输入<br/>仅 PAN+Exp+CVV2<br/>DE 22: 01x<br/>需 3DS 降低欺诈风险"]
     end
 ```
 
@@ -249,28 +249,28 @@ DE 55 中包含 EMV TLV 数据，核心标签：
 sequenceDiagram
     participant CH as 持卡人浏览器/App
     participant M as 商户/3DS Server
-    participant DS as Directory Server\n(Visa 维护)
-    participant ACS as Access Control Server\n(发卡行维护)
+    participant DS as Directory Server<br/>(Visa 维护)
+    participant ACS as Access Control Server<br/>(发卡行维护)
 
     CH->>M: 1. 发起支付（输入卡号等）
-    M->>DS: 2. Authentication Request (AReq)\n含 100+ 数据元素\n（IP、设备指纹、浏览器信息、历史行为）
+    M->>DS: 2. Authentication Request (AReq)<br/>含 100+ 数据元素<br/>（IP、设备指纹、浏览器信息、历史行为）
     DS->>ACS: 3. 路由至持卡人发卡行 ACS
     ACS->>ACS: 4. 风险评估（AI模型打分）
 
     alt 无感知认证（Frictionless Flow）
-        ACS-->>DS: 5a. Authentication Response (ARes)\n结果=Y，ECI=05，CAVV=...
+        ACS-->>DS: 5a. Authentication Response (ARes)<br/>结果=Y，ECI=05，CAVV=...
         DS-->>M: 6a. 认证结果回传
-        Note over ACS: 发卡行认定低风险\n无需持卡人交互
+        Note over ACS: 发卡行认定低风险<br/>无需持卡人交互
     else 质询认证（Challenge Flow）
         ACS-->>DS: 5b. ARes 结果=C
         DS-->>M: 6b. 发起 Challenge
-        M->>CH: 7b. 展示挑战界面\n（OTP短信/生物识别/选图）
+        M->>CH: 7b. 展示挑战界面<br/>（OTP短信/生物识别/选图）
         CH->>ACS: 8b. 持卡人完成认证
         ACS-->>M: 9b. 认证成功/失败
     end
 
     M->>Acquirer: 10. 带 ECI + CAVV 发起授权请求
-    Acquirer->>Visa: 11. ISO 8583 授权请求\n（DE 60 含 ECI=05/06/07）
+    Acquirer->>Visa: 11. ISO 8583 授权请求<br/>（DE 60 含 ECI=05/06/07）
 ```
 
 ### 5.3 ECI 值含义
@@ -295,9 +295,9 @@ ECI（Electronic Commerce Indicator）是 3DS 认证结果在授权报文中的�
 
 ```mermaid
 flowchart LR
-    FPAN["真实卡号\nFPAN: 4111 1111 1111 1111\n永久敏感数据"]
-    Token["网络令牌\nDPAN: 4895 xxxx xxxx xxxx\n场景绑定、可吊销"]
-    TSP["令牌服务商\nVisa TSP\nFPAN ↔ DPAN 映射"]
+    FPAN["真实卡号<br/>FPAN: 4111 1111 1111 1111<br/>永久敏感数据"]
+    Token["网络令牌<br/>DPAN: 4895 xxxx xxxx xxxx<br/>场景绑定、可吊销"]
+    TSP["令牌服务商<br/>Visa TSP<br/>FPAN ↔ DPAN 映射"]
 
     FPAN -->|注册| TSP
     TSP -->|下发 Token| Token
@@ -333,15 +333,15 @@ sequenceDiagram
     participant VIP as VisaNet VIP
     participant ISS as 发卡银行
 
-    POS->>ACQ: 1. 授权请求\n（含 EMV Data 或 Token PAN）
-    ACQ->>VIP: 2. ISO 8583 0100 报文\n（DE2/4/18/22/35/55/60/61）
-    VIP->>VIP: 3. BIN 路由查找\n令牌解析（DPAN→FPAN）\nVAA 风险评分附加
-    VIP->>ISS: 4. 路由授权请求\n（已解析为 FPAN）
-    ISS->>ISS: 5. 多维风控检查：\n额度/余额、黑名单、\n速度核查、规则引擎、\nAI 欺诈模型（部分行）\nEMV ARQC 验证
-    ISS-->>VIP: 6. 0110 响应\n（DE38=授权码, DE39=响应码）
+    POS->>ACQ: 1. 授权请求<br/>（含 EMV Data 或 Token PAN）
+    ACQ->>VIP: 2. ISO 8583 0100 报文<br/>（DE2/4/18/22/35/55/60/61）
+    VIP->>VIP: 3. BIN 路由查找<br/>令牌解析（DPAN→FPAN）<br/>VAA 风险评分附加
+    VIP->>ISS: 4. 路由授权请求<br/>（已解析为 FPAN）
+    ISS->>ISS: 5. 多维风控检查：<br/>额度/余额、黑名单、<br/>速度核查、规则引擎、<br/>AI 欺诈模型（部分行）<br/>EMV ARQC 验证
+    ISS-->>VIP: 6. 0110 响应<br/>（DE38=授权码, DE39=响应码）
     VIP-->>ACQ: 7. 响应回传
     ACQ-->>POS: 8. 授权结果
-    Note over VIP: 全程 < 2 秒\n国际路由目标 < 500ms
+    Note over VIP: 全程 < 2 秒<br/>国际路由目标 < 500ms
 ```
 
 ### 7.2 发卡行风控检查项
@@ -504,7 +504,7 @@ flowchart TB
     end
 
     subgraph "Visa 净轧差"
-        V["Visa NSP\n轧差后：\n总收款 = 总付款\n实际划转量极小"]
+        V["Visa NSP<br/>轧差后：<br/>总收款 = 总付款<br/>实际划转量极小"]
     end
 
     I1 --> V
@@ -619,28 +619,28 @@ mindmap
 
 ```mermaid
 flowchart TB
-    CH["持卡人 向发卡行申请拒付\n时限：交易日后 120 天"] 
+    CH["持卡人 向发卡行申请拒付<br/>时限：交易日后 120 天"] 
     ISS{"发卡行 受理审核"}
     CH --> ISS
 
-    ISS -->|受理| CB_INIT["发起拒付\n发送至 VisaNet"]
+    ISS -->|受理| CB_INIT["发起拒付<br/>发送至 VisaNet"]
     ISS -->|驳回| REJECT["申请驳回"]
 
-    CB_INIT --> ACQ_RECV["收单机构 收到拒付通知\n⚠️ 时限：30 天内响应"]
+    CB_INIT --> ACQ_RECV["收单机构 收到拒付通知<br/>⚠️ 时限：30 天内响应"]
 
     ACQ_RECV --> ACQ_CHOICE{"收单/商户 决策"}
-    ACQ_CHOICE -->|接受| ACCEPT["接受拒付\n资金退回持卡人"]
-    ACQ_CHOICE -->|反驳| REPR["提交反驳文件\n（Representment）\n含：发货证明/签名/\n3DS CAVV/使用记录等"]
+    ACQ_CHOICE -->|接受| ACCEPT["接受拒付<br/>资金退回持卡人"]
+    ACQ_CHOICE -->|反驳| REPR["提交反驳文件<br/>（Representment）<br/>含：发货证明/签名/<br/>3DS CAVV/使用记录等"]
 
     REPR --> ISS2{"发卡行 审核反驳"}
-    ISS2 -->|接受反驳| WIN["商户胜诉\n拒付撤销"]
-    ISS2 -->|二次争议| PRE_ARB["Pre-Arbitration\n时限：30天"]
+    ISS2 -->|接受反驳| WIN["商户胜诉<br/>拒付撤销"]
+    ISS2 -->|二次争议| PRE_ARB["Pre-Arbitration<br/>时限：30天"]
 
     PRE_ARB --> ACQ2{"收单机构响应"}
     ACQ2 -->|接受| LOSE["商户败诉"]
-    ACQ2 -->|拒绝| ARB["提交 Visa 仲裁\n费用 $500\n慎用"]
+    ACQ2 -->|拒绝| ARB["提交 Visa 仲裁<br/>费用 $500<br/>慎用"]
 
-    ARB --> FINAL["Visa 最终裁决\n不可上诉"]
+    ARB --> FINAL["Visa 最终裁决<br/>不可上诉"]
 
     style CH fill:#e53935,color:#fff
     style WIN fill:#43a047,color:#fff
@@ -712,9 +712,9 @@ sequenceDiagram
     participant V as VisaNet
     participant RECV as 收款方（Visa 卡）
 
-    P->>ACQ: 1. 发起 Push Payment 请求\n（原始交易 + 分账比例）
-    ACQ->>V: 2. AFT（Account Funding Transaction）\n原始交易授权
-    ACQ->>V: 3. OCT（Original Credit Transaction）\n推送资金至收款方卡号
+    P->>ACQ: 1. 发起 Push Payment 请求<br/>（原始交易 + 分账比例）
+    ACQ->>V: 2. AFT（Account Funding Transaction）<br/>原始交易授权
+    ACQ->>V: 3. OCT（Original Credit Transaction）<br/>推送资金至收款方卡号
     V-->>RECV: 4. 实时入账（T+0 至 T+1）
     V-->>ACQ: 5. 处理结果
     ACQ-->>P: 6. 分账完成通知
@@ -729,28 +729,28 @@ sequenceDiagram
 ```mermaid
 flowchart TB
     subgraph "T+0 实时（毫秒级）"
-        AUTH["授权 Authorization\n发卡行冻结额度\n返回 AUTH CODE"]
+        AUTH["授权 Authorization<br/>发卡行冻结额度<br/>返回 AUTH CODE"]
     end
 
     subgraph "T+1（工作日）"
-        CLEAR["请款 Clearing\n收单行提交 TC 05 文件\n含 ISO 8583 Data"]
+        CLEAR["请款 Clearing<br/>收单行提交 TC 05 文件<br/>含 ISO 8583 Data"]
     end
 
     subgraph "T+2（工作日）"
-        NET["净轧差 Netting\nVisa NSP 计算\n各行净头寸"]
-        SI["清算指令 Settlement\nInstruction 下发"]
-        BANK["清算银行\n（Fedwire/TARGET2/CIPS）\n完成资金划转"]
+        NET["净轧差 Netting<br/>Visa NSP 计算<br/>各行净头寸"]
+        SI["清算指令 Settlement<br/>Instruction 下发"]
+        BANK["清算银行<br/>（Fedwire/TARGET2/CIPS）<br/>完成资金划转"]
     end
 
     subgraph "T+2~T+3"
-        MERCHANT["商户账户到款\n= 交易金额\n- 交换费\n- Visa 评估费\n- 收单溢价"]
+        MERCHANT["商户账户到款<br/>= 交易金额<br/>- 交换费<br/>- Visa 评估费<br/>- 收单溢价"]
     end
 
     subgraph "可选节点（任意时间）"
-        VOID["撤销 Void\n0400 报文\n请款前有效"]
-        REFUND["退款 Refund\nTC 06\n请款后执行"]
-        CB["拒付 Chargeback\nVCR 120天内\n发卡行主导"]
-        SPLIT["分账 Split\nVisa Direct OCT\n或内部账本"]
+        VOID["撤销 Void<br/>0400 报文<br/>请款前有效"]
+        REFUND["退款 Refund<br/>TC 06<br/>请款后执行"]
+        CB["拒付 Chargeback<br/>VCR 120天内<br/>发卡行主导"]
+        SPLIT["分账 Split<br/>Visa Direct OCT<br/>或内部账本"]
     end
 
     AUTH --> CLEAR --> NET --> SI --> BANK --> MERCHANT
