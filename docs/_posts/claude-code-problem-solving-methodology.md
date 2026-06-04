@@ -199,3 +199,4 @@ Claude Code 本质是 **模型 + 终端里一串工具**（读文件、改文件
 - [Claude Code 进阶：MCP、Skills 与自用习惯](./claude-code-advanced-usage-guide.html)
 - [Claude Code 小技巧：用 /statusline 定制底部状态栏](./claude-code-statusline-tip.html)
 - [主流 AI 编程工具怎么选：工具维度 × 模型维度](./mainstream-ai-coding-tools-comparison.html)
+- [Codex Hook 与 Review：Agent 与 Git 协作](./codex-hook-review-guide.html)

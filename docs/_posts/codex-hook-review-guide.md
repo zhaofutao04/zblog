@@ -19,7 +19,7 @@ author: 老Z
 
 用 OpenAI **Codex**（终端 CLI / IDE 扩展那条产品线）写代码时，「审查」其实有两条腿：**`codex review`** 是专门跑代码评审的子命令；**Hooks** 则是在 Agent 循环里插脚本的生命周期框架。官方文档里 Hooks 还有一层 **Review and trust**——第一次启用某个 hook 脚本前，要在 CLI 里审一眼、点信任，和 Git 里的 review 不是一回事，但名字挨在一起，初学者很容易混。
 
-这篇把三件事拆开讲清楚，并给几条能直接抄的配置：**提交前 diff 审查**、**Agent 跑完再扫一遍**、**危险命令拦截**。姊妹篇：[主流 AI 编程工具怎么选](./mainstream-ai-coding-tools-comparison.html)（Codex 产品线 vs Copilot 里的 Codex 档位）。
+这篇把三件事拆开讲清楚，并给几条能直接抄的配置：**提交前 diff 审查**、**Agent 跑完再扫一遍**、**危险命令拦截**。姊妹篇：[主流 AI 编程工具怎么选](./mainstream-ai-coding-tools-comparison.html)（Codex 产品线 vs Copilot 里的 Codex 档位）。Claude Code 侧的分型与验证节奏见 [问题处理方法论](./claude-code-problem-solving-methodology.html)。
 
 > 官方参考：[Codex Hooks](https://developers.openai.com/codex/hooks) · [codex review（CLI）](https://openai-codex.mintlify.app/cli/review) · [Codex CLI](https://developers.openai.com/codex/cli/)
 
@@ -704,7 +704,7 @@ Cursor 也在 `.cursor/hooks.json` 里用 **command / prompt hook**，事件名�
 - **分栈**：React 侧重 XSS/a11y/Hook 与客户端密钥；Go 侧重 context/SQL/鉴权/并发；monorepo 用路径分支 + 窄提示词。
 - **协作**：Codex hook 管 **会话内**；Git hook 管 **进库**；检查脚本放 `scripts/checks/` 共用，`codex review` 放在 Git pre-commit 或 `Stop`，别绑在每个 `PostToolUse` 上。
 
-如果你已经在用 [Claude Code 进阶](./claude-code-advanced-usage-guide.html) 那套 MCP/Skills，可以把 **Skills 里封装好的检查清单** 写成 `codex review` 的 stdin prompt，或 Stop hook 里调用的脚本参数——工具链不同，**「先护栏、再 LLM 审、最后人过 PR」** 的顺序是一样的。
+已在用 [Claude Code 进阶](./claude-code-advanced-usage-guide.html) 的 MCP/Skills 时，可把检查清单写进 `codex review` 的 stdin prompt，或 Stop hook 调用的脚本——工具不同，**先护栏、再 LLM 审、最后人过 PR** 的顺序一样。
 
 ## 参考链接
 

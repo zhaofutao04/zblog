@@ -3,7 +3,7 @@ title: OpenClaw：把 AI 助手接进所有聊天平台
 date: 2026-04-10
 categories:
   - AI大模型
-  - 工具链
+  - 建站
 tags:
   - OpenClaw
   - AI助手
@@ -17,7 +17,9 @@ author: 老Z
 
 日常用 AI 助手，一般是打开网页或者切到某个 App 问一句。但如果你的**工作流分散在 Slack、Telegram、Discord 多个平台**，来回切换本身就是损耗。
 
-OpenClaw 做的事，就是把 AI 助手**接到所有这些平台里**，让它像一个真正的同事——在任何一个聊天软件里 @ 它，就能帮你干活。
+OpenClaw 做的事，就是把 AI 助手 **接到 Slack、Telegram、Discord 等平台**，在聊天里 @ 它就能干活——少在 App 之间来回切。
+
+和 [Hermes Agent](./hermes-agent-self-improving-ai.html) 不同：OpenClaw 核心是 **本地 Gateway + 多 IM 通道**；Hermes 更强调 **Skill 沉淀与自改进**。写代码向的终端助手见 [Claude Code 进阶](./claude-code-advanced-usage-guide.html)。
 
 ## OpenClaw 是什么
 
@@ -215,13 +217,10 @@ Gateway 启动后常驻后台，通过配置文件管理各平台连接。
 
 ## 小结
 
-OpenClaw 的价值不在于模型本身——模型是通用的——而在于**接入方式和本地化**。如果你：
+OpenClaw 的价值在 **接入方式与本地化**，不在模型本身。适合：多平台协作、希望数据留在本机、用 Gateway 统一管理 Bot。
 
-- 每天在多个平台切换
-- 想要 AI 帮你串联不同 App 的能力
-- 需要本地化部署、不想把数据交给第三方
-
-可以试试。反正一行命令就能跑起来。
+- 要 **Skill 学习与记忆迭代** → [Hermes Agent](./hermes-agent-self-improving-ai.html)
+- 要 **选型 OpenAI Codex / Copilot / Claude** → [主流 AI 编程工具](./mainstream-ai-coding-tools-comparison.html)
 
 ---
 

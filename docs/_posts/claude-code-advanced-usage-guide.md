@@ -169,7 +169,7 @@ dynamic_servers: 25+   # 按需供应服务器
 
 #### 3. Token 优化策略
 
-2026 年的 **MCP Tool Search** 功能通过懒加载减少了 95% 的上下文使用：
+官方与社区在 **MCP 工具懒加载 / Tool Search** 一类能力上持续迭代，目标是减少「一次性塞进上下文的全量 tool schema」。下面用伪代码说明 **思路**（具体 API 与节省比例以你当前 Claude Code / MCP 文档为准）：
 
 ```javascript
 // 只加载相关工具的描述（约100 tokens/server）

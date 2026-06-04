@@ -17,7 +17,7 @@ author: 老Z
 
 > **时效说明**：本文信息与链接整理于 **2026-04-16**。各厂商套餐名、模型档位、定价与文档路径变更频繁，**以官网与控制台为准**；若发现与当前产品不一致，请优先信任官方说明。
 
-若更关心 **GPT / Claude / Gemini 各家族档位与国产替代**（而非 IDE、CLI 产品形态），见：[主流编程大模型怎么选：GPT、Claude、Gemini 与国产替代](./mainstream-coding-llm-families.html)。
+若更关心 **GPT / Claude / Gemini 各家族档位与国产替代**（而非 IDE、CLI 产品形态），见：[主流编程大模型怎么选：GPT、Claude、Gemini 与国产替代](./mainstream-coding-llm-families.html)。**Codex Hooks 与 `codex review`** 的落地配置见 [Codex Hook 与 Review](./codex-hook-review-guide.html)。
 
 写代码用的 AI，拆开来看就两件事：**在什么产品里干活**（工具），以及 **用哪些模型档位在算**（模型族）。此前一文把 **Codex** 只写成「模型名」、不写入工具侧——这与 **OpenAI 当前产品线**不符；下面按 [OpenAI Codex 官方开发者文档](https://developers.openai.com/codex/cli/) 等对正文做了校正。
 

@@ -3,7 +3,7 @@ title: Hermes Agent：唯一内置学习闭环的自改进 AI Agent
 date: 2026-04-10
 categories:
   - AI大模型
-  - 工具链
+  - 建站
 tags:
   - Hermes Agent
   - Nous Research
@@ -15,11 +15,11 @@ tags:
 author: 老Z
 ---
 
-## 前言
+之前搞混过 **Hermes JS 引擎** 和 **Nous Research 的 Hermes Agent**，这篇只写后者。
 
-之前写了篇 Hermes JavaScript 引擎的文章，发出去才发现你说的是另一个 Hermes——**Nous Research 的 Hermes Agent**。抱歉搞混了，这篇才是正确的内容。
+Hermes Agent 是开源 personal Agent 里讨论度很高的一档（GitHub star 数会变，以仓库为准）。和其他 Agent 比，它比较突出的一点是：**会把任务沉淀成 Skill，并在复用时迭代**——不是只会单次问答。
 
-Hermes Agent 49k+ GitHub stars，是目前最火的开源 AI Agent 之一。它的核心卖点就一句话：**内置学习闭环的自我改进 Agent**。
+和 [OpenClaw](./openclaw-personal-ai-assistant.html)（多 IM 接入、本地网关）是不同路线：Hermes 偏 **可成长的工作流 + Skill**；OpenClaw 偏 **聊天平台统一入口**。终端编程助手可看 [Claude Code 进阶](./claude-code-advanced-usage-guide.html)。
 
 ## Hermes Agent 是什么
 
@@ -295,13 +295,10 @@ hermes gateway start
 
 ## 小结
 
-Hermes Agent 的核心创新在于**内置学习闭环**——它不只是一个执行命令的工具，而是会从经验中学习、改进自己的 Agent。
-
-对于个人用户，它是一个真正「越用越懂你」的助手；对于团队，它可以积累和传承操作经验；对于研究者，它提供了 RL 训练的接口。
-
-如果你对 AI Agent 有更高要求——不只是问一句答一句，而是希望它能记住、能学习、能自动化——Hermes Agent 值得一试。
+- **Skill 自改进 + 持久记忆** 是 Hermes 和「只跑命令的 CLI Agent」的主要差别。
+- 要 **多平台 @ 助手**，看 [OpenClaw](./openclaw-personal-ai-assistant.html)；要 **IDE/终端结对写代码**，看 Claude Code 系列（[进阶](./claude-code-advanced-usage-guide.html)、[方法论](./claude-code-problem-solving-methodology.html)）。
+- 安装与模型列表以官方文档为准；`hermes claw migrate` 适合从 OpenClaw 迁配置。
 
 ---
 
-*官网：https://hermes-agent.nousresearch.com*
-*GitHub：https://github.com/NousResearch/hermes-agent*
+*官网：https://hermes-agent.nousresearch.com* · *GitHub：https://github.com/NousResearch/hermes-agent*

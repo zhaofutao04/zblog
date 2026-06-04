@@ -17,11 +17,24 @@ tags:
 author: 老Z
 ---
 
-Visa 是全球最主流的卡组织之一，日均处理超过 **2 亿笔**交易、金额超过 **550 亿美元**。但"刷卡成功"背后的链路远比想象中复杂——从报文格式到交换费分档，从 3DS 认证到 VCR 争议仲裁，每个环节都有大量技术细节。本文结合 Visa Core Rules、VCR Dispute Guidelines、Visa Developer Platform 文档和实际落地经验，把这套体系的底层逻辑拆开讲透。
+刷卡成功只是 **授权通过**；钱真正到商户账上，还要走 **请款、交换费分档、清算轧差**，争议则走 **VCR 拒付**。Visa 日均体量很大（公开口径常提 **2 亿笔+/日** 量级），对接时容易卡在：**ISO 8583 字段**、**CPS 档位**、**Void 和 Refund 选错**、**3DS 没传 CAVV** 等。下面按 Visa Core Rules、VCR 指南、Developer Platform 和落地经验，把链路拆开写——**数字与费率以当期官方 PDF 为准**。
+
+姊妹篇（先建立全景再下钻本篇）：[国际七大卡组织](./international-card-schemes.html) · [3D Secure 验证](./3ds-overview.html) · [Token 支付](./token-payment-guide.html) · [PCI DSS 概述](./pci-dss-overview.html)
+
+> 参考：[Visa Developer](https://developer.visa.com) · [PCI SSC](https://www.pcisecuritystandards.org/)
+
+## 先分清四个阶段（别和「到账」混为一谈）
+
+| 阶段 | 在回答什么 | 商户体感 | 本篇对应章节 |
+| --- | --- | --- | --- |
+| **授权 Authorization** | 这张卡现在能不能扣这笔？ | POS/网关即时成功/失败 | 授权、STIP、Reversal |
+| **请款 Capture / Clearing** | 把授权变成可清算的交易凭证 | T+0～T+1 汇总上报 | TC 05/06、请款时限 |
+| **清算 Settlement** | 发卡行和收单行谁欠谁多少 | T+1～T+3 资金变动 | VSS、交换费档位 |
+| **拒付 Chargeback** | 持卡人争议谁赢谁输 | 120 天内扣款/举证 | VCR 原因码、3DS 举证 |
 
 ## 一、VisaNet 基础架构
 
-在讲交易流程之前，必须先理解 Visa 的网络架构，否则后面的流程会显得很"黑箱"。
+在讲交易流程之前，先把 Visa 网络架构对齐，否则后面的流程会像黑箱。
 
 ### 1.1 VisaNet 的两大核心系统
 
@@ -322,7 +335,7 @@ flowchart LR
 
 ---
 
-## 七、授权（Authorization）深度解析
+## 七、授权（Authorization）机制
 
 ### 7.1 授权请求完整路径
 
@@ -427,7 +440,7 @@ Visa 规则允许请款金额与授权金额有偏差，但设有阈值：
 
 ---
 
-## 九、交换费（Interchange）深度解析
+## 九、交换费（Interchange）机制
 
 交换费是整个支付链路中金额最大、规则最复杂的费用，直接影响商户净收入。
 
@@ -791,4 +804,4 @@ flowchart TB
 
 ---
 
-*如果你觉得这篇文章有帮助，欢迎分享给需要的朋友。*
+**相关文章**：[国际七大卡组织](./international-card-schemes.html) · [3D Secure](./3ds-overview.html) · [Token 支付](./token-payment-guide.html) · [免密支付](./password-free-payment-guide.html) · [PCI DSS 概述](./pci-dss-overview.html)
