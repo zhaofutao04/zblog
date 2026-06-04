@@ -183,7 +183,7 @@ onToolNeeded(toolId => {
 });
 ```
 
-## Skills 系统深度应用
+## Skills 系统
 
 ### Skills 工作机制
 
@@ -195,7 +195,7 @@ Skills 是 `SKILL.md` 文件形式的专业化剧本，使用**渐进披露**机
 
 ### 核心 Skills 推荐
 
-根据 [Awesome Claude Skills](https://github.com/travisvn/awesome-claude-skills) 统计，以下是**最受欢迎的技能**：
+根据 [Awesome Claude Skills](https://github.com/travisvn/awesome-claude-skills) 等社区列表，下面是几类 **我常看到被提到的** Skills（安装量、名称会变，以仓库 README 为准）：
 
 #### 🎨 前端开发类
 
@@ -465,65 +465,44 @@ test('支付流程完整测试', async ({ page }) => {
 });
 ```
 
-### 集成效果
+### 集成效果（主观感受，非 benchmark）
 
-通过 Claude Code 的 MCP 和 Skills 系统：
+把 MCP + Skills 接进支付类项目时，我体感上的变化大概是：
 
-- **开发效率提升 300%**：自动化架构设计、代码生成、测试编写
-- **安全质量提升 250%**：内置 PCI DSS 合规检查、自动安全审计
-- **文档同步率 100%**：Context7 确保使用最新 API 文档
-- **测试覆盖率 95%+**：Playwright 自动生成端到端测试
+- **重复劳动少了**：架构草稿、测试骨架、合规 checklist 可以交给 Skill 模板
+- **文档版本**：Context7 一类 MCP 能拉到较新的 API 说明（仍要人工核对）
+- **测试**：Playwright MCP 适合补 E2E，不能替代单测
 
-## 2026 年发展趋势与展望
+别信「效率提升 X%」这种口号——以你自己仓库的 PR 周期和 bug 数为准。
 
-### 后面可能往哪长（瞎猜成分大）
+## 生态变化（时效内容）
 
-根据调研数据，预计到 2026 年底：
+MCP 服务器和 Skills 仓库增长很快，**数字以下次你自己打开 GitHub 为准**。我一般会：
 
-- **MCP 服务器数量**：1,000+ 社区构建的服务器
-- **Skills 生态**：[Awesome Claude Skills](https://github.com/travisvn/awesome-claude-skills) 达到 1,234+ 技能
-- **集成覆盖**：850+ SaaS 应用通过 Composio 集成
-
-### 新兴技术集成
+- 先接 **GitHub + 文档检索（如 Context7）+ 浏览器/测试** 三个高频 MCP
+- Skills 只装 **和当前项目域相关的**（支付安全、前端设计等），避免 `/` 菜单过长
+- 关注 [Awesome Claude Skills](https://github.com/travisvn/awesome-claude-skills) 和官方 changelog，别追每一个新 server
 
 ```mermaid
 flowchart LR
-    A[Claude Code 2026] --> B[Quantum Computing MCP]
-    A --> C[Blockchain Development Skills]
-    A --> D[AR/VR Interface MCP]
-    A --> E[Edge AI Deployment Skills]
-
-    B --> F[量子算法优化]
-    C --> G[智能合约审计]
-    D --> H[沉浸式开发]
-    E --> I[模型边缘部署]
+  CC[Claude Code] --> MCP[MCP 工具层]
+  CC --> SK[Skills 剧本]
+  MCP --> GH[GitHub / 浏览器 / DB…]
+  SK --> DOM[领域 checklist]
 ```
-
-### 企业级应用
-
-- **金融科技**：自动化 PCI DSS 合规、实时风险评估
-- **Web3 开发**：智能合约审计、DeFi 协议安全
-- **AI 基础设施**：模型训练管道、推理优化
 
 ## 总结与建议
 
-Claude Code 的 MCP 和 Skills 系统代表了 AI 辅助开发的未来方向。通过**标准化协议**和**可复用知识**，开发者可以构建真正智能的工作流。
+MCP 解决 **接什么工具**；Skills 解决 **固定套路怎么复用**。两者叠加，适合把「读规范 → 改代码 → 跑测试」这类重复流标准化。
 
-### 核心建议
+### 实操建议
 
-1. **循序渐进**：从核心 MCP 服务器（GitHub、Context7）开始
-2. **专业化技能**：根据领域需求定制专门的 Skills
-3. **自动化优先**：最大化利用 MCP 的自动化能力
-4. **社区参与**：贡献和使用社区维护的扩展
+1. **从少到多**：先 2～3 个 MCP，跑顺再加
+2. **Skills 按域拆**：支付、前端、DevOps 各一份，别一个大杂烩
+3. **能脚本化的别全丢给模型**：lint/test/hook 仍用确定性工具
+4. **社区 skill 当参考**：装之前读一遍 `SKILL.md`，未知来源别 blindly trust
 
-### 最佳实践要点
-
-- 🎯 **聚焦核心需求**：优先部署与核心工作流相关的扩展
-- ⚡ **性能优化**：合理使用懒加载和渐进披露
-- 🔄 **持续学习**：跟进社区最新的 MCP 服务器和 Skills
-- 🛡️ **安全第一**：特别关注安全相关的技能和工具
-
-在 AI 驱动开发的时代，掌握 Claude Code 的高级功能将成为开发者的核心竞争力。通过深度集成 MCP 和 Skills，我们不仅能够提升开发效率，更能够构建出更安全、更可靠的软件系统。
+写支付/PCI 相关时，可对照 [问题处理方法论](./claude-code-problem-solving-methodology.html) 里的任务分型，以及 [statusline 小技巧](./claude-code-statusline-tip.html) 盯上下文与费用。
 
 ---
 

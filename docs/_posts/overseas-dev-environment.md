@@ -97,44 +97,31 @@ flowchart TB
     class IDE,Browser,Clash,WGClient,WGServer devTool
 ```
 
-## 第一步：账号准备 🎫
+## 第一步：账号准备
 
-俗话说"工欲善其事，必先利其器"。在开始搭建技术架构之前，我们需要准备相应的账号资源。这就像是获得进入"AI 开发者俱乐部"的会员卡一样重要。
+开搭之前先把账号备齐：海外邮箱、能收短信的号码、付 API 订阅用的支付方式、2FA。没有「标准路径」，各凭渠道；**遵守 ToS，别碰灰产线路**。
 
-**基础准备清单：**
-- 🌍 海外邮箱服务（Gmail、Outlook 等）
-- 📱 海外手机号码（用于接收验证码）
-- 💳 支付工具（用于订阅 API 服务）
-- 🔐 安全工具（二步验证、密码管理器）
+**清单：**
+- 海外邮箱（Gmail、Outlook 等）
+- 海外手机号（验证码）
+- 支付工具（API 订阅）
+- 2FA / 密码管理器
 
-关于注册和获取方式，每人渠道不同，这里不展开。**务必遵守**各服务 ToS，别碰灰产线路。
+**安全习惯：** 专用邮箱密码、开 2FA、定期查权限；只用于合法开发学习。
 
-**📋 安全建议：**
-- 使用独立的邮箱和密码
-- 开启二步验证保护账号安全
-- 定期检查和更新访问权限
-- 仅用于合法的开发和学习目的
+## 第二步：海外 VPS
 
-## 第二步：构建海外基地 🏗️
+### 选服务商
 
-### 选择理想的"海外办公室" 🌏
+需要一台 **IP 质量过得去** 的 VPS 当 WireGuard 服务端。下文示例用过 [WEPC.AU](https://wepc.au/aff.php?aff=2465)（澳洲、家庭 IP 段）；你也可以换熟悉的厂商。
 
-要搭建稳定的海外开发环境，选择合适的VPC服务商就像选择办公室地址一样重要。我们需要的不仅是一台服务器，更是一个可靠的"海外基地"。
+**我选型时会看：**
+- **IP 类型**：家庭 IP 通常比纯机房 IP 少踩风控
+- **地域**：美西、日本、香港、新加坡（看延迟）
+- **线路**：延迟 < 200ms、带宽够用即可
+- **价格**：月费在可接受范围
 
-**推荐服务商：**
-- **[WEPC.AU](https://wepc.au/aff.php?aff=2465)** - 澳洲优质服务商
-  - ✅ 家庭 IP 段，天然规避风控
-  - ✅ 多地区节点，延迟表现优秀
-  - ✅ 带宽充足，价格合理
-  - ✅ 技术支持响应及时
-
-**选择标准：**
-- 🌐 **IP 质量**：家庭 IP > 商业 IP > 数据中心 IP
-- 📍 **地理位置**：优选美西、日本、香港、新加坡
-- 🚀 **网络质量**：延迟 < 200ms，带宽 > 10Mbps
-- 💰 **成本效益**：月费用控制在合理范围内
-
-### 服务器环境初始化 ⚙️
+### 初始化系统（Docker）
 
 ```bash
 # 更新系统
@@ -151,20 +138,19 @@ sudo systemctl start docker
 sudo usermod -aG docker $USER
 ```
 
-## 第三步：打通"任督二脉" 🚀
+## 第三步：WireGuard + API 代理
 
-### 第一脉：网络隧道 - WireGuard 高速专线 🌐
+### 3.1 网络：WireGuard + wg-easy
 
-**WireGuard** 是现代化的高性能VPN协议，就像是连接本地和海外的"专用高速公路"。**wg-easy** 则是基于 WireGuard 构建的 Web 界面管理工具，它将复杂的命令行配置封装成了友好的图形界面。
+**WireGuard** 跑加密隧道；**wg-easy** 给 Web UI，生成客户端配置/二维码，省得手写 key。
 
-**技术关系解析：**
-- **WireGuard**：VPN 协议，加密隧道
-- **wg-easy**：Web 管理，生成配置/二维码
-- 🚀 **协同工作**: wg-easy 简化配置流程，WireGuard 提供安全通道
+- **WireGuard**：协议层
+- **wg-easy**：管理界面
+- 二者配合：UI 出配置，WG 扛流量
 
-#### 3.1.1 服务端部署 - wg-easy 管理界面
+#### 3.1.1 服务端：wg-easy
 
-wg-easy 为 WireGuard 提供 Web 管理界面，让 VPN 配置变得简单。创建 `docker-compose.yml` 文件：
+在 VPS 上建 `docker-compose.yml`：
 
 ```yaml
 version: '3.8'
@@ -277,9 +263,9 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 ```
 
-### 第二脉：智能代理 - cliproxyapi 统一网关 🤖
+### 3.2 API 网关：cliproxyapi
 
-如果说 WireGuard 解决了"能不能连"的问题，那么 cliproxyapi 就解决了"怎么连得更好"的问题。它是一款专业的 AI API 代理工具，能够统一管理多个 AI 服务商的认证和调用，为开发者提供透明的 API 访问体验。
+WireGuard 解决 **能不能连上海外**；**cliproxyapi** 解决 **多家 AI API 怎么统一鉴权、转发**（配合 CC Switch 给 IDE 一个入口）。
 
 #### 3.2.1 Docker Compose 部署方式
 
@@ -503,24 +489,17 @@ docker-compose logs -f cliproxyapi
 - **WireGuard 官方客户端**: https://www.wireguard.com/install/
 - **CC Switch**: https://github.com/ccswitch/ccswitch/releases
 
-## 总结：迈向 AI 开发新时代 🎯
+## 总结
 
-经过以上四个步骤的精心搭建，我们已经成功构建了一条从本地 IDE 直达海外 AI 服务的"高速通道"。这不仅仅是一套技术方案，更是现代开发者拥抱 AI 时代的必备基础设施。
+四步下来：**账号 → VPS → WireGuard → cliproxyapi + CC Switch**。本地 IDE 走 CC Switch 打 localhost 代理，出站流量经 WireGuard 到海外，再访问 Claude/OpenAI 等 API。
 
-**🏆 方案优势：**
-- **🛡️ 稳定可靠**：基于 WireGuard + Docker 成熟技术栈，7x24 小时稳定运行
-- **⚡ 高效便捷**：一次配置，终身受益，告别繁琐的网络配置
-- **🔧 易于维护**：容器化架构，可视化管理，运维成本极低
-- **🚀 高度扩展**：支持多用户、多服务，可随业务增长平滑扩容
-- **🔒 安全防护**：端到端加密，多层安全防护，数据传输更安心
+**链路：**
 
-**🌟 技术链路梳理：**
-```
-本地开发 → CC Switch → cliproxyapi → AI 服务商
-    ↓           ↓          ↓           ↓
-  IDE 编辑器  统一 API 管理  智能网关    Claude/GPT
+```text
+本地 IDE → CC Switch → cliproxyapi → AI 服务商
+         ↘ Clash/WireGuard 客户端 → 海外 VPS
 ```
 
-现在，你可以在熟悉的 IDE 中享受 AI 助手的强大能力，就像使用本地工具一样自然流畅。AI 开发的新时代已经到来，而你已经准备就绪！
+容器化部署后，改配置多半在 compose 和 CC Switch 里完成；版本升级以各项目 Release 为准。
 
-**免责声明**：本文仅从技术角度探讨网络代理的实现方案，请读者在使用时严格遵守相关法律法规，合理合法使用相关技术。
+**免责声明**：本文只讨论技术搭建；请遵守当地法规与各服务 ToS，合法使用。

@@ -31,14 +31,14 @@
 | 3 | `blog-directory-structure.md` | ② | 维护型 |
 | 4 | `blog-tech-architecture.md` | ② | 维护型 |
 | 5 | `blog-usage-guide.md` | ② | 维护型 |
-| 6 | `claude-code-advanced-usage-guide.md` | ① | 各章引导语；MCP 段已去「95%」硬数字 |
+| 6 | `claude-code-advanced-usage-guide.md` | ② | 去假数字/量子 mermaid；Skills/MCP 总结重写 |
 | 7 | `claude-code-statusline-tip.md` | ① | 复核小结 |
 | 8 | `dns-resolution-deep-dive.md` | ② | 维护型 |
 | 9 | `frontend-cors-static-resources.md` | ② | 维护型 |
 | 10 | `https-ssl-tls-deep-dive.md` | ② | 维护型 |
 | 11 | `international-card-schemes.md` | ② | 已链 Visa 全流程 |
 | 12 | `jwt-jws-jwe-guide.md` | ② | 维护型 |
-| 13 | `llm-friendly-log-format.md` | ① | 最佳实践/总结已改；中段代码段叙述待扫 |
+| 13 | `llm-friendly-log-format.md` | ① | 原则/Go/Java 桥接已加；大段代码间叙述待扫 |
 | 14 | `llm-from-scratch-day-01-map-and-terms.md` | ② | 维护型 |
 | 15 | `llm-from-scratch-day-02-extra-beginners.md` | — | 轻扫 |
 | 16 | `llm-from-scratch-day-02-nn-basics.md` | — | 轻扫 |
@@ -48,12 +48,12 @@
 | 20 | `mainstream-ai-coding-tools-comparison.md` | ① | 已链 codex-hook；复核时效 |
 | 21 | `mainstream-coding-llm-families.md` | ② | 维护型 |
 | 22 | `mobile-wallets-apple-google-pay.md` | ② | 维护型 |
-| 23 | `overseas-dev-environment.md` | ① | 概览/合规/组件列表已改；步骤小节待扫 |
+| 23 | `overseas-dev-environment.md` | ② | 步骤 1～3、总结已改 |
 | 24 | `password-free-payment-guide.md` | ② | 维护型 |
 | 25 | `pci-dss-implementation.md` | ② | 维护型 |
 | 26 | `pci-dss-overview.md` | ② | 维护型 |
 | 27 | `rsa-algorithm-guide.md` | ② | 维护型 |
-| 28 | `seo-complete-guide-for-tech-blogs.md` | ① | 8.1 AI 段已改；其余按章润色 |
+| 28 | `seo-complete-guide-for-tech-blogs.md` | ① | 1.1/1.2/8.1/11.x 已改；中段章节待扫 |
 | 29 | `token-payment-guide.md` | ② | 维护型 |
 | 30 | ~~`默认模块.md`~~ | ◆ | 已迁至 `docs/api/default-module-openapi.md` |
 | 31 | `visa-transaction-flow.md` | ② | 文首四阶段表+姊妹链；正文 `##` 去「深度解析」 |
@@ -103,4 +103,4 @@
 | 2026-04-01 | `mainstream-coding-llm-families.md`：扩写型号/指标/国产对应表，标为 ② |
 | 2026-06-04 | P0：`默认模块.md` → `docs/api/default-module-openapi.md` |
 | 2026-06-04 | pass：Visa / Hermes / OpenClaw / 支付·AI 互链；overseas-dev、claude-advanced 局部 |
-| 2026-06-04 | 续：llm-friendly / seo 8.1 / overseas / codex 小结 |
+| 2026-06-04 | 续：overseas 全书径 / claude-advanced 去营销 / seo 1·11 章 / llm-log 桥接 |

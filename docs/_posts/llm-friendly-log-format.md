@@ -44,7 +44,9 @@ author: 老Z
 | 上下文丢失 | 单条日志无法反映调用链 | 中 |
 | 类型模糊 | 数字和字符串混淆 | 中 |
 
-## LLM友好日志设计原则
+## LLM 友好日志设计原则
+
+五条原则：**结构化、语义清楚、类型别混、链路齐、层级可读**。后面 Go/Java 示例都按这张表落地。
 
 ### 核心原则
 
@@ -135,7 +137,9 @@ flowchart TB
 | `context` | 是 | object | 业务上下文 |
 | `error` | 条件 | object | 错误详情（ERROR级别必需） |
 
-## Go语言实现
+## Go 语言实现
+
+下面用 **zerolog** 包一层 `LLMLogger`；字段名与上文 JSON 对齐，便于 grep 和 LLM 读。
 
 ### 日志库：zerolog + 自定义封装
 
@@ -460,9 +464,11 @@ func main() {
 {"level":"error","timestamp":"2026-03-23T10:15:32.234Z","llm_log":{"timestamp":"2026-03-23T10:15:32.234567890Z","timestamp_unix":1742720132234,"level":"ERROR","level_value":4,"service":"payment-service","service_version":"2.1.0","environment":"production","trace_id":"a1b2c3d4e5f6","span_id":"7g8h9i0j","parent_span_id":"","logger":"application","message":"Transaction failed","error":{"type":"*main.InsufficientBalanceError","code":"PAY_001","message":"insufficient balance: account=ACC001, balance=50.00, required=199.00","stack_trace":"..."},"context":{"order_id":"ORD20260323001","user_id":"U13800138000"},"metadata":{"host":"payment-srv-05","pid":12345}}}
 ```
 
-## Java语言实现
+## Java 语言实现
 
-### 日志库：Logback + JSON Encoder + 自定义MDC
+团队若以 JVM 为主，可用 **Logback + logstash encoder**，用 MDC 塞 `trace_id` 等，输出 JSON 形态与 Go 侧尽量一致。
+
+### 日志库：Logback + JSON Encoder + 自定义 MDC
 
 添加Maven依赖：
 
