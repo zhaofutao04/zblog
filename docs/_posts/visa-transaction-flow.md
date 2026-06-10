@@ -156,7 +156,7 @@ Visa 授权使用 **ISO 8583** 金融报文协议。理解报文结构是排查�
 
 | DE编号 | 字段名 | 长度 | 说明 |
 |--------|--------|------|------|
-| **DE 2** | Primary Account Number (PAN) | LLVAR≤19 | 卡号，传输时通常 Base64 加密或走 TLS |
+| **DE 2** | Primary Account Number (PAN) | LLVAR≤19 | 卡号；线上靠 **TLS + 网络规则** 保护，非「Base64 即加密」 |
 | **DE 3** | Processing Code | 6 | 前两位区分消费/退款/查询；如 `000000` 消费，`200000` 退款 |
 | **DE 4** | Transaction Amount | 12 | 金额，单位为货币最小单位（美元为美分） |
 | **DE 6** | Cardholder Billing Amount | 12 | 持卡人账单金额（跨境时与 DE 4 不同） |
@@ -293,7 +293,7 @@ ECI（Electronic Commerce Indicator）是 3DS 认证结果在授权报文中的�
 | ECI | 含义 | Liability Shift |
 |-----|------|-----------------|
 | `05` | 3DS 认证成功（Frictionless 或 Challenge 通过） | 转移至发卡行 |
-| `06` | 3DS 尝试认证，持卡人未参与（Attempted） | 部分保护 |
+| `06` | 3DS 尝试认证，持卡人未参与（Attempted） | **视 MCC/地区/程序而定**，常与 Y 不同，见卡组织 Liability Shift 表 |
 | `07` | 未走 3DS（普通 CNP） | 商户/收单行承担 |
 
 > **CAVV（Cardholder Authentication Verification Value）**：ACS 生成的认证密文，随授权请求一起送到发卡行，发卡行验证 CAVV 合法性后才给 Liability Shift 保护。商户侧保存好 CAVV + ECI + 3DS Server Transaction ID，拒付时作为关键证据。

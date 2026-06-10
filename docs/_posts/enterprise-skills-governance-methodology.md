@@ -85,8 +85,14 @@ flowchart TB
 | **L1 企业** | `enterprise` | 全公司 | 企业 Skills 仓库、MDM 下发 | 效能 + 架构 + 安全 | 季度 + 紧急补丁 |
 | **L2 事业部** | `division` | 业务线、职能部门 | `org-skills/payment/` | 事业部 TL + 领域专家 | 月度 |
 | **L3 团队** | `team` | Feature Team | 团队 mono-repo、`team-skills` | Tech Lead | 双周～月度 |
-| **L4 项目** | `project` | 单个仓库 | `.cursor/skills/` | 仓库 Maintainer | 随迭代 |
-| **L5 个人** | `personal` | 个人全项目 | `~/.cursor/skills/` | 个人 | 随时 |
+| **L4 项目** | `project` | 单个仓库 | `.cursor/skills/`、`.claude/skills/` | 仓库 Maintainer | 随迭代 |
+| **L5 个人** | `personal` | 个人全项目 | `~/.cursor/skills/`、`~/.agents/skills/` | 个人 | 随时 |
+
+::: tip Cursor 内置 skill
+
+`~/.cursor/skills-cursor/` 为 **Cursor 自带只读** skill（如 loop、create-skill），**不要**与 L5 个人目录混用。
+
+:::
 
 ### 各层该放什么
 

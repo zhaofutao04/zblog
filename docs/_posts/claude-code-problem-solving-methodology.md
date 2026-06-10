@@ -14,7 +14,7 @@ author: 老Z
 
 Claude Code 本质是 **模型 + 终端里一串工具**（读文件、改文件、跑命令、搜仓库）。它不会魔法：**同一套能力**，你 **怎么描述问题、给多少边界、何时让它停手验证**，决定了结果是「一次改对」还是「改出一堆回归」。
 
-这篇是我自己的 **分工法**：按 **问题类型** 说 **该怎么下指令、先求证还是先动刀、怎么收尾**。不是 Anthropic 官方口径；配置 **MCP / Skills** 见 [Claude Code 进阶：MCP、Skills 与自用习惯](./claude-code-advanced-usage-guide.html)，盯上下文与费用见 [statusline 小技巧](./claude-code-statusline-tip.html)。
+这篇是我自己的 **分工法**：按 **问题类型** 说 **该怎么下指令、先求证还是先动刀、怎么收尾**。不是 Anthropic 官方口径；配置 **MCP / Skills** 见 [Claude Code 进阶](./claude-code-advanced-usage-guide.html)，盯上下文与费用见 [statusline](./claude-code-statusline-tip.html)，等 CI/部署时 **会话内轮询** 见 [`/loop` 指南](./claude-code-loop-guide.html)。
 
 ---
 

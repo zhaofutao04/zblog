@@ -181,7 +181,7 @@ flowchart TB
 | 资源类型 | 是否需要配置 CORS | 说明 |
 |----------|-------------------|------|
 | 普通图片 | 多数情况不用 | 常见 `<img src>` 走默认模式，能显示不等于能 `getImageData` |
-| CSS/JS | 看用法 | 外链脚本样式一般能拉；**module、部分 API** 会再卡一层 CORS |
+| CSS/JS | 看用法 | 经典 `<script>` 跨域常不查 CORS；**`<script type="module">` 跨域必须带 CORS** |
 | **字体文件** | ✅ 要配 | `@font-face` 跨源会查 CORS |
 | **音视频** | ✅ 常要配 | `MediaElement`、Web Audio 等会较真 |
 | Canvas 用图 | ✅ 要配 + `crossOrigin` | 否则画布 **tainted** |

@@ -168,7 +168,7 @@ services:
       - WG_DEFAULT_ADDRESS=10.8.0.x
       # 允许的IP范围
       - WG_ALLOWED_IPS=0.0.0.0/0
-    image: weejewel/wg-easy:latest
+    image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
     volumes:
       - ./wg-easy:/etc/wireguard
@@ -208,44 +208,15 @@ docker-compose logs -f wg-easy
 
 #### 3.1.3 客户端配置
 
-**Clash Verge 配置示例：**
+::: warning 两条路径，别混
 
-Clash Verge 需要导入 WireGuard 配置，然后提供本地 HTTP/SOCKS 代理服务：
+**路径 A**：WireGuard 官方客户端 / 系统 VPN —— 直接导入 `wg-client.conf`，全隧道或分路由由 `AllowedIPs` 决定。
 
-```yaml
-# clash-config.yaml
-port: 7890
-socks-port: 7891
-allow-lan: true
-mode: rule
-log-level: info
+**路径 B**：Clash Verge Rev 等 —— 在 **已能出海的网络环境** 上配 HTTP/SOCKS 上游或规则分流；**不能把 `wg-client.conf` 当 YAML 节点一行粘贴就完事**。WireGuard 与 Clash 的集成方式因 **客户端版本** 而异，以 [Clash Verge Rev](https://github.com/clash-verge-rev/clash-verge-rev) 当期文档为准。
 
-external-controller: 127.0.0.1:9090
+:::
 
-# 导入从 wg-easy 管理界面下载的 WireGuard 配置
-# Clash 会自动转换为内部代理节点
-
-proxy-groups:
-  - name: "海外节点"
-    type: select
-    proxies:
-      - "WireGuard-节点"
-      - "DIRECT"
-
-rules:
-  - DOMAIN-SUFFIX,claude.ai,海外节点
-  - DOMAIN-SUFFIX,openai.com,海外节点
-  - DOMAIN-SUFFIX,github.com,海外节点
-  - DOMAIN-SUFFIX,anthropic.com,海外节点
-  - MATCH,DIRECT
-```
-
-**配置流程：**
-1. 通过 wg-easy 的 Web 界面生成 WireGuard 配置文件
-2. 将配置文件导入 Clash Verge（支持 WireGuard 协议）
-3. Clash 基于 WireGuard 隧道在本地 7890 端口提供 HTTP 代理服务
-
-**WireGuard 原生客户端配置：**
+**路径 A：WireGuard 原生客户端（推荐先跑通）**
 
 使用 wg-easy 生成的配置文件，可直接导入 WireGuard 官方客户端：
 
@@ -262,6 +233,37 @@ Endpoint = your.server.ip:51820
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 ```
+
+导入后系统层 VPN 连通，终端里 `curl`、Git、Claude Code 走隧道即可。
+
+**路径 B：Clash Verge 规则分流（可选）**
+
+在 WG 已连通或另有 HTTP 代理的前提下，用 Clash 做 **按域名分流**（示例骨架，节点名需换成你环境里的）：
+
+```yaml
+# clash-rules-example.yaml — 示意，非 wg.conf 直导
+port: 7890
+socks-port: 7891
+mode: rule
+
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - your-upstream-name
+
+rules:
+  - DOMAIN-SUFFIX,claude.ai,PROXY
+  - DOMAIN-SUFFIX,anthropic.com,PROXY
+  - DOMAIN-SUFFIX,openai.com,PROXY
+  - MATCH,DIRECT
+```
+
+**配置流程（路径 A）**
+
+1. wg-easy Web 界面生成客户端配置
+2. 导入 WireGuard 官方客户端并连接
+3. 需要分流时再单独配置 Clash，勿与 `wg-client.conf` 混写
 
 ### 3.2 API 网关：cliproxyapi
 

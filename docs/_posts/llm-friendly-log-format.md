@@ -67,7 +67,7 @@ flowchart TB
 {
   "level": "ERROR",
   "level_value": 4,
-  "level_desc": "服务降级运行，部分功能不可用"
+  "level_desc": "业务错误，需要人工介入或重试"
 }
 ```
 

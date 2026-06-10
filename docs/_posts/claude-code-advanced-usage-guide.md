@@ -18,6 +18,8 @@ author: 老Z
 
 Claude Code 是 Anthropic 那套跑在终端里的编程助手；比「只问 Chat」多出来的是 **MCP**（接外部工具）和 **Skills**（把固定套路打包）。这篇是我自己的笔记体：**MCP 怎么接、Skills 放哪、哪些配置容易绕** —— 有架构图，但不按官方宣传口径写。
 
+姊妹篇：[问题处理方法论](./claude-code-problem-solving-methodology.html) · [statusline 小技巧](./claude-code-statusline-tip.html) · [会话内 `/loop` 定时任务](./claude-code-loop-guide.html) · [企业 Skills 治理](./enterprise-skills-governance-methodology.html)
+
 ## Claude Code 系统架构概览
 
 ### 核心架构设计
@@ -131,15 +133,14 @@ interface MCPServer {
 
 #### 🧠 智能增强类
 
-7. **[Sequential Thinking MCP Server](https://sequentialthinking.dev)**
+7. **Sequential Thinking 类 MCP**（社区实现，域名与维护方会变）
    - **功能**：结构化推理过程
-   - **优势**：复杂问题分解、反思性思考
    - **使用场景**：架构设计、问题诊断
+   - **注意**：安装前在 [MCP servers 官方仓库](https://github.com/modelcontextprotocol/servers) 或你信任的 registry 核对来源
 
-8. **[Memory Bank MCP Server](https://memorybank.dev)**
-   - **功能**：上下文记忆保持
-   - **优势**：跨会话信息保持
-   - **使用场景**：长期项目开发
+8. **Memory / 上下文类 MCP**（社区实现众多）
+   - **功能**：跨会话记忆、项目上下文
+   - **注意**：同上，**勿盲信第三方域名**；敏感项目优先官方或自建 server
 
 ### MCP 最佳实践
 
@@ -156,7 +157,7 @@ interface MCPServer {
 
 #### 2. MCP Gateway 模式
 
-使用 **[MCP Gateway](https://mcpgateway.dev)** 实现动态服务器供应：
+使用 **MCP Gateway**（第三方网关产品，以当期文档为准）实现动态服务器供应：
 
 ```yaml
 # mcp-gateway.yml
@@ -200,8 +201,7 @@ Skills 是 `SKILL.md` 文件形式的专业化剧本，使用**渐进披露**机
 #### 🎨 前端开发类
 
 1. **[Frontend Design Skill](https://github.com/anthropics/claude-skills)**
-   - **安装量**：277,000+（官方技能）
-   - **特色**：设计系统、大胆审美选择、有意义动画
+   - **特色**：设计系统、大胆审美选择、有意义动画（社区安装量会变，以仓库 README 为准）
    - **使用**：`/frontend-design`
 
 ```markdown
@@ -284,48 +284,37 @@ author: 老Z
 - 合规性检查清单
 ```
 
-#### Skills 组织最佳实践
+#### Skills 放哪（Claude Code + Cursor 通用）
+
+| 路径 | 作用域 | 说明 |
+| --- | --- | --- |
+| `~/.claude/skills/` | 用户（Claude Code） | 全项目可用 |
+| `.claude/skills/` | 项目 | 随仓库共享 |
+| `~/.cursor/skills/` | 用户（Cursor） | 自建 skill 放这里 |
+| `.cursor/skills/` | 项目 | 团队/仓库级 skill |
+| `~/.agents/skills/` | 用户（Agent Skills 标准） | Codex 等兼容 |
+| `~/.cursor/skills-cursor/` | Cursor **内置** | **只读**，含 loop、create-skill 等；**不要**往这里写自己的 skill |
+
+子目录怎么分组随你，官方是 **扁平 namespace**（靠 `name` + `description` 发现），不必硬套 `core/domain/` 层级。
 
 ```bash
-# 推荐的 Skills 目录结构
-~/.claude/skills/
-├── core/                    # 核心技能
-│   ├── frontend-design/
-│   ├── security-audit/
-│   └── planning-files/
-├── domain/                  # 领域专用
-│   ├── payment-security/
-│   ├── web3-audit/
-│   └── ai-model-fine-tuning/
-└── workflows/               # 工作流技能
-    ├── ci-cd-setup/
-    ├── code-review/
-    └── deployment-automation/
+# 示例：项目级 skill
+your-repo/.cursor/skills/payment-review/SKILL.md
 ```
 
 ## 集成工具链最佳实践
 
 ### 1. 开发环境配置
 
-```bash
-# 推荐的 Claude Code 配置
-~/.claude/settings.json
-{
-  "mcp_servers": [
-    "github",           # 代码仓库管理
-    "context7",         # 文档检索
-    "playwright",       # 自动化测试
-    "memory-bank"       # 上下文记忆
-  ],
-  "auto_skills": [
-    "frontend-design",  # 前端设计
-    "security-audit",   # 安全审计
-    "planning-files"    # 项目规划
-  ],
-  "token_optimization": true,
-  "progressive_disclosure": true
-}
-```
+::: warning 配置以官方文档为准
+
+Claude Code 的 MCP、权限、模型等写在 **`~/.claude/settings.json`** 或项目 **`.claude/settings.json`**，字段随版本变。下面 **不是** 可照抄的完整 schema，只表意图。
+
+:::
+
+- **MCP**：在 settings 或 `claude mcp add` 注册 server，见 [MCP 文档](https://code.claude.com/docs/en/mcp)
+- **Skills**：目录见上表；**不会** 在 settings 里用 `auto_skills` 数组批量挂载（靠发现 + 对话 invoke）
+- **定时重跑 prompt**：会话内用 [`/loop`](./claude-code-loop-guide.html)，不是 settings 项
 
 ### 2. 工作流集成
 

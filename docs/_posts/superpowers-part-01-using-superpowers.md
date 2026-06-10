@@ -152,8 +152,9 @@ npx skills add obra/superpowers -g -a cursor -y
 
 | 范围 | 路径 |
 | --- | --- |
-| 用户级 | `~/.agents/skills/`、`~/.cursor/skills/` |
-| 项目级 | `.cursor/skills/`、`.agents/skills/` |
+| 用户级 | `~/.agents/skills/`、`~/.cursor/skills/`、`~/.claude/skills/` |
+| 项目级 | `.cursor/skills/`、`.agents/skills/`、`.claude/skills/` |
+| Cursor 内置（只读） | `~/.cursor/skills-cursor/` — loop、create-skill 等，**勿在此写自有 skill** |
 
 **Cursor 中手动触发：** 在 Agent 输入框输入 `/`，搜索 `brainstorming`、`using-superpowers` 等。
 

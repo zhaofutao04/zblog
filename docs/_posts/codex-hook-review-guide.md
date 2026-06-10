@@ -279,7 +279,7 @@ PROMPT="${ROOT}/scripts/checks/codex-review-prompt.txt"
 OUT="${1:-/tmp/codex-review.md}"
 
 [ -n "${SKIP_CODEX_REVIEW:-}" ] && exit 0
-[ -f "${CI:-}" ] && [ "${CI}" != "false" ] && exit 0   # 按需在 CI 另跑
+[ -n "${CI:-}" ] && [ "${CI}" != "false" ] && exit 0   # 按需在 CI 另跑
 
 codex review --uncommitted "$(cat "$PROMPT")" -o "$OUT"
 # 若要阻断：grep -q 'BLOCKER' "$OUT" && exit 1

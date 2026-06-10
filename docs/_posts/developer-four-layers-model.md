@@ -15,7 +15,7 @@ author: 老Z
 
 AI 编程快成默认姿势之后，「开发者该学什么」反而更乱：有人把敏捷塞进架构、把测试塞进语言、把 Superpowers 当成写代码技巧。本文只谈 **开发** 这件事——不区分前后端，也不把产品、运营整套扛肩上——用一套 **四层能力模型** 把边界划清楚，并说明 [Superpowers 系列](./superpowers-series-plan.html) 落在哪一层、AI 时代各层权重怎么变。
 
-姊妹篇：[Claude Code 怎么处理不同问题](./claude-code-problem-solving-methodology.html)（按题型分工）；[主流 AI 编程工具怎么选](./mainstream-ai-coding-tools-comparison.html)（工具 × 模型维度）。
+姊妹篇：[Claude Code 怎么处理不同问题](./claude-code-problem-solving-methodology.html)（按题型分工）；[主流 AI 编程工具怎么选](./mainstream-ai-coding-tools-comparison.html)（工具 × 模型维度）；[企业 Skills 治理](./enterprise-skills-governance-methodology.html)（Layer 3 组织化）；[Claude Code `/loop`](./claude-code-loop-guide.html)（会话内定时任务）。
 
 ## 先对齐：四层各自回答什么问题
 

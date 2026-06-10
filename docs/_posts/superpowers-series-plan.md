@@ -17,7 +17,7 @@ author: 老Z
 
 姊妹篇（Skills 安装与目录结构，不重复展开）：[Claude Code 进阶：MCP、Skills 与自用习惯](./claude-code-advanced-usage-guide.html)。
 
-**能力地图**（Superpowers 在开发者四层模型里属于 Layer 3 交付纪律）：[开发者的四层能力](./developer-four-layers-model.html)。
+**能力地图**（Superpowers 在开发者四层模型里属于 Layer 3 交付纪律）：[开发者的四层能力](./developer-four-layers-model.html)。团队级 Skills 目录与治理：[企业 Skills 方法论](./enterprise-skills-governance-methodology.html)。Claude Code 会话内定时任务：[`/loop` 指南](./claude-code-loop-guide.html)。
 
 ## 使用方式
 

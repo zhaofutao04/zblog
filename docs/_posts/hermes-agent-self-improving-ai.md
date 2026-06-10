@@ -1,5 +1,5 @@
 ---
-title: Hermes Agent：唯一内置学习闭环的自改进 AI Agent
+title: Hermes Agent：带 Skill 自改进闭环的开源 AI Agent
 date: 2026-04-10
 categories:
   - AI大模型
@@ -156,10 +156,10 @@ graph LR
 
 ```bash
 hermes model                        # 交互式选择
-hermes model openrouter:anthropic/claude-sonnet-4-6
-hermes model nous:intern
-hermes model openai:gpt-5
-hermes model z.ai:glm-4
+hermes model list                   # 查看当期可用 slug（优先用这个）
+# 以下为示意，以 list 输出为准：
+# hermes model openrouter:anthropic/claude-sonnet-4-6
+# hermes model openai:gpt-5
 ```
 
 支持的 provider：
@@ -241,13 +241,13 @@ hermes claw migrate             # 执行迁移
 
 | 优点 | 说明 |
 |------|------|
-| **内置学习闭环** | 唯一有 Skill 自改进能力的开源 Agent |
+| **内置学习闭环** | 强调 Skill 自改进与记忆沉淀（同类能力其他 Agent 亦有，实现路径不同） |
 | **记忆持久化** | 跨会话、跨时间保留上下文 |
 | **多平台统一** | 一个 Agent，接所有聊天软件 |
 | **模型中立** | 不绑定，自选 provider |
 | **部署灵活** | 本地/VPS/Docker/Serverless |
 | **OpenClaw 兼容** | 平滑迁移，数据不丢失 |
-| **社区活跃** | 49k stars，持续迭代 |
+| **社区活跃** | GitHub star 数持续变化，以 [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) 为准 |
 | **Skills 市场** | agentskills.io 共享生态 |
 
 ### 缺点

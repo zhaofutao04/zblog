@@ -21,7 +21,7 @@ Day 1 说过：模型读的是 **token ID**（整数）。神经网络需要的�
 
 1. 说明 **one-hot** 表示的局限，以及为何要用**低维稠密向量**。  
 2. 写出 **词嵌入矩阵** \(E \in \mathbb{R}^{|V|\times d}\)，并解释 **查表（lookup）** 与 **参数** 的对应关系。  
-3. 把 embedding 看成 Day 2 的**线性层特例**：\(\mathbf{e}_i^\top E\)（one-hot 左乘矩阵）。  
+3. 把 embedding 看成 Day 2 的**线性层特例**：行 one-hot \(\mathbf{e}_i \in \mathbb{R}^{1 \times |V|}\) 左乘 \(E\) 得 \(E_{i,:}\)（与 §3 记号一致）。  
 4. 理解**一整句 token 序列**进入网络前，形状大致是「长度 × \(d\)」的矩阵。  
 5. 知道**位置信息**还要另加（Day 9），embedding 只管「这个词学的是什么向量」。
 

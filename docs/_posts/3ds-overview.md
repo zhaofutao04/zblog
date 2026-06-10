@@ -13,6 +13,8 @@ author: 老Z
 
 3D Secure（3DS）是线上刷卡时把 **发卡行** 拉进来一起做验证的协议；相对商户↔收单的老两边模型，多了一块域，所以叫 **3-Domain**。EMVCo 维护规范，1.x 和 2.x 体验差很多。下文按 **为啥要它、版本差在哪、接入时容易扯皮啥** 写。
 
+> **合规提示**：责任转移（Liability Shift）**非二元**，与卡组织、MCC、地区、transStatus 组合有关；以收单行与 Visa/MC 当期商户指南为准。
+
 ## 什么是 3D Secure？
 
 CNP（无卡）交易里，**谁像持卡人**最难验。3DS 干两件事：尽量把这一步甩给 **发卡行 / ACS**；验成了，**责任转移（Liability Shift）** 才好谈——商户侧接不接、接哪一档，看网络和收单条款。
@@ -113,7 +115,7 @@ timeline
     section 强制推行
         2019 : 欧盟 PSD2/SCA 生效<br/>强制要求强客户认证
         2020 : Visa/MC 推进 2.0 迁移
-        2022 : 3DS 1.0 正式退役
+        2019-2022 : 卡组织分阶段停用 3DS 1.0（地区/收单差异）
     section 最新版本
         2023 : EMVCo 发布 2.3.1
         2024 : 持续优化<br/>支持更多设备指纹
@@ -243,10 +245,16 @@ flowchart TB
 
 | 认证结果 | 责任方 | ECI 值（Visa/MC） |
 |----------|--------|-------------------|
-| 认证成功（Y） | 发卡行 | 05 / 02 |
-| 尝试处理（A） | 发卡行 | 06 / 01 |
+| 认证成功（Y） | 通常转移至发卡行 | 05 / 02 |
+| 尝试处理（A） | **视卡组织/MCC/地区而定**，可能部分转移或仍归商户 | 06 / 01 |
 | 认证失败（N） | 商户 | 07 / 00 |
-| 技术不可用（U） | 商户 | 07 / 00 |
+| 技术不可用（U） | 通常仍归商户 | 07 / 00 |
+
+::: warning 责任转移以收单行为准
+
+上表是常见归纳，**不是** 全球统一法条。Attempted（A / ECI 06）在 Visa 等网络下常为 **部分保护**，须对照当期 **Chargeback 与 Liability Shift 指南**。
+
+:::
 
 > **ECI（Electronic Commerce Indicator）** 是交易认证等级的标识，附在授权请求中发送给收单行和卡组织。
 
@@ -296,7 +304,7 @@ mindmap
 | 字段 | 类型 | 必选 | 说明 |
 |------|------|------|------|
 | threeDSServerTransID | String | 是 | 3DS Server 交易 ID |
-| dsTransID | String | 是 | DS 分配的交易 ID |
+| dsTransID | String | ARes 返回 | DS 分配的交易 ID（**不在 AReq 里发送**） |
 | messageVersion | String | 是 | 协议版本（如 "2.2.0"） |
 | deviceChannel | String | 是 | 渠道：01=App, 02=Browser, 03=3RI |
 | acctNumber | String | 是 | 卡号（PAN） |
@@ -479,6 +487,7 @@ function handleChallenge(acsUrl: string, creq: string): Promise<string> {
 
     // 监听 Challenge 完成回调
     const messageHandler = (event: MessageEvent) => {
+      // 生产环境须校验 event.origin === 预期的 ACS/商户源
       if (event.data?.type === 'threeds-challenge-complete') {
         window.removeEventListener('message', messageHandler);
         container.removeChild(iframe);
@@ -772,10 +781,11 @@ func HandleChallengeResult(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(`
 		<html><body><script>
+			// 生产勿用 '*'，改为明确的 parent origin
 			window.parent.postMessage({
 				type: 'threeds-challenge-complete',
 				transStatus: '` + notification.TransStatus + `'
-			}, '*');
+			}, 'https://merchant.example.com');
 		</script></body></html>
 	`))
 }

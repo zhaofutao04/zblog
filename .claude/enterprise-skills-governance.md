@@ -68,6 +68,8 @@
 | **L4 项目** | `project` | 单个代码仓库 | `.cursor/skills/`、`.claude/skills/` | 仓库 Maintainer | 随项目迭代 |
 | **L5 个人** | `personal` | 个人所有项目 | `~/.cursor/skills/`、`~/.agents/skills/` | 个人 | 随时（不进企业目录） |
 
+**Cursor 内置**：`~/.cursor/skills-cursor/` 为只读（loop、create-skill 等），**勿与 L5 个人目录混用**。
+
 ### 各层该放什么
 
 **L0 — 平台通用**

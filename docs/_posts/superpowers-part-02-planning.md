@@ -82,7 +82,7 @@ flowchart TD
 
 ### 本系列是怎么走 brainstorming 的
 
-写 Superpowers 系列本身就用过这套流程：先问读者画像（C：入门+实战）、写法（D：概念为主）、篇数（B：7 篇）、读法（A：线性）—— **一次一题**，再给出 2～3 种目录方案，你选 B 后才建 `superpowers-series-plan.md` 和 Part 1。这就是 brainstorming 的缩小版实例。
+写 Superpowers 系列本身就用过这套流程：先问读者画像（C：入门+实战）、写法（D：概念为主）、篇数（后定为 **6 篇**）、读法（A：线性）—— **一次一题**，再给出 2～3 种目录方案，定稿后才建 `superpowers-series-plan.md` 和 Part 1。这就是 brainstorming 的缩小版实例。
 
 ## writing-plans：把 spec 变成可执行任务
 

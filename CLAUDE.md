@@ -34,12 +34,12 @@ pnpm update
 
 ## 技术栈
 
-- **框架**: VuePress 2.0.0-rc.26
-- **主题**: vuepress-theme-hope 2.0.0-rc.102
+- **框架**: VuePress 2.0.0-rc.28
+- **主题**: vuepress-theme-hope 2.0.0-rc.106
 - **语言**: TypeScript + Vue 3
 - **包管理器**: pnpm
 - **打包工具**: Vite
-- **图表支持**: Mermaid 11.12.3
+- **图表支持**: Mermaid 11.14.0
 - **数学公式**: KaTeX（`markdown.math`，`delimiters: 'all'`：支持 `$...$`、`$$...$$` 与 `\(...\)`、`\[...\]`）
 - **插件**:
   - Google Analytics (G-2NDJZGP77K)

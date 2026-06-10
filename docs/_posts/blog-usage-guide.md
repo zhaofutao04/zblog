@@ -14,11 +14,17 @@ author: 老Z
 ## 开发命令
 
 ```bash
-# 启动开发服务器
+# 首次或依赖变更后
+pnpm install
+
+# 启动开发服务器（改 config.ts 后需重启）
 pnpm run dev
 
 # 构建生产版本
 pnpm run build
+
+# 构建异常时可清理缓存
+rm -rf docs/.vuepress/.cache docs/.vuepress/.temp
 ```
 
 开发服务器地址：`http://localhost:8080`
@@ -128,15 +134,15 @@ export default defineUserConfig({
 
 ```yaml
 categories:
-  - Java技术
+  - AI大模型   # 与导航一致，可选：支付、web3、建站、安全
 ```
 
 ### 标签
 
 ```yaml
 tags:
-  - Spring Boot
-  - MyBatis
+  - Claude Code
+  - VuePress
 ```
 
 分类和标签会自动生成对应页面。
@@ -155,8 +161,8 @@ pnpm run dev -- --port 8081
 
 ```mermaid
 flowchart TB
-    A["构建失败"] --> B["删除 node_modules 和 pnpm-lock.yaml"]
-    B --> C["重新执行 pnpm install"]
+    A["构建失败"] --> B["清理 .cache / .temp"]
+    B --> C["rm -rf node_modules && pnpm install"]
     C --> D["再次构建"]
     D --> E{"成功?"}
     E -->|"是"| F["完成"]

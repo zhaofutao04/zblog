@@ -365,7 +365,7 @@ class PaymentViewController: UIViewController, PKPaymentAuthorizationViewControl
                                         completion: @escaping (PKPaymentAuthorizationStatus) -> Void) {
         // 处理支付令牌
         let token = payment.token
-        // 发送到服务器进行解密和验证
+        // 将 payment.token 交 PSP/收单解密验签（商户侧通常不解密 FPAN）
         completion(.success)
     }
 }
@@ -627,7 +627,7 @@ timeline
 | 数字身份证 | ✓（美国部分州） | ✓ | 推进中 |
 | 疫苗证明 | ✓ | ✓ | 多国支持 |
 | Click to Pay | ✓ | ✓ | 推进中 |
-| Buy Now Pay Later | ✓（Apple Pay Later） | ✓（Affirm 集成） | 部分市场 |
+| Buy Now Pay Later | —（Apple Pay Later 已停服，2024） | ✓（Affirm 等集成） | 因市场而异 |
 
 ## 推荐阅读
 

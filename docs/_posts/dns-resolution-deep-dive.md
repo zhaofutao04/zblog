@@ -155,7 +155,7 @@ sequenceDiagram
 // Firefox: about:networking#dns 查看缓存
 ```
 
-浏览器缓存的 TTL（生存时间）由 DNS 记录的 `max-age` 决定，一般在 60-600 秒之间。
+浏览器 DNS 缓存尊重应答里的 **DNS TTL**（秒），与 HTTP 响应头的 `Cache-Control: max-age` **不是一回事**。常见 TTL 在 60～600 秒，因记录和运营商而异。
 
 #### 第二步：检查 hosts 文件
 
@@ -661,7 +661,7 @@ performance.getEntriesByType('resource').forEach(entry => {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 ```
 
-### 预解析 DNS (Preload)
+### 预解析 DNS（dns-prefetch，非 preload）
 
 ```html
 <!-- 预解析特定域名 -->

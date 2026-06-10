@@ -13,6 +13,8 @@ author: 老Z
 
 Token 支付（令牌化）干的事很具体：**真实卡号（PAN）尽量别在商户侧久留**，换成支付网络或 TSP 发的、用途受限的 token。PCI 压力能小一截，用户侧该绑卡还是绑卡。下面按流程、好处、常见架构写，少套「安全与便捷平衡」那种话。
 
+> **合规提示**：能否降为 SAQ A 等较轻问卷，须 **QSA/收单行** 根据你方数据流认定；下文为技术概念，非审计结论。规则以 [PCI SSC](https://www.pcisecuritystandards.org/) 与 EMVCo 当期文档为准。
+
 ## 什么是Token支付？
 
 Token 支付的核心是 **令牌化（Tokenization）**：把真实 **PAN** 换成网络或 TSP 发的、用途受限的 **token**。

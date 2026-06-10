@@ -15,15 +15,16 @@ author: 老Z
 
 | 组件 | 版本 | 说明 |
 |------|------|------|
-| VuePress | 2.0.0-rc.26 | 静态站点生成器 |
-| vuepress-theme-hope | 2.0.0-rc.102 | 博客主题 |
-| Vue | 3.5.x | 前端框架 |
-| Vite | 7.x | 构建工具（由 `@vuepress/bundler-vite` 引入） |
-| TypeScript | 5.x | 配置语言 |
-| Sass | 1.77.x | 样式预处理器 |
-| KaTeX | ^0.16.x | 数学公式（主题 `markdown.math`） |
-| Mermaid | ^11.x | 图表（主题 `markdown.mermaid`） |
-| @vuepress/plugin-slimsearch | 2.0.0-rc.121 | 全文搜索（替代已弃用的 searchPro） |
+| VuePress | 2.0.0-rc.28 | 静态站点生成器 |
+| vuepress-theme-hope | 2.0.0-rc.106 | 博客主题 |
+| Vue | ^3.5.34 | 前端框架 |
+| Vite | 8.x | 构建工具（由 `@vuepress/bundler-vite` 引入，见 lock） |
+| TypeScript | — | 配置用 `.ts`；非根 `package.json` 直接依赖 |
+| Sass | ^1.99.0 | 样式预处理器 |
+| KaTeX | ^0.16.45 | 数学公式（主题 `markdown.math`） |
+| Mermaid | ^11.14.0 | 图表（主题 `markdown.mermaid`） |
+| @vuepress/plugin-slimsearch | 2.0.0-rc.128 | 全文搜索（替代已弃用的 searchPro） |
+| @vuepress/plugin-pwa | 2.0.0-rc.128 | PWA（主题 `plugins.pwa`） |
 
 站点级插件（`config.ts` 根级 `plugins`）：`@vuepress/plugin-google-analytics`、`vuepress-plugin-copy-page`。主题内还启用了 PWA、SEO、sitemap、公告等，详见仓库 `docs/.vuepress/config.ts`。
 
@@ -43,7 +44,7 @@ flowchart TB
 
     subgraph Build["本地或 CI 构建"]
         B1["VuePress + vuepress-theme-hope"]
-        B2["Vite 7.x 打包"]
+        B2["Vite 8.x 打包"]
     end
 
     subgraph Artifact["构建产物"]
@@ -76,16 +77,17 @@ Hope 主题默认能开的能力很多，这里只列**本博客在用或常开�
 - 时间线（`/timeline/`）
 
 ### SEO 功能
-- sitemap.xml 自动生成
-- robots.txt 自动生成
-- Open Graph meta 标签
+- sitemap.xml（主题 `plugins.sitemap` 生成）
+- robots.txt（`docs/.vuepress/public/robots.txt` **手工维护**，构建时复制到 dist）
+- Open Graph / Twitter Card（`config.ts` `head` + 主题 SEO）
 
 ### 其他功能
 - 暗黑模式
 - 图片点击放大（PhotoSwipe）
 - 代码块复制按钮
 - 响应式布局
-- RSS/Atom/JSON Feed 支持
+- PWA（`plugins.pwa`）
+- 友链页（`docs/links/`）
 - Markdown 内 **Mermaid** 与 **KaTeX**（`$...$` / `$$...$$`、`\(...\)` / `\[...\]` 等，见主题配置）
 - 全文搜索（**SlimSearch**，主题 `plugins.slimsearch`）
 

@@ -50,7 +50,7 @@ flowchart TB
     end
 
     F --> G[制定 PCI DSS 标准]
-    F --> H[制定 PA-DSS 标准]
+    F --> H["PA-DSS（已退役→PCI SSF）"]
     F --> I[制定 PTS 标准]
     F --> J[制定 P2PE 标准]
 ```

@@ -269,6 +269,7 @@ npx skills add your/repo -g -a cursor -y
 
 ## 参考链接
 
+- [企业 Skills 治理方法论](./enterprise-skills-governance-methodology.html)（团队规模化维护 skill）
 - [Superpowers 系列总目录](./superpowers-series-plan.html)
 - [Part 5：质量闭环](./superpowers-part-05-quality.html)
 - finishing-a-development-branch：<https://skills.sh/obra/superpowers/finishing-a-development-branch>

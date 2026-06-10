@@ -14,11 +14,13 @@ clone 下来先找 `docs/`：文章在 `_posts`，站点的开关几乎都在 `.
 ## 项目结构
 
 ```
-my-blog/
+zblog/
 ├── docs/                    # 源码目录
 │   ├── .vuepress/           # VuePress 配置
-│   ├── _posts/              # 博客文章
+│   ├── _posts/              # 博客文章（当前 40+ 篇，每篇一个 .md）
 │   ├── about/               # 关于页面
+│   ├── links/               # 友链
+│   ├── api/                 # 接口草稿（不参与博客发布）
 │   └── README.md            # 首页
 ├── package.json             # 项目配置
 ├── pnpm-lock.yaml           # 依赖锁定
@@ -31,12 +33,13 @@ my-blog/
 ```
 .vuepress/
 ├── config.ts                # 主配置文件
-├── client.ts                # 客户端配置（Vue 组件注册）
+├── client.ts                # 客户端配置（如 copy-page 样式）
 ├── styles/
 │   └── index.scss           # 自定义样式
 ├── public/
-│   ├── logo.svg             # 网站 Logo
-│   └── favicon.ico          # 网站图标
+│   ├── logo.svg             # 网站 Logo / favicon（config head 引用）
+│   ├── hero.svg / avatar.svg
+│   └── robots.txt           # 手工维护，构建时复制到 dist
 ├── .cache/                  # 构建缓存（自动生成）
 └── .temp/                   # 临时文件（自动生成）
 ```
@@ -47,11 +50,12 @@ my-blog/
 
 ```
 _posts/
-├── blog-tech-architecture.md
-├── blog-directory-structure.md
-├── blog-deployment.md
-└── blog-usage-guide.md
+├── blog-tech-architecture.md    # 建站系列示例
+├── developer-four-layers-model.md
+├── …                            # 见 /posts/ 列表
 ```
+
+每篇文章一个 `kebab-case.md`；URL 为 `/posts/<slug>.html`。
 
 ## 自动生成页面
 

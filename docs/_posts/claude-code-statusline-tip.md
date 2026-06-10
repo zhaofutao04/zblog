@@ -15,7 +15,7 @@ author: 老Z
 
 长会话写代码时，最怕两件事：**上下文快满了还在猛聊**，以及**费用和限速心里没数**。Claude Code 底部有一条可定制的 **status line（状态栏）**，官方提供了 **`/statusline` 斜杠命令**，用自然语言描述需求就能自动生成脚本并写入配置。下文先讲官方机制与手写要点，再介绍社区里高定制的 **[ccstatusline](https://github.com/sirmalloc/ccstatusline)**，以及 **ccusage**、**tweakcc** 等周边工具怎么选。
 
-> 官方文档：[Customize your status line](https://docs.claude.com/en/docs/claude-code/statusline)（英文，字段最全）。  
+> 官方文档：[Customize your status line](https://code.claude.com/docs/en/statusline)（英文，字段最全）。  
 > 本博客相关长文：[Claude Code 进阶：MCP、Skills](./claude-code-advanced-usage-guide.html)。
 
 ## `/statusline` 能帮你做什么

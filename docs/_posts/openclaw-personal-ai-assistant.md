@@ -19,6 +19,8 @@ author: 老Z
 
 OpenClaw 做的事，就是把 AI 助手 **接到 Slack、Telegram、Discord 等平台**，在聊天里 @ 它就能干活——少在 App 之间来回切。
 
+> **时效说明**：本文整理于 **2026-04-10**。模型路由字符串、CLI 能力与各 IM 通道支持以 [OpenClaw 官方文档](https://docs.openclaw.ai/) 当期为准。
+
 和 [Hermes Agent](./hermes-agent-self-improving-ai.html) 不同：OpenClaw 核心是 **本地 Gateway + 多 IM 通道**；Hermes 更强调 **Skill 沉淀与自改进**。写代码向的终端助手见 [Claude Code 进阶](./claude-code-advanced-usage-guide.html)。
 
 ## OpenClaw 是什么
@@ -118,23 +120,18 @@ Agent Runtime 通过 MCP 风格的工具接口调用各种能力：
 ### 模型路由
 
 ```json5
+// 示例：模型 ID 随 OpenClaw / 提供商更新，勿照抄
 agents: {
   defaults: {
     model: {
-      primary: "anthropic/claude-sonnet-4-6",
-      fallbacks: [
-        "anthropic/claude-opus-4-6",
-        "openai/gpt-5.2",
-      ],
-    },
-    imageModel: {
-      primary: "openrouter/anthropic/claude-sonnet-4-6",
+      primary: "anthropic/claude-sonnet-4-6",   // 以 openclaw models list 为准
+      fallbacks: ["anthropic/claude-opus-4-6", "openai/gpt-5.2"],
     },
   },
 },
 ```
 
-支持多模型 fallback，优先用 Sonnet，挂了切 Opus，再挂了切 GPT。
+支持多模型 **fallback**；具体 slug 用 `openclaw models list`（或当期命令）核对后再写进配置。
 
 ## 典型应用场景
 
@@ -179,7 +176,7 @@ agents: {
 | 缺点 | 说明 |
 |------|------|
 | **配置门槛** | JSON5 配置文件对普通用户不友好 |
-| **CLI 后端限制** | 命令行模式不支持工具调用和 Streaming 输出 |
+| **CLI 后端限制** | 部分 CLI 模式能力弱于 Gateway（工具/流式以官方文档为准，版本差异大） |
 | **平台限制** | iMessage 依赖本地 macOS，Signal 接入相对复杂 |
 | **多设备同步** | 多人协作场景不如专业团队工具成熟 |
 | **调试成本** | 本地运行，出问题得自己排查日志 |

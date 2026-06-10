@@ -11,6 +11,12 @@ author: 老Z
 
 本仓库当前是：**GitHub 推 main → Cloudflare Pages 构建 `pnpm run build` → 静态资源上 CDN**。下面记的是实际在用的域名与目录，换平台时只改对照表即可。
 
+::: tip 与仓库的差异
+
+Node 22.x、Cloudflare 面板项 **以 Cloudflare Pages 构建日志为准**（仓库内无 `wrangler.toml` / `.github/workflows`）。部署后 SEO（站长验证、robots 策略）见仓库根目录 `部署后SEO配置.md`。
+
+:::
+
 ## 部署架构
 
 ```mermaid
@@ -52,10 +58,14 @@ flowchart TB
 
 ```bash
 # 本地预览
+pnpm install
 pnpm run dev
 
 # 构建
 pnpm run build
+
+# 构建异常：清理缓存后再试
+rm -rf docs/.vuepress/.cache docs/.vuepress/.temp
 
 # 提交并部署
 git add .
@@ -81,6 +91,12 @@ Output Directory: docs/.vuepress/dist
 ```
 
 ### GitHub Pages
+
+::: tip 备选方案
+
+仓库 **当前未包含** 下列 workflow，仅为迁移到其他平台时的模板。
+
+:::
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -108,9 +124,10 @@ jobs:
 
 ### 构建失败
 
-1. 查看 Cloudflare 构建日志
-2. 检查 Node.js 版本兼容性
-3. 确认依赖完整（`pnpm install`）
+1. 本地复现：`pnpm install && pnpm run build`
+2. 清理 `docs/.vuepress/.cache` 与 `.temp` 后重试
+3. 查看 Cloudflare 构建日志与 Node 版本（面板 vs `package.json`）
+4. 对照 [博客操作指南](./blog-usage-guide.html) 排障流程
 
 ### 更新未生效
 

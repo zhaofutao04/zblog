@@ -72,7 +72,7 @@ flowchart LR
 // components/PaymentForm.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 
-// PCI DSS 要求 3.3：显示时掩码 PAN（前6后4）
+// PCI DSS 4.x Req 3.4.x：显示时掩码 PAN（常见前6后4，以 SAQ 为准）
 const maskPAN = (pan: string): string => {
   if (!pan || pan.length < 8) return '******';
   const cleaned = pan.replace(/\s/g, '');
@@ -319,7 +319,7 @@ export class PaymentError extends Error {
 // utils/csp.ts
 
 /**
- * PCI DSS 要求 6.6：保护应用程序免受攻击
+ * 应用安全：CSP 等（PCI DSS 4.x 见 Req 6.4.x 等，条文号随版本变）
  * CSP 防止 XSS 和数据注入攻击
  */
 export const cspDirectives = {
@@ -405,7 +405,7 @@ package model
 import "time"
 
 // PaymentRequest 支付请求
-// PCI DSS 要求 3.2.1：禁止存储敏感认证数据
+// PCI DSS：CVV 仅授权用，禁止落库（示例为教学用直连 API，生产宜 iframe/托管字段 + Token）
 type PaymentRequest struct {
 	PAN            string `json:"pan" validate:"required,luhn"`
 	ExpiryMonth    string `json:"expiry_month" validate:"required,len=2"`
@@ -421,7 +421,7 @@ type PaymentRequest struct {
 type Transaction struct {
 	ID              string    `db:"id"`
 	MerchantID      string    `db:"merchant_id"`
-	EncryptedPAN    []byte    `db:"encrypted_pan"` // 加密存储
+	EncryptedPAN    []byte    `db:"encrypted_pan"` // 示意：若存 PAN 须加密；网络 Token 方案常不存 FPAN
 	Token           string    `db:"token"`         // 标记化 PAN
 	ExpiryMonth     string    `db:"expiry_month"`
 	ExpiryYear      string    `db:"expiry_year"`

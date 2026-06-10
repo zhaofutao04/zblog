@@ -589,10 +589,10 @@ const seoMetrics = {
   // 技术性能指标
   core_web_vitals: {
     source: 'PageSpeed Insights API',
-    key_metrics: ['LCP', 'FID', 'CLS'],
+    key_metrics: ['LCP', 'INP', 'CLS'],
     thresholds: {
       LCP: 2.5, // 秒
-      FID: 100, // 毫秒
+      INP: 200, // 毫秒（交互延迟，替代已废弃的 FID）
       CLS: 0.1  // 评分
     }
   }
@@ -738,8 +738,8 @@ class PerformanceOptimizer {
     // 监控LCP
     this.observer.observe({entryTypes: ['largest-contentful-paint']});
 
-    // 监控FID
-    this.observer.observe({entryTypes: ['first-input']});
+    // 监控 INP（或 legacy first-input，视浏览器支持）
+    this.observer.observe({entryTypes: ['event']}); // 生产环境用 web-vitals 库更稳
 
     // 监控CLS
     this.observer.observe({entryTypes: ['layout-shift']});
@@ -906,49 +906,42 @@ def optimize_with_ai(article):
 
 让我分享一下这个技术博客的实际SEO优化过程和效果：
 
-### 9.1 优化前的问题诊断
+### 9.1 优化前的问题诊断（历史对照）
+
+以下为 **建站初期** 常见缺口；**本站当前** 已在 `config.ts` / Hope 主题中落地 OG、JSON-LD、sitemap、`public/robots.txt` 等。仍待办项见仓库根目录 `部署后SEO配置.md`（站长验证等）。
 
 ```bash
-# 初始SEO问题清单
-❌ 缺少Meta描述和关键词标签
-❌ 没有结构化数据
-❌ URL结构不够SEO友好
-❌ 图片缺少Alt属性
-❌ 页面加载速度有待提升
-❌ 没有sitemap和robots.txt
-❌ 移动端体验需要改善
+# 历史问题清单 → 现状
+❌→✅ Meta / OG / 结构化数据（config head + 主题 SEO）
+❌→✅ sitemap.xml（主题 plugins.sitemap）
+❌→✅ robots.txt（public/ 手工维护，构建复制）
+⏳ 图片 Alt、Core Web Vitals、全文检索体验 — 持续优化
 ```
 
 ### 9.2 具体优化措施
 
-#### 技术SEO配置
+#### 技术SEO配置（本站：Hope 主题内插件）
+
+本仓库 **不用** 根级 `seoPlugin()` / `sitemapPlugin()`，而在 `hopeTheme({ plugins: { ... } })` 里启用，并与 `config.ts` 的 `head` 叠加：
+
 ```typescript
-// VuePress配置优化
-export default defineUserConfig({
-  head: [
-    // SEO基础标签
-    ['meta', { name: 'keywords', content: '支付安全,PCI DSS,AI大模型...' }],
-    ['meta', { name: 'description', content: '专注支付安全与AI技术...' }],
-
-    // Open Graph
-    ['meta', { property: 'og:title', content: '老Z的博客...' }],
-    ['meta', { property: 'og:description', content: '...' }],
-
-    // 结构化数据
-    ['script', { type: 'application/ld+json' }, JSON.stringify({...})]
-  ],
-
-  plugins: [
-    // SEO插件配置
-    seoPlugin({
+// docs/.vuepress/config.ts 摘录
+hopeTheme({
+  hostname: 'https://www.zhaofutao.cn',
+  plugins: {
+    seo: { canonical: 'https://www.zhaofutao.cn' },
+    sitemap: {
       hostname: 'https://www.zhaofutao.cn',
-    }),
-    sitemapPlugin({
-      hostname: 'https://www.zhaofutao.cn',
-    })
-  ]
-});
+      exclude: ['/404.html'],
+    },
+    pwa: { /* ... */ },
+  },
+})
+
+// 同文件 defineUserConfig({ head: [ /* OG、JSON-LD 等 */ ] })
 ```
+
+`robots.txt` 在 `docs/.vuepress/public/robots.txt` **手工维护**（非主题自动生成）。
 
 #### 内容优化策略
 ```markdown
